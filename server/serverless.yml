@@ -1,0 +1,47 @@
+service: overheard-core
+
+
+plugins:
+  - serverless-stage-manager
+  - serverless-webpack
+  - serverless-offline
+
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage,'dev'}
+  region: us-east-1
+
+  environment:
+    EXECUTION_STAGE: ${self:provider.stage}
+    AWS_DEPLOYMENT_REGION: ${self:provider.region}
+    GOOGLE_AUTH_WEB_CLIENT_ID: ${file(./secrets.json):${self:provider.stage}.GOOGLE_AUTH_WEB_CLIENT_ID}
+    GOOGLE_AUTH_WEB_CLIENT_SECRET: ${file(./secrets.json):${self:provider.stage}.GOOGLE_AUTH_WEB_CLIENT_SECRET}
+    MYSQL_CONNECTION_URI: ${file(./secrets.json):${self:provider.stage}.MYSQL_CONNECTION_URI}
+
+
+custom:
+  stages:
+    - dev
+    - prod
+
+  serverless-offline:
+    prefix: users
+    port: 3000
+    stage: ${self:provider.stage}
+
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    packager: 'yarn'
+    includeModules: true
+
+functions:
+  test:
+    handler: src/routes/test.handler
+    events:
+      - http:
+          path: /test
+          method: get
+          cors: true
+ 
