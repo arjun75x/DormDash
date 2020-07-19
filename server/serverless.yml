@@ -27,7 +27,6 @@ custom:
     - prod
 
   serverless-offline:
-    prefix: users
     port: 3000
     stage: ${self:provider.stage}
 

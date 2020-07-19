@@ -1,6 +1,7 @@
+import type { HTTPRawHandler } from 'routes/handler';
+
 import middyfy from 'middleware/wrapper.ts';
 import InputSchema from 'input-schemas/test.is';
-import { HTTPRawHandler } from './handler';
 
 const _handler: HTTPRawHandler = async () => {
   return {
