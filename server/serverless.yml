@@ -1,4 +1,4 @@
-service: overheard-core
+service: dormdash
 
 
 plugins:
@@ -24,7 +24,7 @@ provider:
 custom:
   stages:
     - dev
-    - prod
+    - stable
 
   serverless-offline:
     port: 3000
