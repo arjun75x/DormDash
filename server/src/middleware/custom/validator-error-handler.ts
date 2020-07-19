@@ -2,7 +2,9 @@
  *
  * @return {Object} The middleware.
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default () => ({
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   onError: (handler, next) => {
     // if there are a `statusCode` and an `error` field
     // this is a valid http error object
@@ -18,6 +20,7 @@ export default () => ({
           fields.push(detail.params.missingProperty);
         }
 
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         const assignment = (obj, i) => {
           if (i < fields.length - 1) {
             if (!obj.hasOwnProperty(fields[i]) || typeof obj[fields[i]] !== 'object') {

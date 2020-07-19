@@ -18,6 +18,7 @@ import errorHandler from 'middleware/custom/error-handler';
  *
  * @return {Function} The Middy-fyed wrapped function handler.
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default (handler: HTTPRawHandler, inputSchema: object = null) => {
   const wrappedResponseHandler: Handler = async (...args) => {
     const res = await handler(...args);

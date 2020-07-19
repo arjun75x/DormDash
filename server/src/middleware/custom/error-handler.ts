@@ -1,7 +1,9 @@
 // eslint-disable-next-line valid-jsdoc
 /** A safeguard middleware to ensure uncaught errors are returned as server errors. */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default () => {
   return {
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     onError: (handler, next) => {
       // TODO: improve
       if (handler.error.statusCode && handler.error.message) {
