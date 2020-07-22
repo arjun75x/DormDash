@@ -6,6 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import InputLabel from "@material-ui/core/InputLabel";
+import Paper from "@material-ui/core/Paper";
 
 const StyledSelect = withStyles({
   root: {
@@ -14,7 +15,22 @@ const StyledSelect = withStyles({
   },
 })(FormControl);
 
-const QueueSelect = ({ diningHalls, selectedDiningHall, handleSelect }) => {
+const QueueSizePaper = withStyles({
+  root: {
+    width: "80px",
+    height: "80px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+})(Paper);
+
+const QueueSelect = ({
+  diningHalls,
+  selectedDiningHall,
+  handleSelect,
+  queueSize,
+}) => {
   return (
     <Box
       margin="100px 0"
@@ -41,6 +57,14 @@ const QueueSelect = ({ diningHalls, selectedDiningHall, handleSelect }) => {
           </Select>
         </StyledSelect>
       </Box>
+      {queueSize && (
+        <Box display="flex" flexDirection="column" marginLeft="20px">
+          <Typography>Queue Size</Typography>
+          <QueueSizePaper variant="outlined">
+            <Typography>{queueSize}</Typography>{" "}
+          </QueueSizePaper>
+        </Box>
+      )}
     </Box>
   );
 };
