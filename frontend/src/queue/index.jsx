@@ -3,15 +3,76 @@ import QueueSelect from "./queueSelect";
 import QueueRequest from "./queueRequest";
 
 const dummyDiningHalls = ["PAR", "FAR", "BAR", "CAR"];
+const dummyDiningHallQueueSize = [3, 8, 4, 2];
+var dummyDiningHallDict = {
+  "PAR" : 3,
+  "FAR" : 8,
+  "BAR" : 4,
+  "CAR" : 2
+};
+
+// will be spoofed later
+// var diningHallCurrentStatus = {
+//   "PAR" : [],
+//   "FAR" : [],
+//   "BAR" : [],
+//   "CAR" : []
+// }
 
 const Queue = () => {
-  const [diningHalls, setDiningHalls] = useState(dummyDiningHalls);
+  const [diningHalls, setDiningHalls] = useState(Object.keys(dummyDiningHallDict));
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
   const [queueSize, setQueueSize] = useState(null);
+  // const [groupNetIds, setGroupNetIds] = useState([]);
+  const [diningHallCurrentStatus, updateDiningHallStatus] = useState(
+    {
+      "PAR" : [],
+      "FAR" : [],
+      "BAR" : [],
+      "CAR" : []
+    }
+  );
+
+
+  const [inputNetId, setInputNetId] = useState("");
+  const [groupNetIds, setGroupNetIds] = useState([]);
+
+  const handleInputChange = (event) => {
+    setInputNetId(event.target.value);
+  };
+
+  const handleDeleteNetIdFromGroup = (netId) => {
+    setGroupNetIds(groupNetIds.filter((id) => id !== netId));
+  };
+
+  const addNetIdToGroup = () => {
+    setGroupNetIds([...groupNetIds, inputNetId]);
+    setInputNetId("");
+  };
 
   const handleSelect = (event) => {
     setSelectedDiningHall(event.target.value);
-    setQueueSize(7);
+    setQueueSize(dummyDiningHallDict[event.target.value]);
+  };
+
+  const handleQueueRequest = (event) => {
+    console.log("handling request!");
+    console.log(groupNetIds);
+    // console.log(groupNetIds);
+    if(selectedDiningHall == ""){
+      console.log("choose somethin!");
+    }
+    else{
+      updateDiningHallStatus({...diningHallCurrentStatus, 
+        selectedDiningHall: diningHallCurrentStatus[selectedDiningHall].push(
+          groupNetIds
+        )
+      });
+    // updateDiningHallStatus(diningHallCurrentStatus => ({...diningHallCurrentStatus, }));
+    // updateDiningHallStatus(diningHallCurrentStatus[selectedDiningHall].push([]));
+    }
+    console.log(diningHallCurrentStatus);
+
   };
 
   return (
@@ -23,7 +84,20 @@ const Queue = () => {
         queueSize={queueSize}
       />
       <hr style={{ width: "80%" }}></hr>
-      <QueueRequest />
+      <QueueRequest 
+        handleQueueRequest={handleQueueRequest}
+        // groupNetIds={groupNetIds}
+        // selectedDiningHall={selectedDiningHall}
+        // diningHallCurrentStatus={diningHallCurrentStatus}
+
+
+        inputNetId={inputNetId}
+        groupNetIds={groupNetIds}
+        handleInputChange={handleInputChange}
+        handleDeleteNetIdFromGroup={handleDeleteNetIdFromGroup}
+        addNetIdToGroup={addNetIdToGroup}
+      />
+      <hr style={{ width: "80%", height: "50%"}}></hr>
     </>
   );
 };
