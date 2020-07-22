@@ -33,7 +33,7 @@ const QueueSelect = ({
 }) => {
   return (
     <Box
-      margin="100px 0"
+      height="250px"
       width="100%"
       display="flex"
       alignItems="center"

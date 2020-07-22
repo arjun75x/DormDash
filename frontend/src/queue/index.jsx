@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import QueueSelect from "./queueSelect";
+import QueueRequest from "./queueRequest";
 
 const dummyDiningHalls = ["PAR", "FAR", "BAR", "CAR"];
 
@@ -14,12 +15,16 @@ const Queue = () => {
   };
 
   return (
-    <QueueSelect
-      diningHalls={diningHalls}
-      selectedDiningHall={selectedDiningHall}
-      handleSelect={handleSelect}
-      queueSize={queueSize}
-    />
+    <>
+      <QueueSelect
+        diningHalls={diningHalls}
+        selectedDiningHall={selectedDiningHall}
+        handleSelect={handleSelect}
+        queueSize={queueSize}
+      />
+      <hr style={{ width: "80%" }}></hr>
+      <QueueRequest />
+    </>
   );
 };
 
