@@ -34,9 +34,9 @@ const Queue = () => {
   );
 
 
-  const [inputNetId, setInputNetId] = useState("");
-  const [groupNetIds, setGroupNetIds] = useState([]);
-
+  // const [inputNetId, setInputNetId] = useState("");
+  // const [groupNetIds, setGroupNetIds] = useState([]);
+/*
   const handleInputChange = (event) => {
     setInputNetId(event.target.value);
   };
@@ -49,31 +49,35 @@ const Queue = () => {
     setGroupNetIds([...groupNetIds, inputNetId]);
     setInputNetId("");
   };
-
+*/
   const handleSelect = (event) => {
     setSelectedDiningHall(event.target.value);
     setQueueSize(dummyDiningHallDict[event.target.value]);
   };
-
+/*
   const handleQueueRequest = (event) => {
-    console.log("handling request!");
-    console.log(groupNetIds);
     // console.log(groupNetIds);
     if(selectedDiningHall == ""){
       console.log("choose somethin!");
     }
     else{
-      updateDiningHallStatus({...diningHallCurrentStatus, 
-        selectedDiningHall: diningHallCurrentStatus[selectedDiningHall].push(
-          groupNetIds
-        )
-      });
-    // updateDiningHallStatus(diningHallCurrentStatus => ({...diningHallCurrentStatus, }));
-    // updateDiningHallStatus(diningHallCurrentStatus[selectedDiningHall].push([]));
+      // console.log(selectedDiningHall);
+      updateDiningHallStatus((prevState)  => (
+        {...prevState, 
+          [selectedDiningHall]: [...prevState[selectedDiningHall], groupNetIds]        
+      }
+      ));
     }
-    console.log(diningHallCurrentStatus);
-
   };
+*/
+  const updateDHCallback = (groupNetIds) => {
+    updateDiningHallStatus((prevState)  => (
+      {...prevState, 
+        [selectedDiningHall]: [...prevState[selectedDiningHall], groupNetIds]        
+    }
+    ));
+    console.log(diningHallCurrentStatus);
+  }
 
   return (
     <>
@@ -85,17 +89,16 @@ const Queue = () => {
       />
       <hr style={{ width: "80%" }}></hr>
       <QueueRequest 
+        updateDHCallback={updateDHCallback}
+        //smh had to pass all these up because top level needs to work with groupNetIds
+        /*
         handleQueueRequest={handleQueueRequest}
-        // groupNetIds={groupNetIds}
-        // selectedDiningHall={selectedDiningHall}
-        // diningHallCurrentStatus={diningHallCurrentStatus}
-
-
         inputNetId={inputNetId}
         groupNetIds={groupNetIds}
         handleInputChange={handleInputChange}
         handleDeleteNetIdFromGroup={handleDeleteNetIdFromGroup}
         addNetIdToGroup={addNetIdToGroup}
+        */
       />
       <hr style={{ width: "80%", height: "50%"}}></hr>
     </>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import TextField from "@material-ui/core/TextField";
 import Chip from "@material-ui/core/Chip";
 import Box from "@material-ui/core/Box";
@@ -7,60 +7,45 @@ import Button from "@material-ui/core/Button";
 
 const testObj = {"hello" : 3};
 const QueueRequest = ({
-  handleQueueRequest,
+  updateDHCallback,
+  // handleQueueRequest,
   // groupNetIds
   // selectedDiningHall,
+  // dispatch,
 
-
-  inputNetId,
-  groupNetIds,
-  handleInputChange,
-  handleDeleteNetIdFromGroup,
-  addNetIdToGroup
+  // inputNetId,
+  // groupNetIds,
+  // handleInputChange,
+  // handleDeleteNetIdFromGroup,
+  // addNetIdToGroup
   // diningHallCurrentStatus
 }) => {
-  // const [inputNetId, setInputNetId] = useState("");
-  // const [groupNetIds, setGroupNetIds] = useState([]);
-  // // const [diningHallCurrentStatus, updateDiningHallStatus] = useState({});
+  const [inputNetId, setInputNetId] = useState("");
+  const [groupNetIds, setGroupNetIds] = useState([]);
+  // const [diningHallCurrentStatus, updateDiningHallStatus] = useState({});
 
-  // const handleInputChange = (event) => {
-  //   setInputNetId(event.target.value);
-  // };
+  const handleInputChange = (event) => {
+    setInputNetId(event.target.value);
+  };
 
-  // const handleDeleteNetIdFromGroup = (netId) => {
-  //   setGroupNetIds(groupNetIds.filter((id) => id !== netId));
-  // };
+  const handleDeleteNetIdFromGroup = (netId) => {
+    setGroupNetIds(groupNetIds.filter((id) => id !== netId));
+  };
 
-  // const addNetIdToGroup = () => {
-  //   setGroupNetIds([...groupNetIds, inputNetId]);
-  //   setInputNetId("");
-  // };
+  const addNetIdToGroup = () => {
+    setGroupNetIds([...groupNetIds, inputNetId]);
+    setInputNetId("");
+  };
 
-  // const handleQueueRequest = (event) => {
-  //   console.log("handling request!");
-  //   if(selectedDiningHall == ""){
-  //     console.log("choose somethin!");
-  //   }
-  //   updateDiningHallStatus(diningHallCurrentStatus[selectedDiningHall].push(groupNetIds));
-  // };
+  const handleQueueRequest = (event) => {
+    // console.log("handling request!");
+    // if(selectedDiningHall == ""){
+    //   console.log("choose somethin!");
+    // }
+    // updateDiningHallStatus(diningHallCurrentStatus[selectedDiningHall].push(groupNetIds));
+    updateDHCallback(groupNetIds);
 
-  // const handleQueueRequest = (event) => {
-  //   console.log("handling request!");
-  //   console.log(event.target.value);
-  //   console.log(groupNetIds);
-  //   if(selectedDiningHall == ""){
-  //     console.log("choose somethin!");
-  //   }
-  //   else{
-  //   updateDiningHallStatus({...diningHallCurrentStatus, 
-  //     selectedDiningHall: diningHallCurrentStatus[selectedDiningHall].push(1)
-  //   });
-  //   // updateDiningHallStatus(diningHallCurrentStatus => ({...diningHallCurrentStatus, }));
-  //   // updateDiningHallStatus(diningHallCurrentStatus[selectedDiningHall].push([]));
-  //   }
-  //   console.log(diningHallCurrentStatus);
-
-  // };
+  }; 
 
   return (
     <Box
