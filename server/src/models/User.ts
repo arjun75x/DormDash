@@ -2,40 +2,40 @@ import { query } from 'middleware/custom/mysql-connector';
 
 export interface User {
   [key: string]: string;
-  NetId: string;
+  NetID: string;
   Name: string;
 }
 
-export const getUserByNetId: (netId: string) => Promise<User | null> = async (netId) =>
+export const getUserByNetId: (netID: string) => Promise<User | null> = async (netID) =>
   (
     await query<User>(
       `
     SELECT 
       Name,
-      NetId
+      NetID
     FROM User
-    WHERE NetId = ?
+    WHERE netID = ?
   `,
-      [netId]
+      [netID]
     )
   ).shift();
 
 export const getOrCreateUserByNetId: (
-  netId: string,
+  netID: string,
   name?: string
-) => Promise<User> = async (netId, name = 'NULL') =>
+) => Promise<User> = async (netID, name = 'NULL') =>
   (
     await query<User>(
       `
-    INSERT IGNORE INTO User(NetId, Name)
+    INSERT IGNORE INTO User(NetID, Name)
     VALUES (?, ?);
 
     SELECT 
       Name,
-      NetId
+      NetID
     FROM User
-    WHERE NetId = ?
+    WHERE NetID = ?
   `,
-      [netId, name, netId]
+      [netID, name, netID]
     )
   ).shift();

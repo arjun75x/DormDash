@@ -41,7 +41,7 @@ const _handler: APIGatewayTokenAuthorizerWithContextHandler<User> = async (
   const user = await validateTokenAndReturnUser(token);
 
   if (user !== null) {
-    return generatePolicy(user.NetId, event.methodArn, 'Allow', user);
+    return generatePolicy(user.NetID, event.methodArn, 'Allow', user);
   } else {
     context.fail('Unauthorized');
   }

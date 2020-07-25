@@ -12,7 +12,11 @@ export interface Token {
   value: string;
 }
 
-const googleOAuth2Audience = [process.env.GOOGLE_AUTH_WEB_CLIENT_ID];
+const googleOAuth2Audience = [
+  process.env.GOOGLE_AUTH_WEB_CLIENT_ID,
+  'https://www.googleapis.com/auth/userinfo.profile',
+  'https://www.googleapis.com/auth/userinfo.email',
+];
 const googleOAuth2Client = new GoogleOAuth2Client(
   process.env.GOOGLE_AUTH_WEB_CLIENT_ID,
   process.env.GOOGLE_AUTH_WEB_CLIENT_SECRET
@@ -53,6 +57,7 @@ export const validateTokenAndReturnUser = async (token: Token): Promise<User | n
       }
 
       const payload = ticket.getPayload();
+      console.log(payload);
       const netId = validateIllinoisEmail(payload.email);
       return netId && (await getOrCreateUserByNetId(netId, payload.name));
 

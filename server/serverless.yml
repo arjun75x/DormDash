@@ -57,3 +57,7 @@ functions:
           path: /dining-hall
           method: get
           cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
