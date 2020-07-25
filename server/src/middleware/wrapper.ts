@@ -9,6 +9,7 @@ import doNotWaitForEmptyEventLoop from '@middy/do-not-wait-for-empty-event-loop'
 import validator from 'middleware/custom/validator';
 import validatorErrorHandler from 'middleware/custom/validator-error-handler';
 import errorHandler from 'middleware/custom/error-handler';
+import mysqlConnector from 'middleware/custom/mysql-connector';
 
 /** Wraps a Serverless api function handler with middleware from
  * the Middy framework.
@@ -31,7 +32,8 @@ export default (handler: HTTPRawHandler, inputSchema: object = null) => {
   const middleware = middy(wrappedResponseHandler)
     .use(jsonBodyParser())
     .use(cors())
-    .use(doNotWaitForEmptyEventLoop({ runOnBefore: true, runOnError: true }));
+    .use(doNotWaitForEmptyEventLoop({ runOnBefore: true, runOnError: true }))
+    .use(mysqlConnector());
 
   if (inputSchema) {
     middleware.use(validator({ inputSchema, outputSchema: null, ajvOptions: null }));
