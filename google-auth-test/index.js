@@ -47,7 +47,7 @@ function getAuthenticatedClient() {
     // Generate the url that will be used for the consent dialog.
     const authorizeUrl = oAuth2Client.generateAuthUrl({
       access_type: 'offline',
-      scope: 'https://www.googleapis.com/auth/userinfo.profile',
+      scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'],
     });
 
     // Open an http server to accept the oauth callback. In this simple example, the
