@@ -31,7 +31,8 @@
     "ajv-keywords": "^3.4.1",
     "http-errors": "^1.7.3",
     "mysql": "^2.18.1",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "util": "^0.12.3"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.15",
