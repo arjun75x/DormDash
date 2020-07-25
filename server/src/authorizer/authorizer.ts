@@ -1,4 +1,5 @@
 import type { Token } from 'utils/auth';
+import type { User } from 'models/User';
 
 import {
   APIGatewayTokenAuthorizerWithContextHandler,
@@ -8,14 +9,14 @@ import {
 import authMiddyfy from 'authorizer/middleware/wrapper';
 import { authorizerInputSchema } from 'authorizer/authorizer.is';
 
-import { decodeBasicAuthHeader } from 'utils/auth';
+import { decodeBasicAuthHeader, validateTokenAndReturnUser } from 'utils/auth';
 
 const generatePolicy = (
   principalId: string,
   methodArn: string,
   effect: 'Allow' | 'Deny',
-  user?: null
-): APIGatewayAuthorizerWithContextResult<null> => {
+  user: User
+): APIGatewayAuthorizerWithContextResult<User> => {
   return {
     principalId: principalId,
     policyDocument: {
@@ -32,16 +33,15 @@ const generatePolicy = (
   };
 };
 
-const _handler: APIGatewayTokenAuthorizerWithContextHandler<null> = async (
+const _handler: APIGatewayTokenAuthorizerWithContextHandler<User> = async (
   event,
   context
 ) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const token: Token = decodeBasicAuthHeader(event.authorizationToken);
-  const user = null;
+  const user = await validateTokenAndReturnUser(token);
 
   if (user !== null) {
-    return generatePolicy(user.username, event.methodArn, 'Allow', user);
+    return generatePolicy(user.NetId, event.methodArn, 'Allow', user);
   } else {
     context.fail('Unauthorized');
   }

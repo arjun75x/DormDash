@@ -11,10 +11,8 @@ export const connection = mysql.createConnection({
   database: process.env.DB_NAME,
 });
 
-export const query: <T>(sql: string, args?: mysql.QueryOptions) => Array<T> = (
-  sql,
-  args
-) => util.promisify(connection.query).call(connection, sql, args);
+export const query: <T>(sql: string, values?: Array<any>) => Array<T> = (sql, values) =>
+  util.promisify(connection.query).call(connection, sql, values);
 
 /** A database connection middleware that creates or persists a connection
  * to MongoDB via Mongoose.
