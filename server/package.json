@@ -29,8 +29,10 @@
     "ajv": "^6.12.2",
     "ajv-i18n": "^3.5.0",
     "ajv-keywords": "^3.4.1",
+    "google-auth-library": "^6.0.5",
     "http-errors": "^1.7.3",
     "mysql": "^2.18.1",
+    "safe-buffer": "^5.2.1",
     "source-map-support": "^0.5.19",
     "util": "^0.12.3"
   },
