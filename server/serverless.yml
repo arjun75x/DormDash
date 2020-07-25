@@ -18,7 +18,10 @@ provider:
     AWS_DEPLOYMENT_REGION: ${self:provider.region}
     GOOGLE_AUTH_WEB_CLIENT_ID: ${file(./secrets.json):${self:provider.stage}.GOOGLE_AUTH_WEB_CLIENT_ID}
     GOOGLE_AUTH_WEB_CLIENT_SECRET: ${file(./secrets.json):${self:provider.stage}.GOOGLE_AUTH_WEB_CLIENT_SECRET}
-    MYSQL_CONNECTION_URI: ${file(./secrets.json):${self:provider.stage}.MYSQL_CONNECTION_URI}
+    DB_HOST: ${file(./secrets.json):${self:provider.stage}.DB_HOST}
+    DB_USER: ${file(./secrets.json):${self:provider.stage}.DB_USER}
+    DB_PASSWORD: ${file(./secrets.json):${self:provider.stage}.DB_PASSWORD}
+    DB_NAME: ${file(./secrets.json):${self:provider.stage}.DB_NAME}
 
 
 custom:
