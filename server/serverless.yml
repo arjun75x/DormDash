@@ -46,4 +46,12 @@ functions:
           path: /test
           method: get
           cors: true
- 
+
+  getDiningHalls:
+    handler: src/routes/dining-hall/getHalls.handler
+    events:
+      - http:
+          path: /dining-hall
+          method: get
+          cors: true
+  

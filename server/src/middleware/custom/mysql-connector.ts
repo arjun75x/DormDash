@@ -1,14 +1,20 @@
 import mysql from 'mysql';
+import util from 'util';
 
 const log: (shouldLog: boolean, message: string) => void = (shouldLog, message) =>
   shouldLog ? console.log(message) : null;
 
-const connection = mysql.createConnection({
+export const connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
+
+export const query: <T>(sql: string, args?: mysql.QueryOptions) => Array<T> = (
+  sql,
+  args
+) => util.promisify(connection.query).call(connection, sql, args);
 
 /** A database connection middleware that creates or persists a connection
  * to MongoDB via Mongoose.

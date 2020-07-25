@@ -11,3 +11,21 @@ Pings test route
   "message": "string"
 }
 ```
+
+## GET /dining-hall
+
+Fetches list of dining halls
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+  "diningHalls": [{
+    "DiningHallName": "string",
+    "Latitude": "number",
+    "Longitude": "number",
+    "Capacity": "number"
+  }]
+}
+```
