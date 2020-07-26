@@ -12,11 +12,8 @@ export default {
     },
     body: {
       type: 'object',
-      required: ['DiningHallName', 'TableID'],
+      required: ['TableID'],
       properties: {
-        DiningHallName: {
-          type: 'string',
-        },
         Capacity: {
           type: 'number',
         },

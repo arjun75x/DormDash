@@ -26,17 +26,16 @@ export const createDiningHallTable: (
     )
   ).shift();
 
-export const deleteDiningHallTable: (
-  diningHallName: string,
-  tableID: number
-) => Promise<Array<void>> = async (DiningHallName, TableID) =>
+export const deleteDiningHallTable: (tableID: number) => Promise<Array<void>> = async (
+  TableID
+) =>
   await query<void>(
     `
     DELETE
     FROM DiningHallTable
-    WHERE DiningHallName = ? AND TableID = ?
+    WHERE TableID = ?
   `,
-    [DiningHallName, TableID]
+    [TableID]
   );
 
 export const updateDiningHallTable: (
