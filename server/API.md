@@ -93,3 +93,24 @@ Updates metadata of a specific dining hall table
   "message": "string",
 }
 ```
+
+## DELETE /dining-hall-table
+
+Deletes a dining hall table from a specific dining hall 
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string",
+  "TableID": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```

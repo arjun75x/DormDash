@@ -18,6 +18,19 @@ export const createDiningHallTable: (
     [DiningHallName, Capacity]
   );
 
+export const deleteDiningHallTable: (
+  diningHallName: string,
+  tableID: number
+) => Promise<Array<void>> = async (DiningHallName, TableID) =>
+  await query<void>(
+    `
+    DELETE
+    FROM DiningHallTable
+    WHERE DiningHallName = ? AND TableID = ?
+  `,
+    [DiningHallName, TableID]
+  );
+
 export const updateDiningHallTable: (
   TableID: number,
   Capacity: number

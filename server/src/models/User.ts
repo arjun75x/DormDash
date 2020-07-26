@@ -1,4 +1,4 @@
-import { query } from 'middleware/custom/mysql-connector';
+import { query, multiQuery } from 'middleware/custom/mysql-connector';
 
 export interface User {
   [key: string]: string;
@@ -25,7 +25,7 @@ export const getOrCreateUserByNetId: (
   name?: string
 ) => Promise<User> = async (netID, name = 'NULL') =>
   (
-    await query<User>(
+    await multiQuery<User>(
       `
     INSERT IGNORE INTO User(NetID, Name)
     VALUES (?, ?);
