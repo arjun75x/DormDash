@@ -72,3 +72,24 @@ Adds a dining hall table to a specific dining hall
   "message": "string",
 }
 ```
+
+## DELETE /dining-hall-table
+
+Deletes a dining hall table frp, specific dining hall
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string",
+  "TableID": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```
