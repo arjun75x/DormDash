@@ -72,3 +72,24 @@ Adds a dining hall table to a specific dining hall
   "message": "string",
 }
 ```
+
+## PUT /dining-hall-table
+
+Updates metadata of a specific dining hall table
+
+### Request Body Schema
+
+```json
+{
+  "TableID": "number",
+  "Capacity": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```

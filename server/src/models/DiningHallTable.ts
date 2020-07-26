@@ -17,3 +17,16 @@ export const createDiningHallTable: (
   `,
     [DiningHallName, Capacity]
   );
+
+export const updateDiningHallTable: (
+  TableID: number,
+  Capacity: number
+) => Promise<Array<void>> = async (TableID, Capacity) =>
+  await query<void>(
+    `
+    UPDATE DiningHallTable
+    SET Capacity = ?
+    WHERE TableID = ?
+  `,
+    [Capacity, TableID]
+  );
