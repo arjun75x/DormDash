@@ -12,10 +12,14 @@ export const connection = mysql.createConnection({
   multipleStatements: true,
 });
 
-export const query: <T>(sql: string, values?: Array<any>) => Promise<Array<T>> = async (
-  sql,
-  values
-) => (await util.promisify(connection.query).call(connection, sql, values))[1];
+export const query: <T>(sql: string, values?: Array<any>) => Array<T> = (sql, values) =>
+  util.promisify(connection.query).call(connection, sql, values);
+
+export const multiQuery: <T>(
+  sql: string,
+  values?: Array<any>
+) => Promise<Array<T>> = async (sql, values) =>
+  (await util.promisify(connection.query).call(connection, sql, values))[1];
 
 /** A database connection middleware that creates or persists a connection
  * to MongoDB via Mongoose.
