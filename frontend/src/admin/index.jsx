@@ -4,6 +4,7 @@ import { getToken } from "../utils";
 import Box from "@material-ui/core/Box";
 import TableUpdater from "./tableUpdater";
 import TableInserter from "./tableInserter";
+import Navbar from "../nav/navbar";
 
 const Admin = () => {
   const [diningTableDict, setDiningTableDict] = useState({});
@@ -92,31 +93,36 @@ const Admin = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      padding="50px 0"
-    >
-      <QueueSelect
-        diningHalls={Object.keys(diningTableDict)}
-        selectedDiningHall={selectedDiningHall}
-        handleSelect={handleSelect}
-      />
-      {selectedDiningHall !== "" && (
-        <TableInserter addTable={addTable(selectedDiningHall)} />
-      )}
-      {selectedDiningHall !== "" &&
-        diningTableDict[selectedDiningHall].map(({ TableID, Capacity }, i) => (
-          <TableUpdater
-            updateTableCapacity={updateTable(TableID, selectedDiningHall)}
-            deleteTable={deleteTable(TableID, selectedDiningHall)}
-            capacity={Capacity}
-            key={i}
-          />
-        ))}
-    </Box>
+    <>
+      <Navbar />
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        padding="50px 0"
+      >
+        <QueueSelect
+          diningHalls={Object.keys(diningTableDict)}
+          selectedDiningHall={selectedDiningHall}
+          handleSelect={handleSelect}
+        />
+        {selectedDiningHall !== "" && (
+          <TableInserter addTable={addTable(selectedDiningHall)} />
+        )}
+        {selectedDiningHall !== "" &&
+          diningTableDict[
+            selectedDiningHall
+          ].map(({ TableID, Capacity }, i) => (
+            <TableUpdater
+              updateTableCapacity={updateTable(TableID, selectedDiningHall)}
+              deleteTable={deleteTable(TableID, selectedDiningHall)}
+              capacity={Capacity}
+              key={i}
+            />
+          ))}
+      </Box>
+    </>
   );
 };
 
