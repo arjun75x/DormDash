@@ -50,7 +50,7 @@ ON DELETE CASCADE
 
 create table AdmittedEntry(
 
-EntryID INT PRIMARY KEY,
+EntryID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
 MealType VARCHAR(255) NOT NULL,
 
@@ -62,7 +62,15 @@ GroupExitTime DATE NOT NULL,
 
 DistanceEstimate REAL NOT NULL,
 
+TableID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+DiningHallName VARCHAR(255) NOT NULL,
+
 QueueRequestID INT NOT NULL,
+
+FOREIGN KEY (DiningHallName) REFERENCES DiningHall(DiningHallName),
+
+FOREIGN KEY (TableID) REFERENCES DiningHallTable(TableID),
 
 FOREIGN KEY (QueueRequestID) REFERENCES QueueRequest(QueueRequestID)
 
