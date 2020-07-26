@@ -23,6 +23,15 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "#d8effb",
         border: "solid"
     },
+    DBResult: {
+        backgroundColor: "#d4fbeb",
+        border: "solid",        
+        height:50,
+        display:"flex",
+        justifyContent:"center",
+        alignItems: 'center',
+        // {display: 'flex', justifyContent: 'center'}
+    },
     DBActionBlock: {
         paddingTop: 10,
         paddingLeft: 10
@@ -36,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Admin = () => {
     const classes = useStyles();
+    const shouldDisplayResult = false;
     const [DBAction, setDBAction] = React.useState('');
     const [DBTable, setDBTable] = React.useState('');
 
@@ -69,7 +79,7 @@ const Admin = () => {
         await fetch(url, {
             method: "POST",
             // body: JSON.stringify({DiningHallName: DHName, Capacity: DHTCapacity }),
-            body: JSON.stringify({DiningHallName: "", Capacity: 0 }),
+            body: JSON.stringify(reqBody),
 
             headers: {
                 "Authorization": authorizedToken,
@@ -97,6 +107,7 @@ const Admin = () => {
         fetchPost("http://localhost:3000/dev/dining-hall-table",  reqBody);
         resetDHName();
         resetDHTCapacity();
+        shouldDisplayResult = true;
     }
 
 
@@ -126,9 +137,9 @@ const Admin = () => {
                             <TextField required id="standard-required" label="DiningHallName" type="text" {...bindDHName}/>
                             <TextField required id="standard-required" label="Capacity" type="text" {...bindDHTCapacity}/>
                         </Box>
-                    <Box className={classes.ButtonBox}>
-                        <Button variant="contained" color="primary" type="submit">Submit</Button>
-                    </Box> 
+                        <Box className={classes.ButtonBox}>
+                            <Button variant="contained" color="primary" type="submit">Submit</Button>
+                        </Box> 
                     </Box>
                 </form>                          
 
@@ -213,7 +224,16 @@ const Admin = () => {
                 >
                 {DBActionDisplay[DBAction]}
             </Box>
-            
+
+            <Box height={50}/>
+
+            {shouldDisplayResult && 
+            <Box
+                className={classes.DBResult}
+            >
+                
+            </Box>
+            }
             </Grid>
             <Grid item xs={2} />
             

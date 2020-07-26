@@ -1,6 +1,7 @@
 # package directories
 node_modules
 jspm_packages
+package-lock.json
 
 # Serverless directories
 .serverless
@@ -10,3 +11,6 @@ jspm_packages
 
 # Project secrets
 **/secrets.json
+
+# log files
+yarn-error.log
