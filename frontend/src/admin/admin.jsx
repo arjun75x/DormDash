@@ -9,7 +9,7 @@ import { FormControl, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import Typography from "@material-ui/core/Typography";
-
+import {useInput} from "./useInput";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -38,6 +38,15 @@ const Admin = () => {
     const classes = useStyles();
     const [DBAction, setDBAction] = React.useState('');
     const [DBTable, setDBTable] = React.useState('');
+
+    //fields 
+    const { value:DHName, bind:bindDHName, reset:resetDHName } = useInput('');
+    const { value:DHTCapacity, bind:bindDHTCapacity, reset:resetDHTCapacity } = useInput('');
+
+    // const [DHTReq, submitDHTUpdate] = React.useState({
+    //     "DiningHallName": "",
+    //     "Capacity": 0
+    // });
     const selectDBActionType = (event) => {
         setDBAction(event.target.value);
       };
@@ -45,12 +54,57 @@ const Admin = () => {
         setDBTable(event.target.value);
       };
 
+        //authorization stuff
+      const encodeToken = (tokenType, token) =>
+    Buffer.from(`${tokenType}:${token}`).toString('base64');
+
+    const encodeBasicAuthHeader = (tokenType, token) => {
+        const encodedToken = encodeToken(tokenType, token);
+        return `Basic ${encodedToken}`;
+    };
+    const authorizedToken = encodeBasicAuthHeader('DeveloperOnly','tincher2');
+
+    //FETCH
+    async function fetchPost(url, reqBody){
+        await fetch(url, {
+            method: "POST",
+            body: reqBody,
+            headers: {
+                "Authorization": authorizedToken
+              }
+    
+        })
+        .then(response => {console.log(response.json()); return response.json()})
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+      }
+
+    //generic textfield handler
+    //   handleChange(event) {
+    //     this.setState({value: event.target.value});
+    //   }
+    const submitDHTUpdate = (e) => {
+        e.preventDefault();
+        // submitDHTUpdate()
+
+        fetchPost("http://localhost:3000/dev/dining-hall",
+        JSON.stringify({
+            "DiningHallName": DHName,
+            "Capacity": DHTCapacity
+        })
+        );
+        resetDHName();
+        resetDHTCapacity();
+    }
+
 
     /* conditional rendering using enums*/
 
     const tableSelect = {
         DiningHall:
-        // TODO: this seems wrong, might need to change later
+        // TODO: this seems wrong, might need to change later (should we be able to add to dining hall
+        // so far?)
         <Box className={classes.DBActionBlock}>
             <Box>
                 <TextField required id="standard-required" label="DiningHallName" />
@@ -62,19 +116,21 @@ const Admin = () => {
             </Box>               
 
         </Box>,
+        //focus on this first:
         DiningHallTable:
-        <Box className={classes.DBActionBlock}>
             <Box className={classes.DBActionBlock}>
-            <Box>
-                <TextField required id="standard-required" label="DiningHallName" />
-                <TextField required id="standard-required" label="Capacity" />
-                <TextField required id="standard-required" label="TableID"/> 
-            </Box>
-            <Box className={classes.ButtonBox}>
-                <Button variant="contained" color="primary">Submit</Button>
-            </Box>               
+                <form onSubmit={submitDHTUpdate}>
+                    <Box className={classes.DBActionBlock}>
+                        <Box>
+                            <TextField required id="standard-required" label="DiningHallName" type="text" {...bindDHName}/>
+                            <TextField required id="standard-required" label="Capacity" type="text" {...bindDHTCapacity}/>
+                        </Box>
+                    <Box className={classes.ButtonBox}>
+                        <Button variant="contained" color="primary" type="submit">Submit</Button>
+                    </Box> 
+                    </Box>
+                </form>                          
 
-            </Box>
         </Box>,
         QueueRequest:
         <Box className={classes.DBActionBlock}>
