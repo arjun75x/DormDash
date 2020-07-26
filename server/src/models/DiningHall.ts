@@ -4,24 +4,18 @@ export interface DiningHall {
   DiningHallName: string;
   Latitude: number;
   Longitude: number;
-  NumAvailableTables: number;
-  LargestAvailableTable: number;
+  TableIDs: string;
+  TableCapacities: string;
 }
 
-export interface DiningHallWithMeta extends DiningHall {
-  Capacity: number;
-}
-
-export const getDiningHalls: () => Promise<Array<DiningHallWithMeta>> = async () =>
-  await query<DiningHallWithMeta>(`
+export const getDiningHalls: () => Promise<Array<DiningHall>> = async () =>
+  await query<DiningHall>(`
     SELECT 
       DiningHallName, 
       Latitude, 
       Longitude, 
-      IFNULL(SUM(Capacity), 0) as Capacity,
-      COUNT(TableID) as NumAvailableTables,
-      MAX(Capacity) as LargestAvailableTable
+      GROUP_CONCAT(TableID ORDER BY TableID SEPARATOR ',') as TableIDs,
+      GROUP_CONCAT(Capacity ORDER BY TableID SEPARATOR ',') as TableCapacities
     FROM DiningHall NATURAL JOIN DiningHallTable
-    WHERE TableID NOT IN (SELECT ae.TableID FROM AdmittedEntry ae WHERE ae.DiningHallName = DiningHallName AND ae.GroupExitTime = NULL)
     GROUP BY DiningHallName
   `);
