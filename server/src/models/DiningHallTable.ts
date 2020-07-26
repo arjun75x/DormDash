@@ -1,4 +1,4 @@
-import { query } from 'middleware/custom/mysql-connector';
+import { query, multiQuery } from 'middleware/custom/mysql-connector';
 
 export interface DiningHallTableBase {
   Capacity: number;
@@ -11,14 +11,20 @@ export interface DiningHallTable extends DiningHallTableBase {
 export const createDiningHallTable: (
   DiningHallName: string,
   Capacity: number
-) => Promise<Array<void>> = async (DiningHallName, Capacity) =>
-  await query<void>(
-    `
+) => Promise<DiningHallTable> = async (DiningHallName, Capacity) =>
+  (
+    await multiQuery<DiningHallTable>(
+      `
     INSERT INTO DiningHallTable(DiningHallName, Capacity)
-    VALUES (?, ?)
+    VALUES (?, ?);
+
+    SELECT TableID, Capacity, DiningHallName
+    FROM DiningHallTable
+    WHERE TableID = (SELECT LAST_INSERT_ID())
   `,
-    [DiningHallName, Capacity]
-  );
+      [DiningHallName, Capacity]
+    )
+  ).shift();
 
 export const deleteDiningHallTable: (
   diningHallName: string,
