@@ -78,8 +78,20 @@ functions:
     handler: src/routes/dining-hall-table/deleteTable.handler
     events:
       - http:
-          path: /dining-hall-table/{tableName}
+          path: /dining-hall-table
           method: delete
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  updateDiningHallTable:
+    handler: src/routes/dining-hall-table/updateTable.handler
+    events:
+      - http:
+          path: /dining-hall-table
+          method: put
           cors: true
           authorizer:
             name: authorizer

@@ -73,9 +73,30 @@ Adds a dining hall table to a specific dining hall
 }
 ```
 
+## PUT /dining-hall-table
+
+Updates metadata of a specific dining hall table
+
+### Request Body Schema
+
+```json
+{
+  "TableID": "number",
+  "Capacity": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```
+
 ## DELETE /dining-hall-table
 
-Deletes a dining hall table frp, specific dining hall
+Deletes a dining hall table from a specific dining hall 
 
 ### Request Body Schema
 

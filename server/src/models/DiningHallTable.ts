@@ -18,14 +18,27 @@ export const createDiningHallTable: (
     [DiningHallName, Capacity]
   );
 
-  export const deleteDiningHallTable: (
-    diningHallName: string, tableID: number
-  ) => Promise<Array<void>> = async (diningHallName, tableID) =>
-    await query<void>(
-      `
-      DELETE
-      FROM DiningHallTable dht
-      WHERE dht.DiningHallName = ? AND dht.TableID = ?
-    `,
-      [diningHallName, tableID]
-    );
+export const deleteDiningHallTable: (
+  diningHallName: string, tableID: number
+) => Promise<Array<void>> = async (DiningHallName, TableID) =>
+  await query<void>(
+    `
+    DELETE
+    FROM DiningHallTable
+    WHERE DiningHallName = ? AND TableID = ?
+  `,
+    [DiningHallName, TableID]
+  );
+
+export const updateDiningHallTable: (
+  TableID: number,
+  Capacity: number
+) => Promise<Array<void>> = async (TableID, Capacity) =>
+  await query<void>(
+    `
+    UPDATE DiningHallTable
+    SET Capacity = ?
+    WHERE TableID = ?
+  `,
+    [Capacity, TableID]
+  );
