@@ -104,13 +104,12 @@ Updates metadata of a specific dining hall table
 
 ## DELETE /admin/dining-hall-table
 
-Deletes a dining hall table from a specific dining hall 
+Deletes a dining hall table
 
 ### Request Body Schema
 
 ```json
 {
-  "DiningHallName": "string",
   "TableID": "number"
 }
 ```
