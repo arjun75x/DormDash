@@ -8,21 +8,9 @@ import Button from "@material-ui/core/Button";
 const testObj = {"hello" : 3};
 const QueueRequest = ({
   updateDHCallback,
-  // handleQueueRequest,
-  // groupNetIds
-  // selectedDiningHall,
-  // dispatch,
-
-  // inputNetId,
-  // groupNetIds,
-  // handleInputChange,
-  // handleDeleteNetIdFromGroup,
-  // addNetIdToGroup
-  // diningHallCurrentStatus
 }) => {
   const [inputNetId, setInputNetId] = useState("");
   const [groupNetIds, setGroupNetIds] = useState([]);
-  // const [diningHallCurrentStatus, updateDiningHallStatus] = useState({});
 
   const handleInputChange = (event) => {
     setInputNetId(event.target.value);
@@ -38,11 +26,6 @@ const QueueRequest = ({
   };
 
   const handleQueueRequest = (event) => {
-    // console.log("handling request!");
-    // if(selectedDiningHall == ""){
-    //   console.log("choose somethin!");
-    // }
-    // updateDiningHallStatus(diningHallCurrentStatus[selectedDiningHall].push(groupNetIds));
     updateDHCallback(groupNetIds);
 
   }; 
