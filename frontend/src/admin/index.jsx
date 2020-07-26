@@ -3,6 +3,7 @@ import QueueSelect from "../queue/queueSelect";
 import { getToken } from "../utils";
 import Box from "@material-ui/core/Box";
 import TableUpdater from "./tableUpdater";
+import TableInserter from "./tableInserter";
 
 const Admin = () => {
   const [diningTableDict, setDiningTableDict] = useState({});
@@ -27,6 +28,27 @@ const Admin = () => {
 
   const handleSelect = (event) => {
     setSelectedDiningHall(event.target.value);
+  };
+
+  const addTable = (curDiningHall) => (Capacity) => {
+    fetch("http://localhost:3000/dev/admin/dining-hall-table", {
+      headers: {
+        Authorization: getToken(),
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ DiningHallName: curDiningHall, Capacity }),
+    })
+      .then((response) => response.json())
+      .then(({ table }) => {
+        setDiningTableDict({
+          ...diningTableDict,
+          [curDiningHall]: [
+            { TableID: table.TableID, Capacity: table.Capacity },
+            ...diningTableDict[curDiningHall],
+          ],
+        });
+      });
   };
 
   const updateTable = (TableID, curDiningHall) => (Capacity) => {
@@ -56,7 +78,7 @@ const Admin = () => {
         "Content-Type": "application/json",
       },
       method: "DELETE",
-      body: JSON.stringify({ TableID, DiningHallName: curDiningHall }),
+      body: JSON.stringify({ TableID: TableID.toString() }),
     })
       .then((response) => response.json())
       .then(() => {
@@ -82,6 +104,9 @@ const Admin = () => {
         selectedDiningHall={selectedDiningHall}
         handleSelect={handleSelect}
       />
+      {selectedDiningHall !== "" && (
+        <TableInserter addTable={addTable(selectedDiningHall)} />
+      )}
       {selectedDiningHall !== "" &&
         diningTableDict[selectedDiningHall].map(({ TableID, Capacity }, i) => (
           <TableUpdater
