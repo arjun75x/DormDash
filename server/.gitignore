@@ -1,7 +1,6 @@
 # package directories
 node_modules
 jspm_packages
-yarn-error.log
 
 # Serverless directories
 .serverless
@@ -11,3 +10,6 @@ yarn-error.log
 
 # Project secrets
 **/secrets.json
+
+# log files
+yarn-error.log
