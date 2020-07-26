@@ -29,7 +29,6 @@ const QueueRequest = ({
     updateDHCallback(groupNetIds);
     //also clear groupNetIds
     setGroupNetIds([])
-
   }; 
 
   return (

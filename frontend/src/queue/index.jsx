@@ -1,8 +1,12 @@
 import React, { useState } from "react";
+
 import QueueSelect from "./queueSelect";
 import QueueRequest from "./queueRequest";
 import QueueDisplay from "./queueDisplay";
+import Navbar from "../nav/navbar";
 import Grid from '@material-ui/core/Grid';
+import Admin from "../admin/admin" 
+import {Buffer} from 'buffer';
 
 const dummyDiningHalls = ["PAR", "FAR", "BAR", "CAR"];
 const dummyDiningHallQueueSize = [3, 8, 4, 2];
@@ -49,6 +53,7 @@ const Queue = () => {
       "CAR" : []
     }
   );
+  
 
 
   const handleSelect = (event) => {
@@ -64,8 +69,42 @@ const Queue = () => {
     console.log(diningHallCurrentStatus);
   }
 
+
+
+  const encodeToken = (tokenType, token) =>
+  Buffer.from(`${tokenType}:${token}`).toString('base64');
+
+  const encodeBasicAuthHeader = (tokenType, token) => {
+    const encodedToken = encodeToken(tokenType, token);
+    return `Basic ${encodedToken}`;
+  };
+  const authorizedToken = encodeBasicAuthHeader('DeveloperOnly','tincher2');
+  async function fetchTest(){
+    console.log(authorizedToken);
+    await fetch('http://localhost:3000/dev/dining-hall', {
+      headers: {
+        "Authorization": authorizedToken
+      }
+
+    })
+    .then(response => {console.log(response.json()); return response.json()})
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+  // fetchTest("http://localhost:8000/dev/test", { answer: 42 })
+  // .then(data => {
+  //   console.log(data); // JSON data parsed by `data.json()` call
+  // });
+  // fetch("http://localhost:3000/dev/test").then(response => response.json())
+  // .then(data => console.log(data));
+
+ 
+
   return (
     <>
+    <Navbar />
+
     <Grid container spacing={3}>
         <Grid item xs={8}>
           <QueueSelect
