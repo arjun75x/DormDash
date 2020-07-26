@@ -16,7 +16,7 @@ const Queue = () => {
   const [queueSize, setQueueSize] = useState();
 
   useEffect(() => {
-    fetch("http://localhost:3000/dev/dining-hall", {
+    fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
         Authorization: getToken(),
       },
