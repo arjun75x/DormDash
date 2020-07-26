@@ -51,3 +51,66 @@ Fetches list of dining halls
   }]
 }
 ```
+
+## POST /dining-hall-table
+
+Adds a dining hall table to a specific dining hall
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string",
+  "Capacity": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```
+
+## PUT /dining-hall-table
+
+Updates metadata of a specific dining hall table
+
+### Request Body Schema
+
+```json
+{
+  "TableID": "number",
+  "Capacity": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```
+
+## DELETE /dining-hall-table
+
+Deletes a dining hall table from a specific dining hall 
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string",
+  "TableID": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```
