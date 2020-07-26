@@ -61,3 +61,15 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+  
+  deleteDiningHallTable:
+    handler: src/routes/dining-hall-table/deleteTable.handler
+    events:
+      - http:
+          path: /dining-hall-table/{tableName}
+          method: delete
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
