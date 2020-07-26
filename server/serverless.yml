@@ -52,7 +52,7 @@ functions:
     handler: src/routes/dining-hall/getHalls.handler
     events:
       - http:
-          path: /dining-hall
+          path: /admin/dining-hall
           method: get
           cors: true
           authorizer:
@@ -64,7 +64,7 @@ functions:
     handler: src/routes/dining-hall-table/addTable.handler
     events:
       - http:
-          path: /dining-hall-table
+          path: /admin/dining-hall-table
           method: post
           cors: true
           authorizer:
@@ -76,7 +76,7 @@ functions:
     handler: src/routes/dining-hall-table/deleteTable.handler
     events:
       - http:
-          path: /dining-hall-table
+          path: /admin/dining-hall-table
           method: delete
           cors: true
           authorizer:
@@ -88,8 +88,32 @@ functions:
     handler: src/routes/dining-hall-table/updateTable.handler
     events:
       - http:
-          path: /dining-hall-table
+          path: /admin/dining-hall-table
           method: put
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  createDiningHall:
+    handler: src/routes/dining-hall/createHall.handler
+    events:
+      - http:
+          path: /admin/dining-hall
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  deleteDiningHall:
+    handler: src/routes/dining-hall/deleteHall.handler
+    events:
+      - http:
+          path: /admin/dining-hall
+          method: delete
           cors: true
           authorizer:
             name: authorizer

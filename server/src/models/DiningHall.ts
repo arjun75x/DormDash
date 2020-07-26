@@ -40,3 +40,27 @@ export const getDiningHalls: () => Promise<Array<DiningHallWithTables>> = async 
     const Tables: Array<DiningHallTableBase> = JSON.parse(jsonRes.Tables);
     return { ...jsonRes, Tables };
   });
+
+export const createDiningHall: (
+  DiningHallName: string,
+  Latitude: number,
+  Longitude: number
+) => Promise<Array<void>> = async (DiningHallName, Latitude, Longitude) =>
+  await query<void>(
+    `
+    INSERT INTO DiningHall(DiningHallName, Latitude, Longitude)
+    VALUES (?, ?, ?)
+  `,
+    [DiningHallName, Latitude, Longitude]
+  );
+
+export const deleteDiningHall: (diningHallName: string) => Promise<Array<void>> = async (
+  DiningHallName
+) =>
+  await query<void>(
+    `
+    DELETE FROM DiningHall
+    WHERE DiningHallName = ?
+  `,
+    [DiningHallName]
+  );

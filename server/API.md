@@ -34,7 +34,7 @@ Pings test route
 }
 ```
 
-## GET /dining-hall
+## GET /admin/dining-hall
 
 Fetches list of dining halls
 
@@ -55,7 +55,7 @@ Fetches list of dining halls
 }
 ```
 
-## POST /dining-hall-table
+## POST /admin/dining-hall-table
 
 Adds a dining hall table to a specific dining hall
 
@@ -76,7 +76,7 @@ Adds a dining hall table to a specific dining hall
 }
 ```
 
-## PUT /dining-hall-table
+## PUT /admin/dining-hall-table
 
 Updates metadata of a specific dining hall table
 
@@ -97,7 +97,7 @@ Updates metadata of a specific dining hall table
 }
 ```
 
-## DELETE /dining-hall-table
+## DELETE /admin/dining-hall-table
 
 Deletes a dining hall table from a specific dining hall 
 
@@ -107,6 +107,48 @@ Deletes a dining hall table from a specific dining hall
 {
   "DiningHallName": "string",
   "TableID": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```
+
+## POST /admin/dining-hall
+
+Adds a dining hall table to a specific dining hall
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string",
+  "Latitude": "number",
+  "Longitude": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```
+
+## DELETE /admin/dining-hall
+
+Deletes a dining hall
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string"
 }
 ```
 
