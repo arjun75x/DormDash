@@ -61,3 +61,15 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+
+  createDiningHallTable:
+    handler: src/routes/dining-hall-table/addTable.handler
+    events:
+      - http:
+          path: /dining-hall-table
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token

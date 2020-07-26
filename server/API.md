@@ -51,3 +51,24 @@ Fetches list of dining halls
   }]
 }
 ```
+
+## POST /dining-hall-table
+
+Adds a dining hall table to a specific dining hall
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string",
+  "Capacity": "number"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+}
+```
