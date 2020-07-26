@@ -8,7 +8,7 @@ const _handler: HTTPRawHandler = async ({ body: { DiningHallName, Capacity } }) 
   const table = await createDiningHallTable(DiningHallName, Capacity);
   return {
     message: 'Success!',
-    table: table
+    table: table,
   };
 };
 
