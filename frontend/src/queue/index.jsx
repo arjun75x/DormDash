@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import QueueSelect from "./queueSelect";
 import QueueRequest from "./queueRequest";

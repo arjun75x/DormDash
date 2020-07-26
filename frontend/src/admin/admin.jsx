@@ -68,13 +68,16 @@ const Admin = () => {
     async function fetchPost(url, reqBody){
         await fetch(url, {
             method: "POST",
-            body: reqBody,
+            // body: JSON.stringify({DiningHallName: DHName, Capacity: DHTCapacity }),
+            body: JSON.stringify({DiningHallName: "", Capacity: 0 }),
+
             headers: {
-                "Authorization": authorizedToken
+                "Authorization": authorizedToken,
+                'Content-Type': 'application/json'
               }
     
         })
-        .then(response => {console.log(response.json()); return response.json()})
+        .then(response => {console.log(reqBody);console.log(response.json()); return response.json()})
         .catch((error) => {
           console.error('Error:', error);
         });
@@ -87,13 +90,11 @@ const Admin = () => {
     const submitDHTUpdate = (e) => {
         e.preventDefault();
         // submitDHTUpdate()
-
-        fetchPost("http://localhost:3000/dev/dining-hall",
-        JSON.stringify({
+        var reqBody = {
             "DiningHallName": DHName,
             "Capacity": DHTCapacity
-        })
-        );
+        };
+        fetchPost("http://localhost:3000/dev/dining-hall-table",  reqBody);
         resetDHName();
         resetDHTCapacity();
     }
