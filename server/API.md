@@ -73,6 +73,11 @@ Adds a dining hall table to a specific dining hall
 ```json
 {
   "message": "string",
+  "table": {
+    "TableID": "number",
+    "Capacity": "number",
+    "DiningHallName": "string" 
+  }
 }
 ```
 

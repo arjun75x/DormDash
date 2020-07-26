@@ -11,7 +11,7 @@ export interface DiningHallTable extends DiningHallTableBase {
 export const createDiningHallTable: (
   DiningHallName: string,
   Capacity: number
-) => Promise<Array<void>> = async (DiningHallName, Capacity) =>
+) => Promise<DiningHallTable> = async (DiningHallName, Capacity) => {
   await query<void>(
     `
     INSERT INTO DiningHallTable(DiningHallName, Capacity)
@@ -19,6 +19,16 @@ export const createDiningHallTable: (
   `,
     [DiningHallName, Capacity]
   );
+  return (
+    await query<DiningHallTable>(
+    `
+    SELECT TableID, Capacity, DiningHallName
+    FROM DiningHallTable
+    WHERE TableID = (SELECT LAST_INSERT_ID())
+  `
+  )).shift();
+}
+
 
 export const deleteDiningHallTable: (
   diningHallName: string,
