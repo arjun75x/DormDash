@@ -10,7 +10,7 @@ Longitude REAL NOT NULL
 
 create table DiningHallTable(
 
-TableID INT PRIMARY KEY,
+TableID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
 Capacity INT NOT NULL,
 
