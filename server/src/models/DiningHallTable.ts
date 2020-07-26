@@ -1,9 +1,11 @@
 import { query } from 'middleware/custom/mysql-connector';
 
-export interface DiningHallTable {
-  DiningHallName: string;
+export interface DiningHallTableBase {
   Capacity: number;
   TableID: number;
+}
+export interface DiningHallTable extends DiningHallTableBase {
+  DiningHallName: string;
 }
 
 export const createDiningHallTable: (

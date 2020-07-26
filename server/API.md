@@ -47,7 +47,10 @@ Fetches list of dining halls
     "DiningHallName": "string",
     "Latitude": "number",
     "Longitude": "number",
-    "Capacity": "number"
+    "Tables": {
+      "TableID": "number",
+      "Capacity": "number"
+    }
   }]
 }
 ```

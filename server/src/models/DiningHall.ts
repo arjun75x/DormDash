@@ -1,21 +1,42 @@
 import { query } from 'middleware/custom/mysql-connector';
+import { DiningHallTableBase } from 'models/DiningHallTable';
 
-export interface DiningHall {
+export interface DiningHallBase {
   DiningHallName: string;
   Latitude: number;
   Longitude: number;
-  TableIDs: string;
-  TableCapacities: string;
 }
 
-export const getDiningHalls: () => Promise<Array<DiningHall>> = async () =>
-  await query<DiningHall>(`
+interface DiningHallWithTablesSQL extends DiningHallBase {
+  Tables: string; // JSON
+}
+
+export interface DiningHallWithTables extends DiningHallBase {
+  Tables: Array<DiningHallTableBase>;
+}
+
+export const getDiningHalls: () => Promise<Array<DiningHallWithTables>> = async () =>
+  (
+    await query<DiningHallWithTablesSQL>(`
     SELECT 
-      DiningHallName, 
-      Latitude, 
-      Longitude, 
-      GROUP_CONCAT(TableID ORDER BY TableID SEPARATOR ',') as TableIDs,
-      GROUP_CONCAT(Capacity ORDER BY TableID SEPARATOR ',') as TableCapacities
-    FROM DiningHall NATURAL JOIN DiningHallTable
-    GROUP BY DiningHallName
-  `);
+      dh.DiningHallName, 
+      dh.Latitude, 
+      dh.Longitude,
+      CONCAT(
+        '[',
+        GROUP_CONCAT(
+          JSON_OBJECT(
+            'TableID', dht.TableID,
+            'Capacity', dht.Capacity
+          )
+        ),
+        ']'
+      ) AS Tables
+    FROM DiningHall dh
+    LEFT JOIN DiningHallTable dht ON dh.DiningHallName = dht.DiningHallName
+    GROUP BY dh.DiningHallName
+  `)
+  ).map((jsonRes) => {
+    const Tables: Array<DiningHallTableBase> = JSON.parse(jsonRes.Tables);
+    return { ...jsonRes, Tables };
+  });
