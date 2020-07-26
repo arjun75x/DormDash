@@ -27,6 +27,8 @@ const QueueRequest = ({
 
   const handleQueueRequest = (event) => {
     updateDHCallback(groupNetIds);
+    //also clear groupNetIds
+    setGroupNetIds([])
 
   }; 
 

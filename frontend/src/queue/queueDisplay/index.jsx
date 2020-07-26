@@ -9,20 +9,34 @@ import Typography from "@material-ui/core/Typography";
 import Grid from '@material-ui/core/Grid';
 
 
-function renderRow(props) {
-    const { index, style } = props;
-  
-    return (
-      <ListItem button style={style} key={index}>
-        <ListItemText 
-            primary={`Item ${index + 1}`} 
-        />
-      </ListItem>
-    );
-}
-const QueueDisplay = ({list}
 
-) => {
+const QueueDisplay = ({
+    list,
+    DHGroups,
+    selectedDiningHall
+}) => {
+    function renderRow(props) {
+        const { index, style } = props;
+      
+        return (
+            console.log(DHGroups[index]),
+          <ListItem button style={style} key={index}>
+            <ListItemText 
+                primary={`Group ${index}`} 
+                // secondary={`names`}
+                // secondary={groupNetIds.map((index) => (
+
+                //     // <Chip
+                //     //   variant="outlined"
+                //     //   label={netId}
+                //     //   onDelete={() => handleDeleteNetIdFromGroup(netId)}
+                //     // />
+                // ))}
+                secondary={DHGroups[index].join(", ")}
+            />
+          </ListItem>
+        );
+    }
     return (
         <Box
         display="flex"
@@ -33,10 +47,11 @@ const QueueDisplay = ({list}
             
         <Grid container spacing={3}>
             <Grid item xs={12}>
-                <Typography margin="20px 0" variant="h6">Current Queue Status</Typography>
+    <Typography margin="20px 0" variant="h6">Current Queue Status for {selectedDiningHall}</Typography>
             </Grid>
             <Grid item xs={12}>
-                <FixedSizeList height={400} width={300} itemSize={46} itemCount={200}>
+                
+                <FixedSizeList height={400} width={300} itemSize={46} itemCount={selectedDiningHall == "" ? 0 : DHGroups.length}>
                     {renderRow}
                 </FixedSizeList>
                     {/* <Box> */}

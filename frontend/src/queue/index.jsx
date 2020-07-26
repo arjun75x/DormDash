@@ -82,6 +82,8 @@ const Queue = () => {
         <Grid item xs={4}>
           <QueueDisplay 
             list={list}
+            selectedDiningHall={selectedDiningHall}
+            DHGroups={diningHallCurrentStatus[selectedDiningHall]}
             />
         </Grid>      
         
