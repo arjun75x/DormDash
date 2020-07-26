@@ -8,6 +8,7 @@ import Navbar from "../nav/navbar";
 import Admin from "../admin/admin";
 import { Buffer } from "buffer";
 import Box from "@material-ui/core/Box";
+import { getToken } from "../utils";
 
 const Queue = () => {
   const [diningHalls, setDiningHalls] = useState([]);
@@ -17,7 +18,7 @@ const Queue = () => {
   useEffect(() => {
     fetch("http://localhost:3000/dev/dining-hall", {
       headers: {
-        Authorization: `Basic ${btoa("DeveloperOnly:ajhsu2")}`,
+        Authorization: getToken(),
       },
     })
       .then((response) => response.json())
@@ -30,30 +31,6 @@ const Queue = () => {
     setSelectedDiningHall(event.target.value);
     setQueueSize(7);
   };
-
-  const encodeToken = (tokenType, token) =>
-    Buffer.from(`${tokenType}:${token}`).toString("base64");
-
-  const encodeBasicAuthHeader = (tokenType, token) => {
-    const encodedToken = encodeToken(tokenType, token);
-    return `Basic ${encodedToken}`;
-  };
-  const authorizedToken = encodeBasicAuthHeader("DeveloperOnly", "tincher2");
-  async function fetchTest() {
-    console.log(authorizedToken);
-    await fetch("http://localhost:3000/dev/dining-hall", {
-      headers: {
-        Authorization: authorizedToken,
-      },
-    })
-      .then((response) => {
-        console.log(response.json());
-        return response.json();
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
 
   return (
     <>
