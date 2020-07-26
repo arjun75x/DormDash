@@ -5,8 +5,6 @@ plugins:
   - serverless-stage-manager
   - serverless-webpack
   - serverless-offline
-
-
 provider:
   name: aws
   runtime: nodejs12.x
