@@ -5,10 +5,7 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 
-const testObj = {"hello" : 3};
-const QueueRequest = ({
-  updateDHCallback,
-}) => {
+const QueueRequest = () => {
   const [inputNetId, setInputNetId] = useState("");
   const [groupNetIds, setGroupNetIds] = useState([]);
 
@@ -26,10 +23,9 @@ const QueueRequest = ({
   };
 
   const handleQueueRequest = (event) => {
-    updateDHCallback(groupNetIds);
     //also clear groupNetIds
-    setGroupNetIds([])
-  }; 
+    setGroupNetIds([]);
+  };
 
   return (
     <Box
@@ -38,11 +34,7 @@ const QueueRequest = ({
       marginTop="100px"
       justifyContent="center"
     >
-      <Button 
-        variant="contained" 
-        color="primary"
-        onClick={handleQueueRequest}
-        >
+      <Button variant="contained" color="primary" onClick={handleQueueRequest}>
         Add to Queue
       </Button>
       <Box maxWidth="600px" width="100%" height="100px" marginLeft="40px">

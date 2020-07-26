@@ -9,49 +9,10 @@ import Admin from "../admin/admin";
 import { Buffer } from "buffer";
 import Box from "@material-ui/core/Box";
 
-const dummyDiningHalls = ["PAR", "FAR", "BAR", "CAR"];
-const dummyDiningHallQueueSize = [3, 8, 4, 2];
-var dummyDiningHallDict = {
-  PAR: 3,
-  FAR: 8,
-  BAR: 4,
-  CAR: 2,
-};
-
-// example list, need to define how it'll look like when grabbed from DB
-// also should use some random UID for the ID component
-const list = [
-  {
-    id: "a",
-    firstname: "Robin",
-    lastname: "Wieruch",
-  },
-  {
-    id: "b",
-    firstname: "Dave",
-    lastname: "Davidds",
-  },
-];
-
-// will be spoofed later
-// var diningHallCurrentStatus = {
-//   "PAR" : [],
-//   "FAR" : [],
-//   "BAR" : [],
-//   "CAR" : []
-// }
-
 const Queue = () => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
   const [queueSize, setQueueSize] = useState();
-  // const [groupNetIds, setGroupNetIds] = useState([]);
-  const [diningHallCurrentStatus, updateDiningHallStatus] = useState({
-    PAR: [],
-    FAR: [],
-    BAR: [],
-    CAR: [],
-  });
 
   useEffect(() => {
     fetch("http://localhost:3000/dev/dining-hall", {
@@ -68,12 +29,6 @@ const Queue = () => {
   const handleSelect = (event) => {
     setSelectedDiningHall(event.target.value);
     setQueueSize(7);
-  };
-  const updateDHCallback = (groupNetIds) => {
-    updateDiningHallStatus((prevState) => ({
-      ...prevState,
-      [selectedDiningHall]: [...prevState[selectedDiningHall], groupNetIds],
-    }));
   };
 
   const encodeToken = (tokenType, token) =>
@@ -99,12 +54,6 @@ const Queue = () => {
         console.error("Error:", error);
       });
   }
-  // fetchTest("http://localhost:8000/dev/test", { answer: 42 })
-  // .then(data => {
-  //   console.log(data); // JSON data parsed by `data.json()` call
-  // });
-  // fetch("http://localhost:3000/dev/test").then(response => response.json())
-  // .then(data => console.log(data));
 
   return (
     <>
@@ -124,7 +73,7 @@ const Queue = () => {
         {queueSize && <QueueSize queueSize={queueSize} />}
       </Box>
       <hr style={{ width: "80%" }}></hr>
-      <QueueRequest updateDHCallback={updateDHCallback} />
+      <QueueRequest />
     </>
   );
 };
