@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import TextField from "@material-ui/core/TextField";
 import Chip from "@material-ui/core/Chip";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 
-const QueueRequest = () => {
+const testObj = {"hello" : 3};
+const QueueRequest = ({
+  updateDHCallback,
+}) => {
   const [inputNetId, setInputNetId] = useState("");
   const [groupNetIds, setGroupNetIds] = useState([]);
 
@@ -22,6 +25,13 @@ const QueueRequest = () => {
     setInputNetId("");
   };
 
+  const handleQueueRequest = (event) => {
+    updateDHCallback(groupNetIds);
+    //also clear groupNetIds
+    setGroupNetIds([])
+
+  }; 
+
   return (
     <Box
       display="flex"
@@ -29,7 +39,11 @@ const QueueRequest = () => {
       marginTop="100px"
       justifyContent="center"
     >
-      <Button variant="contained" color="primary">
+      <Button 
+        variant="contained" 
+        color="primary"
+        onClick={handleQueueRequest}
+        >
         Add to Queue
       </Button>
       <Box maxWidth="600px" width="100%" height="100px" marginLeft="40px">
