@@ -24,10 +24,14 @@ export const getDiningHalls: () => Promise<Array<DiningHallWithTables>> = async 
       dh.Longitude,
       CONCAT(
         '[',
-        GROUP_CONCAT(
-          JSON_OBJECT(
-            'TableID', dht.TableID,
-            'Capacity', dht.Capacity
+        IF(
+          dht.TableID IS NULL, 
+          '', 
+          GROUP_CONCAT(
+            JSON_OBJECT(
+              'TableID', dht.TableID,
+              'Capacity', dht.Capacity
+            )
           )
         ),
         ']'
