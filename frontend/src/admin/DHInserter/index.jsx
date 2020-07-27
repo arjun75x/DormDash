@@ -19,7 +19,6 @@ const DHInserter = ({ addDHCB }) => {
   };
 
   const handleAddDH = () => {
-    console.log("Adding DH!");
     setDHName("");
     setLat("");
     setLong("");

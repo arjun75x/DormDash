@@ -106,13 +106,10 @@ const Admin = () => {
     })
       .then((response) => response.json())
       .then(() => {
-        // console.log({
-        //   ...diningTableDict,
-        //   [DHName] : []
-        // });
         setDiningTableDict({
+          
+          [DHName] : [],
           ...diningTableDict,
-          [DHName] : []
 
         });
         
@@ -129,24 +126,8 @@ const Admin = () => {
     })
       .then((response) => response.json())
       .then(() => {
-        // console.log({
-        //   ...diningTableDict,
-        //   [DHName] : []
-        // });
-        // setGroupNetIds(groupNetIds.filter((id) => id !== netId));
-        var value;
-        // var withoutDH;
-        setDiningTableDict({
-          
-          ...diningTableDict,
-          [DHName] : value
-        });
-        // setDiningTableDict({
-        //   ...diningTableDict,
-        //   [curDiningHall]: diningTableDict[curDiningHall].filter(
-        //     (table) => table.TableID !== TableID
-        //   ),
-        // });
+        const {[DHName]: garbage, ...rest } = diningTableDict;
+        setDiningTableDict(rest);
         
       });
   };

@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
 const DHDeleter = ({ deleteDHCB, DHName}) => {
     const classes = useStyles();
     const handleDeleteDH = () => {
-        // setNewCapacity("");
         deleteDHCB(DHName);
     };
 
@@ -42,7 +41,7 @@ const DHDeleter = ({ deleteDHCB, DHName}) => {
             color="secondary"
             className={classes.button}
             startIcon={<DeleteIcon />}
-            onClick={handleDeleteDH}
+            onClick={() => {if (window.confirm('Are you sure you wish to delete this Dining Hall DB Table?')) handleDeleteDH() } }
         >
             Delete
         </Button>
