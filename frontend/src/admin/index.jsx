@@ -5,6 +5,7 @@ import Box from "@material-ui/core/Box";
 import TableUpdater from "./tableUpdater";
 import TableInserter from "./tableInserter";
 import Navbar from "../nav/navbar";
+import DHInserter from "./DHInserter";
 
 const Admin = () => {
   const [diningTableDict, setDiningTableDict] = useState({});
@@ -92,6 +93,30 @@ const Admin = () => {
       });
   };
 
+  const addDH =  () => (DHName, Lat, Long)  => {
+    fetch("http://localhost:3000/dev/admin/dining-hall", {
+      headers: {
+        Authorization: getToken(),
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ DiningHallName: DHName, Latitude: Lat, Longitude: Long }),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        // console.log({
+        //   ...diningTableDict,
+        //   [DHName] : []
+        // });
+        setDiningTableDict({
+          ...diningTableDict,
+          [DHName] : []
+
+        });
+        
+      });
+  };
+
   return (
     <>
       <Navbar />
@@ -103,14 +128,14 @@ const Admin = () => {
         padding="50px 0"
       >
         <QueueSelect
-          diningHalls={Object.keys(diningTableDict)}
+          diningHalls={[...Object.keys(diningTableDict),"Insert Dining Hall"]}
           selectedDiningHall={selectedDiningHall}
           handleSelect={handleSelect}
         />
-        {selectedDiningHall !== "" && (
+        {selectedDiningHall !== "" && selectedDiningHall !== "Insert Dining Hall" && (
           <TableInserter addTable={addTable(selectedDiningHall)} />
         )}
-        {selectedDiningHall !== "" &&
+        {selectedDiningHall !== "" && selectedDiningHall !== "Insert Dining Hall" &&
           diningTableDict[
             selectedDiningHall
           ].map(({ TableID, Capacity }, i) => (
@@ -121,6 +146,9 @@ const Admin = () => {
               key={i}
             />
           ))}
+          {selectedDiningHall !== "" && selectedDiningHall === "Insert Dining Hall" && (
+              <DHInserter addDHCB={addDH()}/>
+          )}
       </Box>
     </>
   );
