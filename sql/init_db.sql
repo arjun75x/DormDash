@@ -6,7 +6,15 @@ Latitude REAL NOT NULL,
 
 Longitude REAL NOT NULL
 
-)
+);
+
+create table User(
+
+NetID VARCHAR(255) NOT NULL PRIMARY KEY,
+
+Name VARCHAR(255) NOT NULL
+
+);
 
 create table DiningHallTable(
 
@@ -22,21 +30,21 @@ ON UPDATE CASCADE
 
 ON DELETE CASCADE
 
-)
+);
 
 create table QueueRequest(
 
-QueueRequestID INT PRIMARY KEY,
+QueueRequestID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
-EnterQueueTime DATE NOT NULL,
+EnterQueueTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-ExitQueueTime DATE NOT NULL,
+ExitQueueTime TIMESTAMP NULL DEFAULT NULL,
 
-DistanceEstimate REAL NOT NULL,
+RequestTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-Preferences VARCHAR(255) NOT NULL,
+Preferences VARCHAR(255) NULL,
 
-Canceled BOOLEAN NOT NULL,
+Canceled BOOLEAN NOT NULL DEFAULT FALSE,
 
 DiningHallName VARCHAR(255) NOT NULL,
 
@@ -46,23 +54,21 @@ ON UPDATE CASCADE
 
 ON DELETE CASCADE
 
-)
+);
 
 create table AdmittedEntry(
 
 EntryID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
-MealType VARCHAR(255) NOT NULL,
+MealType VARCHAR(255) NULL DEFAULT NULL,
 
-AdmitOffQueueTime DATE NOT NULL,
+AdmitOffQueueTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-GroupArrivalTime DATE NOT NULL,
+GroupArrivalTime TIMESTAMP NULL DEFAULT NULL,
 
-GroupExitTime DATE NOT NULL,
+GroupExitTime TIMESTAMP NULL DEFAULT NULL,
 
-DistanceEstimate REAL NOT NULL,
-
-TableID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+TableID INT NOT NULL,
 
 DiningHallName VARCHAR(255) NOT NULL,
 
@@ -74,18 +80,19 @@ FOREIGN KEY (TableID) REFERENCES DiningHallTable(TableID),
 
 FOREIGN KEY (QueueRequestID) REFERENCES QueueRequest(QueueRequestID)
 
-ON UPDATE CASCADE
+);
 
-ON DELETE CASCADE
+create table QueueGroup(
 
-)
+QueueRequestID INT NOT NULL,
 
-create table User(
+NetID VARCHAR(255) NOT NULL,
 
-NetID VARCHAR(255) PRIMARY KEY,
+FOREIGN KEY (QueueRequestID) REFERENCES QueueRequest(QueueRequestID),
 
-DeviceID INT NOT NULL,
+FOREIGN KEY (NetID) REFERENCES User(NetID),
 
-Name VARCHAR(255) NOT NULL
+INDEX (QueueRequestID),
 
-)
+PRIMARY KEY (QueueRequestID, NetID)
+);
