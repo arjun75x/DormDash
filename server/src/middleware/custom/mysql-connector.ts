@@ -17,9 +17,10 @@ export const query: <T>(sql: string, values?: Array<any>) => Array<T> = (sql, va
 
 export const multiQuery: <T>(
   sql: string,
-  values?: Array<any>
-) => Promise<Array<T>> = async (sql, values) =>
-  (await util.promisify(connection.query).call(connection, sql, values))[1];
+  values?: Array<any>,
+  valIdx?: number
+) => Promise<Array<T>> = async (sql, values, valIdx = 1) =>
+  (await util.promisify(connection.query).call(connection, sql, values))[valIdx];
 
 /** A database connection middleware that creates or persists a connection
  * to MongoDB via Mongoose.

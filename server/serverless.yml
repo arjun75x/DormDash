@@ -119,3 +119,15 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+
+  joinQueue:
+    handler: src/routes/queue/joinQueue.handler
+    events:
+      - http:
+          path: /queue
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token

@@ -163,3 +163,34 @@ Deletes a dining hall
   "message": "string",
 }
 ```
+
+## POST /queue
+
+Joins the queue
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string",
+  "QueueGroup": ["NetID"],
+}
+```
+
+### Response Body Schema
+
+```json
+{
+    "message": "string",
+    "queueRequest": {
+        "QueueRequestID": "number",
+        "EnterQueueTime": "datetime",
+        "ExitQueueTime": "datetime",
+        "RequestTime": "datetime",
+        "Preferences": "string",
+        "Canceled": "boolean",
+        "DiningHallName": "string",
+        "QueueGroup": ["NetID"]
+    }
+}
+```
