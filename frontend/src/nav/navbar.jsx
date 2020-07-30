@@ -83,12 +83,12 @@ const Navbar = () => {
           <List>
             {["Home", "Admin"].map((text, index) => (
               <Link
-                to={index % 2 == 0 ? "/" : "/admin"}
+                to={index % 2 === 0 ? "/" : "/admin"}
                 style={{ color: "inherit", textDecoration: "inherit" }}
               >
                 <ListItem button key={text}>
                   <ListItemIcon>
-                    {index % 2 == 0 ? <HomeIcon /> : <SupervisorAccountIcon />}
+                    {index % 2 === 0 ? <HomeIcon /> : <SupervisorAccountIcon />}
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItem>

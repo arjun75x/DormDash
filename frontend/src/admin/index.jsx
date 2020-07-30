@@ -5,6 +5,9 @@ import Box from "@material-ui/core/Box";
 import TableUpdater from "./tableUpdater";
 import TableInserter from "./tableInserter";
 import Navbar from "../nav/navbar";
+import DHInserter from "./DHInserter";
+import DHDeleter from "./DHDeleter";
+import { waitForElementToBeRemoved } from "@testing-library/react";
 
 const Admin = () => {
   const [diningTableDict, setDiningTableDict] = useState({});
@@ -92,6 +95,43 @@ const Admin = () => {
       });
   };
 
+  const addDH =  () => (DHName, Lat, Long)  => {
+    fetch("http://localhost:3000/dev/admin/dining-hall", {
+      headers: {
+        Authorization: getToken(),
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ DiningHallName: DHName, Latitude: Lat, Longitude: Long }),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        setDiningTableDict({
+          
+          [DHName] : [],
+          ...diningTableDict,
+
+        });
+        
+      });
+  };
+  const deleteDH =  DHName => ()  => {
+    fetch("http://localhost:3000/dev/admin/dining-hall", {
+      headers: {
+        Authorization: getToken(),
+        "Content-Type": "application/json",
+      },
+      method: "DELETE",
+      body: JSON.stringify({ DiningHallName: DHName}),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        const {[DHName]: garbage, ...rest } = diningTableDict;
+        setDiningTableDict(rest);
+        
+      });
+  };
+
   return (
     <>
       <Navbar />
@@ -103,14 +143,16 @@ const Admin = () => {
         padding="50px 0"
       >
         <QueueSelect
-          diningHalls={Object.keys(diningTableDict)}
+          diningHalls={[...Object.keys(diningTableDict),"Insert Dining Hall", "Delete Dining Hall"]}
           selectedDiningHall={selectedDiningHall}
           handleSelect={handleSelect}
         />
-        {selectedDiningHall !== "" && (
+        {selectedDiningHall !== "" && selectedDiningHall !== "Insert Dining Hall" && 
+        selectedDiningHall !== "Delete Dining Hall" && (
           <TableInserter addTable={addTable(selectedDiningHall)} />
         )}
-        {selectedDiningHall !== "" &&
+        {selectedDiningHall !== "" && selectedDiningHall !== "Insert Dining Hall" &&
+        selectedDiningHall !== "Delete Dining Hall" &&
           diningTableDict[
             selectedDiningHall
           ].map(({ TableID, Capacity }, i) => (
@@ -118,6 +160,19 @@ const Admin = () => {
               updateTableCapacity={updateTable(TableID, selectedDiningHall)}
               deleteTable={deleteTable(TableID, selectedDiningHall)}
               capacity={Capacity}
+              key={i}
+            />
+          ))}
+          {selectedDiningHall !== "" && selectedDiningHall === "Insert Dining Hall" && 
+          selectedDiningHall !== "Delete Dining Hall" && (
+              <DHInserter addDHCB={addDH()}/>
+          )}
+          {selectedDiningHall !== "" && selectedDiningHall !== "Insert Dining Hall" && 
+          selectedDiningHall === "Delete Dining Hall" && 
+          Object.keys(diningTableDict).map(( DHName , i) => (
+            <DHDeleter
+              deleteDHCB={deleteDH(DHName)}
+              DHName={DHName}
               key={i}
             />
           ))}

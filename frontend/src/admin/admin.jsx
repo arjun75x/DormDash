@@ -8,7 +8,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { FormControl, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
-import Typography from "@material-ui/core/Typography";
 import {useInput} from "./useInput";
 
 const useStyles = makeStyles((theme) => ({
