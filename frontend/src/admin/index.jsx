@@ -21,6 +21,13 @@ const Admin = () => {
     })
       .then((response) => response.json())
       .then(({ diningHalls }) => {
+        console.log(diningHalls);
+        console.log(
+          diningHalls.reduce((acc, { DiningHallName, Tables }) => {
+          acc[DiningHallName] = Tables;
+          return acc;
+        }, {})
+        );
         setDiningTableDict(
           diningHalls.reduce((acc, { DiningHallName, Tables }) => {
             acc[DiningHallName] = Tables;

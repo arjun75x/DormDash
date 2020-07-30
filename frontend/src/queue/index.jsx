@@ -9,11 +9,13 @@ import Admin from "../admin/admin";
 import { Buffer } from "buffer";
 import Box from "@material-ui/core/Box";
 import { getToken } from "../utils";
+import { makeStyles } from "@material-ui/core";
 
 const Queue = () => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
   const [queueSize, setQueueSize] = useState();
+  const [queueReqResponse, setQueueReqResponse] = useState({});
 
   useEffect(() => {
     fetch("http://localhost:3000/dev/admin/dining-hall", {
@@ -49,8 +51,32 @@ const Queue = () => {
         />
         {queueSize && <QueueSize queueSize={queueSize} />}
       </Box>
+
+      {selectedDiningHall !== "" && 
+      <>
       <hr style={{ width: "80%" }}></hr>
-      <QueueRequest />
+      <QueueRequest 
+        selectedDiningHall={selectedDiningHall}
+        setQueueReqResponseCB={setQueueReqResponse}
+      />
+      </>}
+
+      {(queueReqResponse && Object.keys(queueReqResponse).length !== 0) && 
+      <>
+        <hr style={{ width: "80%" }}></hr>
+        <Box
+          display="flex"
+          alignItems="center"
+          width="100%"
+          height="250px"
+          justifyContent="center"
+        >
+          <QueueDisplay 
+          queueReqResponse={queueReqResponse}
+          />
+        </Box>
+        </>
+      }
     </>
   );
 };

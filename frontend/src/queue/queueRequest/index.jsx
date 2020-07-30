@@ -4,10 +4,16 @@ import Chip from "@material-ui/core/Chip";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import { getToken } from "../../utils";
 
-const QueueRequest = () => {
+const QueueRequest = ({
+  selectedDiningHall,
+  setQueueReqResponseCB
+
+}) => {
   const [inputNetId, setInputNetId] = useState("");
   const [groupNetIds, setGroupNetIds] = useState([]);
+  
 
   const handleInputChange = (event) => {
     setInputNetId(event.target.value);
@@ -23,8 +29,42 @@ const QueueRequest = () => {
   };
 
   const handleQueueRequest = (event) => {
-    //also clear groupNetIds
-    setGroupNetIds([]);
+    
+    
+    //TODO: post join queue, need some way to tie in user later
+    fetch("http://localhost:3000/dev/queue", {
+      headers: {
+        Authorization: getToken(),
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      //hardcoded rn
+      body: JSON.stringify({ DiningHallName: selectedDiningHall, QueueGroup: groupNetIds }),
+    })
+      .then((response) => response.json())
+      .then(({queueRequest}) => {
+        var toFilter = ["QueueRequestID", "DiningHallName", "EnterQueueTime", "QueueGroup"];
+        console.log(
+          Object.keys(queueRequest)
+        .filter(key => toFilter.includes(key))
+        .reduce((obj,key) => {
+          obj[key] = queueRequest[key];
+          return obj;
+        }, {})
+        );
+        setQueueReqResponseCB(
+        Object.keys(queueRequest)
+        .filter(key => toFilter.includes(key))
+        .reduce((obj,key) => {
+          obj[key] = queueRequest[key];
+          return obj;
+        }, {})
+        );
+      });
+      //TODO: should add error catching here
+      
+      //also clear groupNetIds
+      setGroupNetIds([]);
   };
 
   return (
