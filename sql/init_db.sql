@@ -70,11 +70,7 @@ GroupExitTime TIMESTAMP NULL DEFAULT NULL,
 
 TableID INT NOT NULL,
 
-DiningHallName VARCHAR(255) NOT NULL,
-
 QueueRequestID INT NOT NULL,
-
-FOREIGN KEY (DiningHallName) REFERENCES DiningHall(DiningHallName),
 
 FOREIGN KEY (TableID) REFERENCES DiningHallTable(TableID),
 
