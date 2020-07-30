@@ -194,3 +194,32 @@ Joins the queue
     }
 }
 ```
+
+## POST /admit
+
+Attempts to admit off the queue. Returns back null admittedEntry if it can't
+
+### Request Body Schema
+
+```json
+{
+  "NetID": "string",
+}
+```
+
+### Response Body Schema
+
+```json
+{
+    "message": "string",
+    "admittedEntry": {
+        "EntryID": "number",
+        "MealType": "string",
+        "AdmitOffQueueTime": "datetime",
+        "TableID": "number",
+        "QueueRequestID": "number",
+        "DiningHallName": "string",
+        "QueueGroup": ["NetID"]
+    }
+}
+```

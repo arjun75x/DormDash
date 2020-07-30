@@ -35,9 +35,16 @@ const parseQueueRequestWithGroupFromSQL: (
   queueRequest: QueueRequestWithGroupFromSQL
 ) => QueueRequest = (queueRequest) => ({
   ...queueRequest,
-  EnterQueueTime: moment(queueRequest.EnterQueueTime).toDate(),
-  ExitQueueTime: moment(queueRequest.ExitQueueTime).toDate(),
-  RequestTime: moment(queueRequest.RequestTime).toDate(),
+  EnterQueueTime:
+    queueRequest.EnterQueueTime == null
+      ? null
+      : moment(queueRequest.EnterQueueTime).toDate(),
+  ExitQueueTime:
+    queueRequest.ExitQueueTime == null
+      ? null
+      : moment(queueRequest.ExitQueueTime).toDate(),
+  RequestTime:
+    queueRequest.RequestTime == null ? null : moment(queueRequest.RequestTime).toDate(),
   Canceled: Boolean(queueRequest.Canceled),
   QueueGroup: JSON.parse(queueRequest.QueueGroup),
 });

@@ -131,3 +131,15 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+
+  attemptAdmit:
+    handler: src/routes/admit/attemptAdmit.handler
+    events:
+      - http:
+          path: /admit
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
