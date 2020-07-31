@@ -14,21 +14,6 @@ const QueueRequest = ({
   const [inputNetId, setInputNetId] = useState("");
   const [groupNetIds, setGroupNetIds] = useState([]);
   
-  // useInterval(async() => {
-  //       console.log('polling...');
-  //       fetch("http://localhost:3000/dev/admit", {
-  //       headers: {
-  //         Authorization: getToken(),
-  //         "Content-Type": "application/json",
-  //       },
-  //       method: "POST",
-  //       //hardcoded rn
-  //       body: JSON.stringify({ NetID: "naymanl2" }),
-  //     })
-  //     .then(response => {console.log(response.json()); return response.json()});
-  //     // .then()
-  //     }, 5000);
-
   const handleInputChange = (event) => {
     setInputNetId(event.target.value);
   };
@@ -106,18 +91,6 @@ const QueueRequest = ({
           console.log(r);
         }
       );
-      // .then(({admittedEntry}) => {
-      //   /* this populates the queueRequest state */
-      //   var toFilter = ["QueueRequestID", "DiningHallName", "AdmitOffQueueTime", "QueueGroup"];
-      //   setQueueReqResponseCB(
-      //   Object.keys(admittedEntry)
-      //   .filter(key => toFilter.includes(key))
-      //   .reduce((obj,key) => {
-      //     obj[key] = admittedEntry[key];
-      //     return obj;
-      //   }, {})
-      //   );
-      // });
       //TODO: should add error catching here
       
       //also clear groupNetIds

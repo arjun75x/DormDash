@@ -8,6 +8,9 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from "@material-ui/icons/Delete";
+import PublishIcon from '@material-ui/icons/Publish';
+import { green } from '@material-ui/core/colors';
+
 
 const useStyles = makeStyles({
     root: {
@@ -30,6 +33,16 @@ const useStyles = makeStyles({
       justifyContent: "center"
     }
   });
+
+const GreenButton = withStyles((theme) => ({
+  root: {
+    // color: theme.palette.getContrastText(green[500]),
+    backgroundColor: green[500],
+    '&:hover': {
+      backgroundColor: green[700],
+    },
+  },
+}))(Button);
 
 
 const QueueDisplay = ({
@@ -69,14 +82,24 @@ const QueueDisplay = ({
             </CardContent>
             <CardActions className={classes.cardAction}>
                 <Button
-                variant="contained"
-                color="secondary"
-                // className={classes.button}
-                startIcon={<DeleteIcon />}
-                // onClick={() => {if (window.confirm('Are you sure you wish to delete this Dining Hall DB Table?')) handleDeleteDH() } }
-            >
-                Unqueue
-            </Button>
+                    variant="contained"
+                    color="secondary"
+                    // className={classes.button}
+                    startIcon={<DeleteIcon />}
+                    // onClick={() => {if (window.confirm('Are you sure you wish to delete this Dining Hall DB Table?')) handleDeleteDH() } }
+                >
+                    Unqueue
+                </Button>
+                <GreenButton 
+                  variant="contained" 
+                  color="primary" 
+                  // className={classes.margin}
+                  startIcon={<PublishIcon />}
+                >
+                  Admit
+                </GreenButton>
+
+
             </CardActions>
             </Card>
       
