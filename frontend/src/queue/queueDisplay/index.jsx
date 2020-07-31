@@ -1,80 +1,89 @@
 import React, { useState } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import { FixedSizeList } from 'react-window';
-import Typography from "@material-ui/core/Typography";
-import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import DeleteIcon from "@material-ui/icons/Delete";
 
+const useStyles = makeStyles({
+    root: {
+      minWidth: 275,
+    },
+    bullet: {
+      display: 'inline-block',
+      margin: '0 2px',
+      transform: 'scale(0.8)',
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginTop: 8
+    },
+    pos: {
+      marginBottom: 12,
+    },
+    cardAction: {
+      justifyContent: "center"
+    }
+  });
 
 
 const QueueDisplay = ({
-    list,
-    DHGroups,
-    selectedDiningHall
+    queueReqResponse    
 }) => {
-    function renderRow(props) {
-        const { index, style } = props;
-      
-        return (
-            console.log(DHGroups[index]),
-          <ListItem button style={style} key={index}>
-            <ListItemText 
-                primary={`Group ${index}`} 
-                // secondary={`names`}
-                // secondary={groupNetIds.map((index) => (
+    const classes = useStyles();
 
-                //     // <Chip
-                //     //   variant="outlined"
-                //     //   label={netId}
-                //     //   onDelete={() => handleDeleteNetIdFromGroup(netId)}
-                //     // />
-                // ))}
-                secondary={DHGroups[index].join(", ")}
-            />
-          </ListItem>
-        );
-    }
     return (
-        <Box
-        display="flex"
-        marginTop="100px"
-        alignItems="center"
-        // justifyContent="left"
-        >
-            
-        <Grid container spacing={3}>
-            <Grid item xs={12}>
-    <Typography margin="20px 0" variant="h6">Current Queue Status for {selectedDiningHall}</Typography>
-            </Grid>
-            <Grid item xs={12}>
-                
-                <FixedSizeList height={400} width={300} itemSize={46} itemCount={selectedDiningHall == "" ? 0 : DHGroups.length}>
-                    {renderRow}
-                </FixedSizeList>
-                    {/* <Box> */}
-                        {/* <List component="nav" aria-label="main mailbox folders">
-                        <ListItem button>
-                        <ListItemText 
-                            primary="group 1" 
-                            secondary="Bailey, Andrew"
-                        />
-                        </ListItem>
-                        <ListItem button>
-                        <ListItemText 
-                            primary="group 2" 
-                            secondary="Nayman, Arjun"
-                        />
-                        </ListItem>
-                    </List> */}
-                    
-                    {/* </Box> */}
-            
-            
-            </Grid>
-        </Grid>
+        <Box display="flex" alignItems="center">
+
+        <Card className={classes.root} variant="outlined">
+            <CardContent>
+                <Typography className={classes.title}  gutterBottom>
+                  Queue Position
+                </Typography>
+                <Typography variant="body2" component="p">
+                {queueReqResponse.QueueRequestID}
+                </Typography>
+                <Typography className={classes.title} gutterBottom>
+                  Dining Hall
+                </Typography>
+                <Typography variant="body2" component="p">
+                  {queueReqResponse.DiningHallName}
+                </Typography>
+                <Typography className={classes.title} gutterBottom>
+                  Enter Queue Time
+                </Typography>
+                <Typography variant="body2" component="p">
+                {Date(queueReqResponse.EnterQueueTime)}
+                </Typography>
+                <Typography className={classes.title} gutterBottom>
+                  Queue Group
+                </Typography>
+                <Typography variant="body2" component="p">
+                  {queueReqResponse.QueueGroup.join(', ')}
+                </Typography>
+            </CardContent>
+            <CardActions className={classes.cardAction}>
+                <Button
+                variant="contained"
+                color="secondary"
+                // className={classes.button}
+                startIcon={<DeleteIcon />}
+                // onClick={() => {if (window.confirm('Are you sure you wish to delete this Dining Hall DB Table?')) handleDeleteDH() } }
+            >
+                Unqueue
+            </Button>
+            </CardActions>
+            </Card>
+      
+ 
+
+
+      
     </Box>
     );
 };
