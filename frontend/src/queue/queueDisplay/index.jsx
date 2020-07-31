@@ -158,11 +158,7 @@ const QueueDisplay = ({
                   Enter
                 </GreenButton>
 
-                <Snackbar open={hasEntered} autoHideDuration={6000} onClose={handleClose}>
-                  <Alert onClose={handleClose} severity="success">
-                    You've entered the Dining Hall - enjoy your meal!
-                  </Alert>
-                </Snackbar>
+                
 
 
             </CardActions>
@@ -170,6 +166,12 @@ const QueueDisplay = ({
           }
 
           { hasEntered &&
+          <>
+            <Snackbar open={hasEntered} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="success">
+                You've entered the Dining Hall - enjoy your meal!
+              </Alert>
+            </Snackbar>
             <Card className={classes.root} variant="outlined">
               <CardContent>
               <Typography variant="h6"  gutterBottom>
@@ -188,7 +190,7 @@ const QueueDisplay = ({
                 </CardActions>
               </CardContent>
             </Card>
-
+            </>
           }
  
 
