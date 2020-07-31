@@ -44,14 +44,6 @@ const QueueRequest = ({
       .then((response) => response.json())
       .then(({queueRequest}) => {
         var toFilter = ["QueueRequestID", "DiningHallName", "EnterQueueTime", "QueueGroup"];
-        console.log(
-          Object.keys(queueRequest)
-        .filter(key => toFilter.includes(key))
-        .reduce((obj,key) => {
-          obj[key] = queueRequest[key];
-          return obj;
-        }, {})
-        );
         setQueueReqResponseCB(
         Object.keys(queueRequest)
         .filter(key => toFilter.includes(key))
