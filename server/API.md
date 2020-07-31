@@ -224,9 +224,29 @@ Attempts to admit off the queue. Returns back null admittedEntry if it can't
 }
 ```
 
-## DELETE /admit
+## POST /admit/leave
 
 Exits the dining hall
+
+### Request Body Schema
+
+```json
+{
+  "NetID": "string",
+}
+```
+
+### Response Body Schema
+
+```json
+{
+    "message": "string"
+}
+```
+
+## POST /admit/arrive
+
+Enters the dining hall *after* having been admitted
 
 ### Request Body Schema
 

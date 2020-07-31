@@ -148,8 +148,20 @@ functions:
     handler: src/routes/admit/leaveHall.handler
     events:
       - http:
-          path: /admit
-          method: delete
+          path: /admit/leave
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  arriveAtHall:
+    handler: src/routes/admit/arriveAtHall.handler
+    events:
+      - http:
+          path: /admit/arrive
+          method: post
           cors: true
           authorizer:
             name: authorizer

@@ -148,3 +148,17 @@ export const leaveHall: (NetID: string) => Promise<Array<void>> = async (NetID) 
     `,
     [NetID]
   );
+
+export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetID) =>
+  query<void>(
+    `
+      UPDATE AdmittedEntry
+      NATURAL JOIN QueueGroup
+      SET GroupArrivalTime = CURRENT_TIMESTAMP
+      WHERE 
+          GroupArrivalTime IS NULL
+          AND GroupExitTime IS NULL
+          AND NetID = ?
+    `,
+    [NetID]
+  );
