@@ -4,7 +4,7 @@ import Chip from "@material-ui/core/Chip";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import { getToken } from "../../utils";
+import { getToken, useInterval, encodeBasicAuthHeader } from "../../utils";
 
 const QueueRequest = ({
   selectedDiningHall,
@@ -14,6 +14,20 @@ const QueueRequest = ({
   const [inputNetId, setInputNetId] = useState("");
   const [groupNetIds, setGroupNetIds] = useState([]);
   
+  // useInterval(async() => {
+  //       console.log('polling...');
+  //       fetch("http://localhost:3000/dev/admit", {
+  //       headers: {
+  //         Authorization: getToken(),
+  //         "Content-Type": "application/json",
+  //       },
+  //       method: "POST",
+  //       //hardcoded rn
+  //       body: JSON.stringify({ NetID: "naymanl2" }),
+  //     })
+  //     .then(response => {console.log(response.json()); return response.json()});
+  //     // .then()
+  //     }, 5000);
 
   const handleInputChange = (event) => {
     setInputNetId(event.target.value);
@@ -41,18 +55,69 @@ const QueueRequest = ({
       //hardcoded rn
       body: JSON.stringify({ DiningHallName: selectedDiningHall, QueueGroup: groupNetIds }),
     })
-      .then((response) => response.json())
-      .then(({queueRequest}) => {
-        var toFilter = ["QueueRequestID", "DiningHallName", "EnterQueueTime", "QueueGroup"];
-        setQueueReqResponseCB(
-        Object.keys(queueRequest)
-        .filter(key => toFilter.includes(key))
-        .reduce((obj,key) => {
-          obj[key] = queueRequest[key];
-          return obj;
-        }, {})
-        );
-      });
+      .then((response) => {
+        var r = response.json();        
+        return r;
+      })
+      .then(
+        function(r){
+          console.log(r.message);
+          if (r.message === "Success!"){
+            var admitpoll = setInterval(
+              function() {
+                  console.log("trying to admit!");
+                  fetch("http://localhost:3000/dev/admit", {
+                    headers: {
+                      Authorization: encodeBasicAuthHeader("DeveloperOnly", groupNetIds[0]),
+                      "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    //hardcoded rn
+                    body: JSON.stringify({ NetID: groupNetIds[0] }),
+                  })
+                  .then((response) => {
+                    return response.json()})
+                  .then(
+                    function(r){
+                      if(r.message === "Success!"){
+                        console.log("ya got admitted boi");
+                        clearInterval(admitpoll);
+                        return r;
+                        
+                      }
+                    }
+                  )
+                  .then(({admittedEntry}) => {
+                    //   /* this populates the queueRequest state */
+                      var toFilter = ["QueueRequestID", "DiningHallName", "AdmitOffQueueTime", "QueueGroup"];
+                      setQueueReqResponseCB(
+                      Object.keys(admittedEntry)
+                      .filter(key => toFilter.includes(key))
+                      .reduce((obj,key) => {
+                        obj[key] = admittedEntry[key];
+                        return obj;
+                      }, {})
+                      );
+                    });
+
+              }
+              , 5000);
+          }
+          console.log(r);
+        }
+      );
+      // .then(({admittedEntry}) => {
+      //   /* this populates the queueRequest state */
+      //   var toFilter = ["QueueRequestID", "DiningHallName", "AdmitOffQueueTime", "QueueGroup"];
+      //   setQueueReqResponseCB(
+      //   Object.keys(admittedEntry)
+      //   .filter(key => toFilter.includes(key))
+      //   .reduce((obj,key) => {
+      //     obj[key] = admittedEntry[key];
+      //     return obj;
+      //   }, {})
+      //   );
+      // });
       //TODO: should add error catching here
       
       //also clear groupNetIds

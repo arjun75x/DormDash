@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import QueueSelect from "../queue/queueSelect";
-import { getToken } from "../utils";
+import { getToken, useInterval } from "../utils";
 import Box from "@material-ui/core/Box";
 import TableUpdater from "./tableUpdater";
 import TableInserter from "./tableInserter";
@@ -27,11 +27,12 @@ const Admin = () => {
             return acc;
           }, {})
         );
-      });
+      }); 
+       
   }, []);
-
+         
   const handleSelect = (event) => {
-    setSelectedDiningHall(event.target.value);
+    setSelectedDiningHall(event.target.value);  
   };
 
   const addTable = (curDiningHall) => (Capacity) => {
@@ -125,11 +126,13 @@ const Admin = () => {
       body: JSON.stringify({ DiningHallName: DHName}),
     })
       .then((response) => response.json())
+      .then(function(r){console.log(r)})
       .then(() => {
         const {[DHName]: garbage, ...rest } = diningTableDict;
         setDiningTableDict(rest);
         
       });
+      //should probably have error checking here since you need to delete entries in table that references DH
   };
 
   return (

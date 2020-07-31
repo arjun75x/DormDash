@@ -55,10 +55,10 @@ const QueueDisplay = ({
                   {queueReqResponse.DiningHallName}
                 </Typography>
                 <Typography className={classes.title} gutterBottom>
-                  Enter Queue Time
+                  Admitted off the Queue on
                 </Typography>
                 <Typography variant="body2" component="p">
-                {Date(queueReqResponse.EnterQueueTime)}
+                {Date(queueReqResponse.AdmitOffQueueTime)}
                 </Typography>
                 <Typography className={classes.title} gutterBottom>
                   Queue Group
