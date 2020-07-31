@@ -57,7 +57,7 @@ const QueueRequest = ({
                       "Content-Type": "application/json",
                     },
                     method: "POST",
-                    //hardcoded rn
+                    //TODO: hardcoded rn
                     body: JSON.stringify({ NetID: groupNetIds[0] }),
                   })
                   .then((response) => {

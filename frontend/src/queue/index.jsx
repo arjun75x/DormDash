@@ -73,6 +73,8 @@ const Queue = () => {
         >
           <QueueDisplay 
           queueReqResponse={queueReqResponse}
+          setQueueReqResponseCB={setQueueReqResponse}
+
           />
         </Box>
         </>
