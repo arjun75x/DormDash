@@ -1,4 +1,4 @@
-import { multiQuery } from 'middleware/custom/mysql-connector';
+import { multiQuery, query } from 'middleware/custom/mysql-connector';
 import moment from 'moment';
 
 export interface AdmittedEntryFromSQL {
@@ -134,3 +134,17 @@ export const attemptAdmit: (
 
   return admittedEntry != null ? parseAdmittedEntryWithGroupFromSQL(admittedEntry) : null;
 };
+
+export const leaveHall: (NetID: string) => Promise<Array<void>> = async (NetID) =>
+  query<void>(
+    `
+      UPDATE AdmittedEntry
+      NATURAL JOIN QueueGroup
+      SET GroupExitTime = CURRENT_TIMESTAMP
+      WHERE 
+          GroupArrivalTime IS NOT NULL
+          AND GroupExitTime IS NULL
+          AND NetID = ?
+    `,
+    [NetID]
+  );

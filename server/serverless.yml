@@ -143,3 +143,15 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+
+  leaveHall:
+    handler: src/routes/admit/leaveHall.handler
+    events:
+      - http:
+          path: /admit
+          method: delete
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
