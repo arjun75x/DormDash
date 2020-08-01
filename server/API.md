@@ -281,6 +281,7 @@ Returns the best dining hall based on recommendation system
 
 ```json
 {
-  "DiningHallName": "string"
+    "message": "string",
+    "DiningHallName": "string",
 }
 ```
