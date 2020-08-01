@@ -173,7 +173,7 @@ functions:
     events:
       - http:
           path: /recommendation
-          method: get
+          method: post
           cors: true
           authorizer:
             name: authorizer
