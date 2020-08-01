@@ -263,3 +263,24 @@ Enters the dining hall *after* having been admitted
     "message": "string"
 }
 ```
+
+## GET /hall-recommendation
+
+Returns the best dining hall based on recommendation system
+
+### Request Body Schema
+
+```json
+{
+  "Latitude": "number",
+  "Longitude": "number",
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "DiningHallName": "string"
+}
+```
