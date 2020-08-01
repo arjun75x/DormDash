@@ -13,7 +13,7 @@ export const rankByLocation: (
     });
     const distances = Object.keys(distance_hall);
     distances.sort();
-    const out = [];
+    const out = Array<string>();
     distances.forEach(distance => {
         out.push(distance_hall[distance])
     });

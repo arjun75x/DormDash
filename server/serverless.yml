@@ -167,3 +167,15 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+  
+  getRecommendation:
+    handler: src/routes/recommendation-system/getRecommendation.handler
+    events:
+      - http:
+          path: /recommendation
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token

@@ -264,7 +264,7 @@ Enters the dining hall *after* having been admitted
 }
 ```
 
-## GET /hall-recommendation
+## GET /recommendation
 
 Returns the best dining hall based on recommendation system
 
