@@ -11,7 +11,7 @@ import Box from "@material-ui/core/Box";
 import { getToken } from "../utils";
 import { makeStyles } from "@material-ui/core";
 
-const Queue = () => {
+const Queue = ({hasLoggedIn, setLoggedInCB}) => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
   const [queueSize, setQueueSize] = useState();
@@ -36,23 +36,24 @@ const Queue = () => {
 
   return (
     <>
-      <Navbar />
-      <Box
-        display="flex"
-        alignItems="center"
-        width="100%"
-        height="250px"
-        justifyContent="center"
-      >
-        <QueueSelect
-          diningHalls={diningHalls}
-          selectedDiningHall={selectedDiningHall}
-          handleSelect={handleSelect}
-        />
-        {queueSize && <QueueSize queueSize={queueSize} />}
-      </Box>
-
-      {selectedDiningHall !== "" && 
+      <Navbar hasLoggedIn={hasLoggedIn} setLoggedInCB={setLoggedInCB}/>
+      {hasLoggedIn &&
+        <Box
+          display="flex"
+          alignItems="center"
+          width="100%"
+          height="250px"
+          justifyContent="center"
+        >
+          <QueueSelect
+            diningHalls={diningHalls}
+            selectedDiningHall={selectedDiningHall}
+            handleSelect={handleSelect}
+          />
+          {queueSize && <QueueSize queueSize={queueSize} />}
+        </Box>
+      }
+      {selectedDiningHall !== "" && hasLoggedIn &&
       <>
       <hr style={{ width: "80%" }}></hr>
       <QueueRequest 
@@ -61,7 +62,7 @@ const Queue = () => {
       />
       </>}
 
-      {(queueReqResponse && Object.keys(queueReqResponse).length !== 0) && 
+      {(queueReqResponse && Object.keys(queueReqResponse).length !== 0) && hasLoggedIn &&
       <>
         <hr style={{ width: "80%" }}></hr>
         <Box
@@ -79,6 +80,7 @@ const Queue = () => {
         </Box>
         </>
       }
+    
     </>
   );
 };

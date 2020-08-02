@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -24,48 +24,87 @@ import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+import {useGoogleLogout , GoogleLogin } from 'react-google-login';
+
+
+const Navbar = ({hasLoggedIn, setLoggedInCB}) => {
   const [menu, updateMenu] = useState({
     drawerOpened: false,
   });
+  // useEffect(() => {
+  //   console.log()
+  // },[]);
   const toggleDrawer = (booleanValue) => () => {
     updateMenu({
       drawerOpened: booleanValue,
     });
   };
-  const useStyles = makeStyles({
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1
+    },
     drawer: {
       width: 250,
       flexShrink: 0,
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
     },
     drawerPaper: {
       width: 250,
     },
     // toolbar: theme.mixins.toolbar,
+  }));
+
+  const onLogoutSuccess = (response) => {
+    console.log(response);
+    setLoggedInCB(false);
+  }
+  
+  const onFailure = (response) => {
+    console.log('Login failed, res: ', response);
+  }
+  const clientId = "808699597542-2jgrb1ive07o219flrasng9q0rm4fj6p.apps.googleusercontent.com";
+
+  const { signOut } = useGoogleLogout({
+    onLogoutSuccess,
+    clientId,
+    onFailure,
   });
   const classes = useStyles();
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="Menu"
-            onClick={toggleDrawer(true)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h4" color="inherit">
-            Dorm
-          </Typography>
-          <HealingIcon />
-          <Typography variant="h4" color="inherit">
-            Dash
-          </Typography>
-          {/* <DirectionsRunIcon /> */}
-          <FastfoodIcon />
-        </Toolbar>
-      </AppBar>
+      <Box className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="Menu"
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Box display="flex" flexGrow="1" alignItems="center">
+              <Typography variant="h4" color="inherit">
+                Dorm
+              </Typography>
+              <HealingIcon />
+              <Typography variant="h4" color="inherit">
+                Dash
+              </Typography>
+              <FastfoodIcon flexGrow={1}/>
+            </Box>
+            
+           
+            {!hasLoggedIn &&
+              <Button color="inherit">Login</Button>
+            }
+            {hasLoggedIn &&
+              <Button color="inherit" onClick={signOut}>Logout</Button>
+            }
+          </Toolbar>
+        </AppBar>
+      </Box>
 
       <Drawer
         anchor="left"

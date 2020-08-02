@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import QueueSelect from "../queue/queueSelect";
-import { getToken, useInterval } from "../utils";
+import { getToken, encodeBasicAuthHeader } from "../utils";
 import Box from "@material-ui/core/Box";
 import TableUpdater from "./tableUpdater";
 import TableInserter from "./tableInserter";
@@ -16,7 +16,8 @@ const Admin = () => {
   useEffect(() => {
     fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
-        Authorization: getToken(),
+        // Authorization: getToken(),
+        Authorization: encodeBasicAuthHeader("Google", "naymanl2")
       },
     })
       .then((response) => response.json())
