@@ -55,24 +55,29 @@ function Alert(props) {
 
 const QueueDisplay = ({
     queueReqResponse    ,
-    setQueueReqResponseCB
+    setQueueReqResponseCB,
     /* TODO: add unique user to distinguish usage (for entering)? right now defaulted to groupnetID[0] */
+    userTokenID,
+    userNetID
 }) => {
     const classes = useStyles();
     const [hasEntered, setHasEntered] = useState(false);
 
     const handleEnter = (event) => {
       setHasEntered(true);
-    
       //TODO: post join queue, need some way to tie in user later
       fetch("http://localhost:3000/dev/admit/arrive", {
         headers: {
-          Authorization: encodeBasicAuthHeader("DeveloperOnly", queueReqResponse.QueueGroup[0]),
+          // Authorization: encodeBasicAuthHeader("DeveloperOnly", queueReqResponse.QueueGroup[0]),
+          Authorization: encodeBasicAuthHeader("Google", userTokenID),
+
           "Content-Type": "application/json",
         },
         method: "POST",
         //TODO: hardcoded rn
-        body: JSON.stringify({ NetID: queueReqResponse.QueueGroup[0] }),
+        // body: JSON.stringify({ NetID: queueReqResponse.QueueGroup[0] }),
+        body: JSON.stringify({ NetID: userNetID }),
+
       })
         .then((response) => {
           var r = response.json();        
@@ -89,12 +94,14 @@ const QueueDisplay = ({
 
       fetch("http://localhost:3000/dev/admit/leave", {
         headers: {
-          Authorization: encodeBasicAuthHeader("DeveloperOnly", queueReqResponse.QueueGroup[0]),
+          // Authorization: encodeBasicAuthHeader("DeveloperOnly", queueReqResponse.QueueGroup[0]),
+          Authorization: encodeBasicAuthHeader("Google", userTokenID),
           "Content-Type": "application/json",
         },
         method: "POST",
         //TODO: hardcoded rn
-        body: JSON.stringify({ NetID: queueReqResponse.QueueGroup[0] }),
+        // body: JSON.stringify({ NetID: queueReqResponse.QueueGroup[0] }),
+        body: JSON.stringify({ NetID: userNetID }),
       })
         .then((response) => {
           var r = response.json();        

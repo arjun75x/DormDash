@@ -9,18 +9,28 @@ import LogIn from './LogIn/index';
 
 function App() {
   const [hasLoggedIn, setLoggedIn] = useState(false);
+  const [userTokenID, setUserTokenID] = useState();
+  const [userNetID, setUserNetID] = useState("");
   const handleLogIn = () => (value) => {
     console.log(value);
     setLoggedIn(value);
   }
+  const handleUserToken = () => (value) => {
+    console.log(value);
+    setUserTokenID(value);
+  }
+  const handleUserNetID = () => (value) => {
+    console.log(value);
+    setUserNetID(value);
+  }
   return (
     <main>      
         { !hasLoggedIn && 
-          <LogIn setLoggedInCB={handleLogIn()}/>}
+          <LogIn setLoggedInCB={handleLogIn()} handleUserTokenCB={handleUserToken()} handleUserNetIDCB={handleUserNetID()}/>}
         { hasLoggedIn &&
         <Switch>
           <Route path="/"   exact>
-            <Queue hasLoggedIn={hasLoggedIn} setLoggedInCB={handleLogIn()}/>
+            <Queue hasLoggedIn={hasLoggedIn} setLoggedInCB={handleLogIn()} userTokenID={userTokenID} userNetID={userNetID}/>
           </Route>
           <Route path="/admin" component={Admin} />
           <Route component={Error} />

@@ -8,11 +8,13 @@ import { getToken, useInterval, encodeBasicAuthHeader } from "../../utils";
 
 const QueueRequest = ({
   selectedDiningHall,
-  setQueueReqResponseCB
+  setQueueReqResponseCB,
+  userTokenID,
+  userNetID
 
 }) => {
   const [inputNetId, setInputNetId] = useState("");
-  const [groupNetIds, setGroupNetIds] = useState([]);
+  const [groupNetIds, setGroupNetIds] = useState([userNetID]);
   
   const handleInputChange = (event) => {
     setInputNetId(event.target.value);
@@ -28,12 +30,13 @@ const QueueRequest = ({
   };
 
   const handleQueueRequest = (event) => {
-    
+    console.log(userNetID);
     
     //TODO: post join queue, need some way to tie in user later
     fetch("http://localhost:3000/dev/queue", {
       headers: {
-        Authorization: getToken(),
+        // Authorization: getToken(),
+        Authorization: encodeBasicAuthHeader("Google",userTokenID),
         "Content-Type": "application/json",
       },
       method: "POST",
@@ -53,14 +56,18 @@ const QueueRequest = ({
                   console.log("trying to admit!");
                   fetch("http://localhost:3000/dev/admit", {
                     headers: {
-                      Authorization: encodeBasicAuthHeader("DeveloperOnly", groupNetIds[0]),
+                      // Authorization: encodeBasicAuthHeader("DeveloperOnly", groupNetIds[0]),
+                      Authorization: encodeBasicAuthHeader("Google",userTokenID),
+
                       "Content-Type": "application/json",
                     },
                     method: "POST",
                     //TODO: hardcoded rn
-                    body: JSON.stringify({ NetID: groupNetIds[0] }),
+                    // body: JSON.stringify({ NetID: groupNetIds[0] }),
+                    body: JSON.stringify({ NetID: userNetID }),
                   })
                   .then((response) => {
+                    // console.log(response.json());
                     return response.json()})
                   .then(
                     function(r){
@@ -127,13 +134,27 @@ const QueueRequest = ({
           </Button>
         </Box>
         <Box display="flex" flexWrap="flex">
-          {groupNetIds.map((netId, i) => (
-            <Chip
-              variant="outlined"
-              label={netId}
-              onDelete={() => handleDeleteNetIdFromGroup(netId)}
-            />
-          ))}
+          {groupNetIds.map((netId, i) => 
+            {
+              return (
+                <>
+                {netId===userNetID ?
+                  <Chip
+                    disabled variant="outlined"
+                    label={netId}
+                    onDelete={() => handleDeleteNetIdFromGroup(netId)}
+                  />     
+                  :
+                  <Chip
+                    variant="outlined"
+                    label={netId}
+                    onDelete={() => handleDeleteNetIdFromGroup(netId)}  
+                  />  
+            }
+          </>
+          );
+        }
+          )}
         </Box>
       </Box>
     </Box>

@@ -31,9 +31,6 @@ const Navbar = ({hasLoggedIn, setLoggedInCB}) => {
   const [menu, updateMenu] = useState({
     drawerOpened: false,
   });
-  // useEffect(() => {
-  //   console.log()
-  // },[]);
   const toggleDrawer = (booleanValue) => () => {
     updateMenu({
       drawerOpened: booleanValue,

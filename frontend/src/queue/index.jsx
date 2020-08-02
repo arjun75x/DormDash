@@ -8,19 +8,21 @@ import Navbar from "../nav/navbar";
 import Admin from "../admin/admin";
 import { Buffer } from "buffer";
 import Box from "@material-ui/core/Box";
-import { getToken } from "../utils";
+import { getToken, encodeBasicAuthHeader } from "../utils";
 import { makeStyles } from "@material-ui/core";
 
-const Queue = ({hasLoggedIn, setLoggedInCB}) => {
+const Queue = ({hasLoggedIn, setLoggedInCB, userTokenID, userNetID}) => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
   const [queueSize, setQueueSize] = useState();
   const [queueReqResponse, setQueueReqResponse] = useState({});
 
   useEffect(() => {
+    console.log(userNetID);
     fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
-        Authorization: getToken(),
+        // Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2"),
       },
     })
       .then((response) => response.json())
@@ -59,6 +61,8 @@ const Queue = ({hasLoggedIn, setLoggedInCB}) => {
       <QueueRequest 
         selectedDiningHall={selectedDiningHall}
         setQueueReqResponseCB={setQueueReqResponse}
+        userTokenID={userTokenID}
+        userNetID={userNetID}
       />
       </>}
 
@@ -75,7 +79,8 @@ const Queue = ({hasLoggedIn, setLoggedInCB}) => {
           <QueueDisplay 
           queueReqResponse={queueReqResponse}
           setQueueReqResponseCB={setQueueReqResponse}
-
+          userTokenID={userTokenID}
+          userNetID={userNetID}
           />
         </Box>
         </>
