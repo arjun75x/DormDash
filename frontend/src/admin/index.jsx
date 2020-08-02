@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import QueueSelect from "../queue/queueSelect";
-import { getToken } from "../utils";
+import { getToken, encodeBasicAuthHeader } from "../utils";
 import Box from "@material-ui/core/Box";
 import TableUpdater from "./tableUpdater";
 import TableInserter from "./tableInserter";
@@ -16,7 +16,8 @@ const Admin = () => {
   useEffect(() => {
     fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
-        Authorization: getToken(),
+        // Authorization: getToken(),
+        Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2")
       },
     })
       .then((response) => response.json())
@@ -27,11 +28,12 @@ const Admin = () => {
             return acc;
           }, {})
         );
-      });
+      }); 
+       
   }, []);
-
+         
   const handleSelect = (event) => {
-    setSelectedDiningHall(event.target.value);
+    setSelectedDiningHall(event.target.value);  
   };
 
   const addTable = (curDiningHall) => (Capacity) => {
@@ -125,11 +127,13 @@ const Admin = () => {
       body: JSON.stringify({ DiningHallName: DHName}),
     })
       .then((response) => response.json())
+      .then(function(r){console.log(r)})
       .then(() => {
         const {[DHName]: garbage, ...rest } = diningTableDict;
         setDiningTableDict(rest);
         
       });
+      //should probably have error checking here since you need to delete entries in table that references DH
   };
 
   return (

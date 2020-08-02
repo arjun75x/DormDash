@@ -4,17 +4,18 @@ import Chip from "@material-ui/core/Chip";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import { getToken } from "../../utils";
+import { getToken, useInterval, encodeBasicAuthHeader } from "../../utils";
 
 const QueueRequest = ({
   selectedDiningHall,
-  setQueueReqResponseCB
+  setQueueReqResponseCB,
+  userTokenID,
+  userNetID
 
 }) => {
   const [inputNetId, setInputNetId] = useState("");
-  const [groupNetIds, setGroupNetIds] = useState([]);
+  const [groupNetIds, setGroupNetIds] = useState([userNetID]);
   
-
   const handleInputChange = (event) => {
     setInputNetId(event.target.value);
   };
@@ -29,30 +30,74 @@ const QueueRequest = ({
   };
 
   const handleQueueRequest = (event) => {
-    
+    console.log(userNetID);
     
     //TODO: post join queue, need some way to tie in user later
     fetch("http://localhost:3000/dev/queue", {
       headers: {
-        Authorization: getToken(),
+        // Authorization: getToken(),
+        Authorization: encodeBasicAuthHeader("Google",userTokenID),
         "Content-Type": "application/json",
       },
       method: "POST",
       //hardcoded rn
       body: JSON.stringify({ DiningHallName: selectedDiningHall, QueueGroup: groupNetIds }),
     })
-      .then((response) => response.json())
-      .then(({queueRequest}) => {
-        var toFilter = ["QueueRequestID", "DiningHallName", "EnterQueueTime", "QueueGroup"];
-        setQueueReqResponseCB(
-        Object.keys(queueRequest)
-        .filter(key => toFilter.includes(key))
-        .reduce((obj,key) => {
-          obj[key] = queueRequest[key];
-          return obj;
-        }, {})
-        );
-      });
+      .then((response) => {
+        var r = response.json();        
+        return r;
+      })
+      .then(
+        function(r){
+          console.log(r.message);
+          if (r.message === "Success!"){
+            var admitpoll = setInterval(
+              function() {
+                  console.log("trying to admit!");
+                  fetch("http://localhost:3000/dev/admit", {
+                    headers: {
+                      // Authorization: encodeBasicAuthHeader("DeveloperOnly", groupNetIds[0]),
+                      Authorization: encodeBasicAuthHeader("Google",userTokenID),
+
+                      "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    //TODO: hardcoded rn
+                    // body: JSON.stringify({ NetID: groupNetIds[0] }),
+                    body: JSON.stringify({ NetID: userNetID }),
+                  })
+                  .then((response) => {
+                    // console.log(response.json());
+                    return response.json()})
+                  .then(
+                    function(r){
+                      if(r.message === "Success!"){
+                        console.log("ya got admitted boi");
+                        clearInterval(admitpoll);
+                        return r;
+                        
+                      }
+                    }
+                  )
+                  .then(({admittedEntry}) => {
+                    //   /* this populates the queueRequest state */
+                      var toFilter = ["QueueRequestID", "DiningHallName", "AdmitOffQueueTime", "QueueGroup"];
+                      setQueueReqResponseCB(
+                      Object.keys(admittedEntry)
+                      .filter(key => toFilter.includes(key))
+                      .reduce((obj,key) => {
+                        obj[key] = admittedEntry[key];
+                        return obj;
+                      }, {})
+                      );
+                    });
+
+              }
+              , 5000);
+          }
+          console.log(r);
+        }
+      );
       //TODO: should add error catching here
       
       //also clear groupNetIds
@@ -89,13 +134,27 @@ const QueueRequest = ({
           </Button>
         </Box>
         <Box display="flex" flexWrap="flex">
-          {groupNetIds.map((netId, i) => (
-            <Chip
-              variant="outlined"
-              label={netId}
-              onDelete={() => handleDeleteNetIdFromGroup(netId)}
-            />
-          ))}
+          {groupNetIds.map((netId, i) => 
+            {
+              return (
+                <>
+                {netId===userNetID ?
+                  <Chip
+                    disabled variant="outlined"
+                    label={netId}
+                    onDelete={() => handleDeleteNetIdFromGroup(netId)}
+                  />     
+                  :
+                  <Chip
+                    variant="outlined"
+                    label={netId}
+                    onDelete={() => handleDeleteNetIdFromGroup(netId)}  
+                  />  
+            }
+          </>
+          );
+        }
+          )}
         </Box>
       </Box>
     </Box>

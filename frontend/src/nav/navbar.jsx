@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -17,55 +17,105 @@ import HomeIcon from "@material-ui/icons/Home";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import DirectionsRunIcon from "@material-ui/icons/DirectionsRun";
 import HealingIcon from "@material-ui/icons/Healing";
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import FastfoodIcon from "@material-ui/icons/Fastfood";
 import Box from "@material-ui/core/Box";
+import Menu from '@material-ui/core/Menu';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+import {useGoogleLogout } from 'react-google-login';
+
+
+const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, userTokenID, handleUserTokenCB, handleUserNetIDCB}) => {
   const [menu, updateMenu] = useState({
     drawerOpened: false,
   });
+
   const toggleDrawer = (booleanValue) => () => {
     updateMenu({
       drawerOpened: booleanValue,
     });
   };
-  const useStyles = makeStyles({
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1
+    },
     drawer: {
       width: 250,
       flexShrink: 0,
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
     },
     drawerPaper: {
       width: 250,
     },
     // toolbar: theme.mixins.toolbar,
+  }));
+
+  const onLogoutSuccess = (response) => {
+    console.log(response);
+    setLoggedInCB(false);
+    handleUserTokenCB();
+    handleUserNetIDCB("");
+  }
+  
+  const onFailure = (response) => {
+    console.log('Logout failed, res: ', response);
+  }
+  const clientId = "808699597542-2jgrb1ive07o219flrasng9q0rm4fj6p.apps.googleusercontent.com";
+
+  const { signOut } = useGoogleLogout({
+    onLogoutSuccess,
+    clientId,
+    onFailure,
   });
+
   const classes = useStyles();
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="Menu"
-            onClick={toggleDrawer(true)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h4" color="inherit">
-            Dorm
-          </Typography>
-          <HealingIcon />
-          <Typography variant="h4" color="inherit">
-            Dash
-          </Typography>
-          {/* <DirectionsRunIcon /> */}
-          <FastfoodIcon />
-        </Toolbar>
-      </AppBar>
+      <Box className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="Menu"
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Box display="flex" flexGrow="1" alignItems="center">
+              <Typography variant="h4" color="inherit">
+                Dorm
+              </Typography>
+              <HealingIcon />
+              <Typography variant="h4" color="inherit">
+                Dash
+              </Typography>
+              <FastfoodIcon flexGrow={1}/>
+            </Box>
+            
+           
+            {!hasLoggedIn &&
+              <Button color="inherit">Login</Button>
+            }
+            {hasLoggedIn &&
+              <>
+                <Tooltip title={userNetID}>
+                  <IconButton color="inherit" aria-label={userNetID}>
+                    <AccountCircle />
+                  </IconButton>
+                </Tooltip>
+                <Button color="inherit" onClick={signOut}>Logout</Button>
+              </>
+            }
+          </Toolbar>
+        </AppBar>
+      </Box>
 
       <Drawer
         anchor="left"
