@@ -74,12 +74,29 @@ export const rankByBusyness: () => Promise<Array<string>> = async () => {
     return sortDictionaryOnKeys(hallByQueueSize);
 }
 
+export const rankByBusynessSQL: () => Promise<Array<string>> = async () => {
+    const rankedHalls = await query<DiningHallBase>(
+        `
+        SELECT dh.DiningHallName as DiningHallName
+        FROM DiningHall dh LEFT JOIN QueueRequest qr on dh.DiningHallName = qr.DiningHallName
+        WHERE ExitQueueTime IS NULL
+        GROUP BY dh.DiningHallName
+        ORDER BY COUNT(qr.QueueRequestID)
+        `
+    );
+    var out = Array<string>();
+    rankedHalls.forEach(hall => {
+        out.push(hall.DiningHallName);
+    });
+    return out;
+}
+
 export const getRecommendation: (
     Latitude: number,
     Longitude: number
 ) => Promise<string> = async (Latitude, Longitude) => {
     const rankedLocations = await rankByLocationSQL(Latitude, Longitude);
-    const rankedBusyness = await rankByBusyness();
+    const rankedBusyness = await rankByBusynessSQL();
     const final_rank = {};
     for (var i = 0; i < rankedLocations.length; i++) {
         final_rank[rankedLocations[i]] += i;
