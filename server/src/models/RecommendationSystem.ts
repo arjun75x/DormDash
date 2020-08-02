@@ -99,7 +99,7 @@ export const rankByBusynessSQL: () => Promise<Array<string>> = async () => {
     });
     return out;
 }
-// WHERE qr.RequestTime = TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 25 HOUR) AND qr.RequestTime = TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 23 HOUR)
+
 export const rankByPastDataSQL: () => Promise<Array<string>> = async () => {
     const rankedHalls = await query<RecSystemBase>(
         `
