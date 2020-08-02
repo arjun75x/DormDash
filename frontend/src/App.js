@@ -12,25 +12,35 @@ function App() {
   const [userTokenID, setUserTokenID] = useState();
   const [userNetID, setUserNetID] = useState("");
   const handleLogIn = () => (value) => {
-    console.log(value);
+    // console.log(value);
     setLoggedIn(value);
   }
   const handleUserToken = () => (value) => {
-    console.log(value);
+    // console.log(value);
     setUserTokenID(value);
   }
   const handleUserNetID = () => (value) => {
-    console.log(value);
+    // console.log(value);
     setUserNetID(value);
   }
   return (
     <main>      
         { !hasLoggedIn && 
-          <LogIn setLoggedInCB={handleLogIn()} handleUserTokenCB={handleUserToken()} handleUserNetIDCB={handleUserNetID()}/>}
+          <LogIn 
+          setLoggedInCB={handleLogIn()} 
+          handleUserTokenCB={handleUserToken()} 
+          handleUserNetIDCB={handleUserNetID()}/>}
         { hasLoggedIn &&
         <Switch>
           <Route path="/"   exact>
-            <Queue hasLoggedIn={hasLoggedIn} setLoggedInCB={handleLogIn()} userTokenID={userTokenID} userNetID={userNetID}/>
+            <Queue 
+            hasLoggedIn={hasLoggedIn} 
+            setLoggedInCB={handleLogIn()} 
+            userTokenID={userTokenID} 
+            userNetID={userNetID}
+            handleUserTokenCB={handleUserToken()} 
+            handleUserNetIDCB={handleUserNetID()}
+          />
           </Route>
           <Route path="/admin" component={Admin} />
           <Route component={Error} />

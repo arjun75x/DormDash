@@ -11,7 +11,7 @@ import Box from "@material-ui/core/Box";
 import { getToken, encodeBasicAuthHeader } from "../utils";
 import { makeStyles } from "@material-ui/core";
 
-const Queue = ({hasLoggedIn, setLoggedInCB, userTokenID, userNetID}) => {
+const Queue = ({hasLoggedIn, setLoggedInCB, userTokenID, userNetID, handleUserTokenCB, handleUserNetIDCB}) => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
   const [queueSize, setQueueSize] = useState();
@@ -38,7 +38,13 @@ const Queue = ({hasLoggedIn, setLoggedInCB, userTokenID, userNetID}) => {
 
   return (
     <>
-      <Navbar hasLoggedIn={hasLoggedIn} setLoggedInCB={setLoggedInCB}/>
+      <Navbar 
+      hasLoggedIn={hasLoggedIn} 
+      setLoggedInCB={setLoggedInCB} 
+      userNetID={userNetID} 
+      userTokenID={userTokenID} 
+      handleUserTokenCB={handleUserTokenCB} 
+      handleUserNetIDCB={handleUserNetIDCB}/>
       {hasLoggedIn &&
         <Box
           display="flex"

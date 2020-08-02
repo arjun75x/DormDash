@@ -17,9 +17,12 @@ import HomeIcon from "@material-ui/icons/Home";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import DirectionsRunIcon from "@material-ui/icons/DirectionsRun";
 import HealingIcon from "@material-ui/icons/Healing";
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import FastfoodIcon from "@material-ui/icons/Fastfood";
 import Box from "@material-ui/core/Box";
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
@@ -27,10 +30,16 @@ import { Link } from "react-router-dom";
 import {useGoogleLogout , GoogleLogin } from 'react-google-login';
 
 
-const Navbar = ({hasLoggedIn, setLoggedInCB}) => {
+const Navbar = ({hasLoggedIn, setLoggedInCB, UserNetID, userTokenID, handleUserTokenCB, handleUserNetIDCB}) => {
   const [menu, updateMenu] = useState({
     drawerOpened: false,
   });
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const toggleDrawer = (booleanValue) => () => {
     updateMenu({
       drawerOpened: booleanValue,
@@ -56,10 +65,12 @@ const Navbar = ({hasLoggedIn, setLoggedInCB}) => {
   const onLogoutSuccess = (response) => {
     console.log(response);
     setLoggedInCB(false);
+    handleUserTokenCB();
+    handleUserNetIDCB("");
   }
   
   const onFailure = (response) => {
-    console.log('Login failed, res: ', response);
+    console.log('Logout failed, res: ', response);
   }
   const clientId = "808699597542-2jgrb1ive07o219flrasng9q0rm4fj6p.apps.googleusercontent.com";
 
@@ -68,6 +79,10 @@ const Navbar = ({hasLoggedIn, setLoggedInCB}) => {
     clientId,
     onFailure,
   });
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
   const classes = useStyles();
   return (
     <>
@@ -97,7 +112,35 @@ const Navbar = ({hasLoggedIn, setLoggedInCB}) => {
               <Button color="inherit">Login</Button>
             }
             {hasLoggedIn &&
-              <Button color="inherit" onClick={signOut}>Logout</Button>
+              <>
+                <IconButton
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={open}
+                    onClose={handleClose}
+                  >
+                    <MenuItem onClick={()=>{console.log(UserNetID)}} value={userTokenID} />
+                </Menu>
+                <Button color="inherit" onClick={signOut}>Logout</Button>
+              </>
             }
           </Toolbar>
         </AppBar>

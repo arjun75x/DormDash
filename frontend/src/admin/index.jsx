@@ -17,7 +17,7 @@ const Admin = () => {
     fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
         // Authorization: getToken(),
-        Authorization: encodeBasicAuthHeader("Google", "naymanl2")
+        Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2")
       },
     })
       .then((response) => response.json())
