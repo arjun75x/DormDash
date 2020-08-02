@@ -61,7 +61,6 @@ export const getRecommendation: (
 ) => Promise<string> = async (Latitude, Longitude) => {
     const rankedLocations = await rankByLocation(Latitude, Longitude);
     const rankedBusyness = await rankByBusyness();
-    console.log(rankedBusyness, rankedLocations);
     const final_rank = {};
     for (var i = 0; i < rankedLocations.length; i++) {
         final_rank[rankedLocations[i]] += i;
