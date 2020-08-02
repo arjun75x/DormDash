@@ -18,10 +18,11 @@ const Queue = ({hasLoggedIn, setLoggedInCB, userTokenID, userNetID, handleUserTo
   const [queueReqResponse, setQueueReqResponse] = useState({});
 
   useEffect(() => {
-    console.log(userNetID);
+    // console.log(userTokenID);
     fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
         // Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        // "Content-Type": "application/json",
         Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2"),
       },
     })

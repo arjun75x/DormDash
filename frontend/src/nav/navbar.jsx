@@ -22,23 +22,18 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import FastfoodIcon from "@material-ui/icons/Fastfood";
 import Box from "@material-ui/core/Box";
 import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
-import {useGoogleLogout , GoogleLogin } from 'react-google-login';
+import {useGoogleLogout } from 'react-google-login';
 
 
-const Navbar = ({hasLoggedIn, setLoggedInCB, UserNetID, userTokenID, handleUserTokenCB, handleUserNetIDCB}) => {
+const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, userTokenID, handleUserTokenCB, handleUserNetIDCB}) => {
   const [menu, updateMenu] = useState({
     drawerOpened: false,
   });
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const toggleDrawer = (booleanValue) => () => {
     updateMenu({
@@ -80,9 +75,6 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, UserNetID, userTokenID, handleUserT
     onFailure,
   });
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const classes = useStyles();
   return (
     <>
@@ -113,32 +105,11 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, UserNetID, userTokenID, handleUserT
             }
             {hasLoggedIn &&
               <>
-                <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    open={open}
-                    onClose={handleClose}
-                  >
-                    <MenuItem onClick={()=>{console.log(UserNetID)}} value={userTokenID} />
-                </Menu>
+                <Tooltip title={userNetID}>
+                  <IconButton color="inherit" aria-label={userNetID}>
+                    <AccountCircle />
+                  </IconButton>
+                </Tooltip>
                 <Button color="inherit" onClick={signOut}>Logout</Button>
               </>
             }
