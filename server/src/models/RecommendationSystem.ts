@@ -1,5 +1,5 @@
 import { query, multiQuery } from 'middleware/custom/mysql-connector';
-import { getDiningHalls } from 'models/DiningHall'
+import { getDiningHalls, DiningHallBase } from 'models/DiningHall'
 
 function sortDictionaryOnKeys(dict) {
 	var toSort = [];
@@ -34,6 +34,25 @@ export const rankByLocation: (
     return sortDictionaryOnKeys(hallByDistance);
 }
 
+export const rankByLocationSQL: (
+    Latitude: number,
+    Longitude: number
+) => Promise<Array<string>> = async (Latitude, Longitude) => {
+    const rankedHalls = await query<DiningHallBase>(
+        `
+        SELECT DiningHallName
+        FROM DiningHall
+        ORDER BY (POW((Latitude - ?), 2) + POW((Longitude - ?), 2))
+        `,
+        [Latitude, Longitude]
+    );
+    var out = Array<string>();
+    rankedHalls.forEach(hall => {
+        out.push(hall.DiningHallName);
+    });
+    return out;
+}
+
 export const rankByBusyness: () => Promise<Array<string>> = async () => {
     const diningHalls = await getDiningHalls();
     const hallByQueueSize = {};
@@ -59,7 +78,7 @@ export const getRecommendation: (
     Latitude: number,
     Longitude: number
 ) => Promise<string> = async (Latitude, Longitude) => {
-    const rankedLocations = await rankByLocation(Latitude, Longitude);
+    const rankedLocations = await rankByLocationSQL(Latitude, Longitude);
     const rankedBusyness = await rankByBusyness();
     const final_rank = {};
     for (var i = 0; i < rankedLocations.length; i++) {
