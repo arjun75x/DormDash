@@ -45,7 +45,7 @@ export const rankByBusyness: () => Promise<Array<string>> = async () => {
             `
             SELECT COUNT(QueueRequestID) as size
             FROM QueueRequest
-            WHERE ExitQueueTime = NULL AND DiningHallName = ?
+            WHERE ExitQueueTime IS NULL AND DiningHallName = ?
             `,
         [hall.DiningHallName]
         )).shift()
