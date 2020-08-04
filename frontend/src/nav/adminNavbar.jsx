@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -15,22 +15,16 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import HomeIcon from "@material-ui/icons/Home";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
-import DirectionsRunIcon from "@material-ui/icons/DirectionsRun";
 import HealingIcon from "@material-ui/icons/Healing";
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import FastfoodIcon from "@material-ui/icons/Fastfood";
 import Box from "@material-ui/core/Box";
-import Menu from '@material-ui/core/Menu';
-import Tooltip from '@material-ui/core/Tooltip';
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
-import {useGoogleLogout } from 'react-google-login';
 
 
-const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handleUserNetIDCB, hasAdminPriv}) => {
+const AdminNavbar = () => {
 
   const [menu, updateMenu] = useState({
     drawerOpened: false,
@@ -58,23 +52,7 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
     // toolbar: theme.mixins.toolbar,
   }));
 
-  const onLogoutSuccess = (response) => {
-    console.log(response);
-    setLoggedInCB(false);
-    handleUserTokenCB();
-    handleUserNetIDCB("");
-  }
   
-  const onFailure = (response) => {
-    console.log('Logout failed, res: ', response);
-  }
-  const clientId = "808699597542-2jgrb1ive07o219flrasng9q0rm4fj6p.apps.googleusercontent.com";
-
-  const { signOut } = useGoogleLogout({
-    onLogoutSuccess,
-    clientId,
-    onFailure,
-  });
 
   const classes = useStyles();
   return (
@@ -100,20 +78,6 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
               <FastfoodIcon flexGrow={1}/>
             </Box>
             
-           
-            {!hasLoggedIn &&
-              <Button color="inherit">Login</Button>
-            }
-            {hasLoggedIn &&
-              <>
-                <Tooltip title={userNetID}>
-                  <IconButton color="inherit" aria-label={userNetID}>
-                    <AccountCircle />
-                  </IconButton>
-                </Tooltip>
-                <Button color="inherit" onClick={signOut}>Logout</Button>
-              </>
-            }
           </Toolbar>
         </AppBar>
       </Box>
@@ -131,7 +95,6 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
         <Box onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
           <Box height={64} />
           <Divider />
-          { hasAdminPriv && 
           <List>
             {["Home", "Admin"].map((text, index) => (
               <Link
@@ -147,30 +110,11 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
               </Link>
             ))}
           </List>
-          }
-        {/* keeping map in case some history log gets add later or smthing */}
-          { !hasAdminPriv && 
           
-          <List>
-            {["Home"].map((text, index) => (
-              <Link
-                to={index % 2 === 0 ? "/" : "/admin"}
-                style={{ color: "inherit", textDecoration: "inherit" }}
-              >
-                <ListItem button key={text}>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <HomeIcon /> : <SupervisorAccountIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              </Link>
-            ))}
-          </List>
-          }
         </Box>
       </Drawer>
     </>
   );
 };
 
-export default Navbar;
+export default AdminNavbar;
