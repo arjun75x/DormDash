@@ -1,4 +1,4 @@
-import { query, multiQuery } from 'middleware/custom/mysql-connector';
+import { query } from 'middleware/custom/mysql-connector';
 
 export const getQueueSize = async (diningHallName: string): Promise<number> => {
   const result = await query<{ Size: number }>(

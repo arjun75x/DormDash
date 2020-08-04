@@ -141,8 +141,33 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
           )
         ),
         ']'
-      ) AS QueueGroup
-     
+      ) AS QueueGroup,
+      (
+        SELECT COUNT(*) 
+        FROM QueueRequest qq
+        WHERE qq.ExitQueueTime IS NULL 
+        AND qq.Canceled = 0 
+        AND qq.DiningHallName = (
+          SELECT temp.DiningHallName 
+          FROM QueueRequest temp 
+          WHERE temp.QueueRequestID = (
+            SELECT QueueRequestID
+            FROM QueueGroup
+            WHERE NetID = ?
+            ORDER BY QueueRequestID DESC
+            LIMIT 1
+            )) 
+        AND qq.EnterQueueTime <= (
+          SELECT temp.EnterQueueTime 
+          FROM QueueRequest temp 
+          WHERE temp.QueueRequestID = (
+            SELECT QueueRequestID
+            FROM QueueGroup
+            WHERE NetID = ?
+            ORDER BY QueueRequestID DESC
+            LIMIT 1
+            ))
+        ) AS QueuePosition
       FROM QueueRequest q
       LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
       WHERE q.QueueRequestID = (
@@ -153,7 +178,7 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
         LIMIT 1
         );
       `,
-      [NetID]
+      [NetID, NetID, NetID]
     )
   ).shift();
 

@@ -245,7 +245,8 @@ Checks if given user has already been queued up in a group. Message is "not in g
     "Preferences": "string",
     "Canceled": "boolean",
     "DiningHallName": "string",
-    "QueueGroup": ["NetID"]
+    "QueueGroup": ["NetID"],
+    "QueuePosition": "number"
   }
 }
 ```
