@@ -2,7 +2,7 @@ API Basename Structure: `{localhost:3000|{uri}}/{dev|prod}/`
 
 ## Auth Headers
 
-Auth is a hack on the Basic Authorization header scheme. 
+Auth is a hack on the Basic Authorization header scheme.
 
 ```javascript
 token = base64encode(`Google:${idToken}`);
@@ -43,15 +43,17 @@ Fetches list of dining halls
 ```json
 {
   "message": "string",
-  "diningHalls": [{
-    "DiningHallName": "string",
-    "Latitude": "number",
-    "Longitude": "number",
-    "Tables": {
-      "TableID": "number",
-      "Capacity": "number"
+  "diningHalls": [
+    {
+      "DiningHallName": "string",
+      "Latitude": "number",
+      "Longitude": "number",
+      "Tables": {
+        "TableID": "number",
+        "Capacity": "number"
+      }
     }
-  }]
+  ]
 }
 ```
 
@@ -76,7 +78,7 @@ Adds a dining hall table to a specific dining hall
   "table": {
     "TableID": "number",
     "Capacity": "number",
-    "DiningHallName": "string" 
+    "DiningHallName": "string"
   }
 }
 ```
@@ -98,7 +100,7 @@ Updates metadata of a specific dining hall table
 
 ```json
 {
-  "message": "string",
+  "message": "string"
 }
 ```
 
@@ -118,7 +120,7 @@ Deletes a dining hall table
 
 ```json
 {
-  "message": "string",
+  "message": "string"
 }
 ```
 
@@ -140,7 +142,7 @@ Adds a dining hall table to a specific dining hall
 
 ```json
 {
-  "message": "string",
+  "message": "string"
 }
 ```
 
@@ -160,7 +162,7 @@ Deletes a dining hall
 
 ```json
 {
-  "message": "string",
+  "message": "string"
 }
 ```
 
@@ -173,7 +175,7 @@ Joins the queue
 ```json
 {
   "DiningHallName": "string",
-  "QueueGroup": ["NetID"],
+  "QueueGroup": ["NetID"]
 }
 ```
 
@@ -181,17 +183,39 @@ Joins the queue
 
 ```json
 {
-    "message": "string",
-    "queueRequest": {
-        "QueueRequestID": "number",
-        "EnterQueueTime": "datetime",
-        "ExitQueueTime": "datetime",
-        "RequestTime": "datetime",
-        "Preferences": "string",
-        "Canceled": "boolean",
-        "DiningHallName": "string",
-        "QueueGroup": ["NetID"]
-    }
+  "message": "string",
+  "queueRequest": {
+    "QueueRequestID": "number",
+    "EnterQueueTime": "datetime",
+    "ExitQueueTime": "datetime",
+    "RequestTime": "datetime",
+    "Preferences": "string",
+    "Canceled": "boolean",
+    "DiningHallName": "string",
+    "QueueGroup": ["NetID"]
+  }
+}
+```
+
+## GET /queue/size
+
+Gets the queue size for a dining hall
+
+### Query Params
+
+```json
+{
+  "DiningHallName": "string"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+  "queueSize": "number"
+  }
 }
 ```
 
@@ -203,7 +227,7 @@ Checks if given user has already been queued up in a group. Message is "not in g
 
 ```json
 {
-  "NetID" : "string"
+  "NetID": "string"
 }
 ```
 
@@ -211,17 +235,17 @@ Checks if given user has already been queued up in a group. Message is "not in g
 
 ```json
 {
-    "message": "string",
-    "queueRequest": {
-        "QueueRequestID": "number",
-        "EnterQueueTime": "datetime",
-        "ExitQueueTime": "datetime",
-        "RequestTime": "datetime",
-        "Preferences": "string",
-        "Canceled": "boolean",
-        "DiningHallName": "string",
-        "QueueGroup": ["NetID"]
-    }
+  "message": "string",
+  "queueRequest": {
+    "QueueRequestID": "number",
+    "EnterQueueTime": "datetime",
+    "ExitQueueTime": "datetime",
+    "RequestTime": "datetime",
+    "Preferences": "string",
+    "Canceled": "boolean",
+    "DiningHallName": "string",
+    "QueueGroup": ["NetID"]
+  }
 }
 ```
 
@@ -233,7 +257,7 @@ Attempts to admit off the queue. Returns back null admittedEntry if it can't
 
 ```json
 {
-  "NetID": "string",
+  "NetID": "string"
 }
 ```
 
@@ -241,16 +265,16 @@ Attempts to admit off the queue. Returns back null admittedEntry if it can't
 
 ```json
 {
-    "message": "string",
-    "admittedEntry": {
-        "EntryID": "number",
-        "MealType": "string",
-        "AdmitOffQueueTime": "datetime",
-        "TableID": "number",
-        "QueueRequestID": "number",
-        "DiningHallName": "string",
-        "QueueGroup": ["NetID"]
-    }
+  "message": "string",
+  "admittedEntry": {
+    "EntryID": "number",
+    "MealType": "string",
+    "AdmitOffQueueTime": "datetime",
+    "TableID": "number",
+    "QueueRequestID": "number",
+    "DiningHallName": "string",
+    "QueueGroup": ["NetID"]
+  }
 }
 ```
 
@@ -262,7 +286,7 @@ Exits the dining hall
 
 ```json
 {
-  "NetID": "string",
+  "NetID": "string"
 }
 ```
 
@@ -270,19 +294,19 @@ Exits the dining hall
 
 ```json
 {
-    "message": "string"
+  "message": "string"
 }
 ```
 
 ## POST /admit/arrive
 
-Enters the dining hall *after* having been admitted
+Enters the dining hall _after_ having been admitted
 
 ### Request Body Schema
 
 ```json
 {
-  "NetID": "string",
+  "NetID": "string"
 }
 ```
 
@@ -290,7 +314,7 @@ Enters the dining hall *after* having been admitted
 
 ```json
 {
-    "message": "string"
+  "message": "string"
 }
 ```
 
@@ -303,7 +327,7 @@ Returns the best dining hall based on recommendation system
 ```json
 {
   "Latitude": "number",
-  "Longitude": "number",
+  "Longitude": "number"
 }
 ```
 
@@ -311,7 +335,7 @@ Returns the best dining hall based on recommendation system
 
 ```json
 {
-    "message": "string",
-    "DiningHallName": "string",
+  "message": "string",
+  "DiningHallName": "string"
 }
 ```
