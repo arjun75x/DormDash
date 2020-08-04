@@ -1,6 +1,5 @@
 service: dormdash
 
-
 plugins:
   - serverless-stage-manager
   - serverless-webpack
@@ -20,7 +19,6 @@ provider:
     DB_USER: ${file(./secrets.json):${self:provider.stage}.DB_USER}
     DB_PASSWORD: ${file(./secrets.json):${self:provider.stage}.DB_PASSWORD}
     DB_NAME: ${file(./secrets.json):${self:provider.stage}.DB_NAME}
-
 
 custom:
   stages:
@@ -44,7 +42,7 @@ functions:
           path: /test
           method: get
           cors: true
-  
+
   authorizer:
     handler: src/authorizer/authorizer.handler
 
@@ -132,6 +130,18 @@ functions:
             identitySource: method.request.header.Authorization
             type: token
 
+  getQueueSize:
+    handler: src/routes/queue/getQueueSize.handler
+    events:
+      - http:
+          path: /queue/size
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
   attemptAdmit:
     handler: src/routes/admit/attemptAdmit.handler
     events:
@@ -167,7 +177,7 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
-  
+
   getRecommendation:
     handler: src/routes/recommendation-system/getRecommendation.handler
     events:
