@@ -108,3 +108,46 @@ export const joinQueue: (
 
   return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
 };
+
+export const checkGroup: (
+  NetID: string
+) => Promise<QueueRequest | null> = async (NetID) => {
+  const queueRequest = (
+    await multiQuery<QueueRequestWithGroupFromSQL>(
+      `
+      SELECT 
+      q.QueueRequestID,
+      q.EnterQueueTime,
+      q.ExitQueueTime,
+      q.RequestTime,
+      q.Preferences,
+      q.Canceled,
+      q.DiningHallName,
+      CONCAT(
+        '[',
+        GROUP_CONCAT(
+          CONCAT(
+            '"',
+            g.NetID,
+            '"'
+          )
+        ),
+        ']'
+      ) AS QueueGroup
+      FROM QueueRequest q
+      LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
+      WHERE q.QueueRequestID in (
+        SELECT QueueRequestID
+        FROM QueueGroup g
+        WHERE g.NetID = ?
+        ORDER BY QueueRequestID DESC
+        LIMIT 1
+        );
+      `,
+      [NetID],
+      8
+    )
+  ).shift();
+
+  return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
+};
