@@ -2,7 +2,6 @@ import React from 'react';
 import {useGoogleLogin } from 'react-google-login';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import {encodeBasicAuthHeader} from '../utils'
 const LogIn = ({setLoggedInCB, handleUserTokenCB, handleUserNetIDCB, handlePrivCB}) => {
 
     const admins = ["tincher2", "ajhsu2", "naymanl2", "arjunsa2"];

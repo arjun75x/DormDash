@@ -5,11 +5,8 @@ import QueueRequest from "./queueRequest";
 import QueueDisplay from "./queueDisplay";
 import QueueSize from "./queueSize";
 import Navbar from "../nav/navbar";
-import Admin from "../admin/admin";
-import { Buffer } from "buffer";
 import Box from "@material-ui/core/Box";
-import { getToken, encodeBasicAuthHeader } from "../utils";
-import { makeStyles } from "@material-ui/core";
+import { encodeBasicAuthHeader } from "../utils";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";

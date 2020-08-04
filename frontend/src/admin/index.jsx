@@ -4,10 +4,8 @@ import { getToken, encodeBasicAuthHeader } from "../utils";
 import Box from "@material-ui/core/Box";
 import TableUpdater from "./tableUpdater";
 import TableInserter from "./tableInserter";
-import Navbar from "../nav/navbar";
 import DHInserter from "./DHInserter";
 import DHDeleter from "./DHDeleter";
-import { waitForElementToBeRemoved } from "@testing-library/react";
 import AdminNavbar from "../nav/adminNavbar";
 
 const Admin = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, { useState} from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -15,13 +15,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import HomeIcon from "@material-ui/icons/Home";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
-import DirectionsRunIcon from "@material-ui/icons/DirectionsRun";
 import HealingIcon from "@material-ui/icons/Healing";
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import FastfoodIcon from "@material-ui/icons/Fastfood";
 import Box from "@material-ui/core/Box";
-import Menu from '@material-ui/core/Menu';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -137,6 +134,7 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
               <Link
                 to={index % 2 === 0 ? "/" : "/admin"}
                 style={{ color: "inherit", textDecoration: "inherit" }}
+                key={index}
               >
                 <ListItem button key={text}>
                   <ListItemIcon>
@@ -156,6 +154,7 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
               <Link
                 to={index % 2 === 0 ? "/" : "/admin"}
                 style={{ color: "inherit", textDecoration: "inherit" }}
+                key={index}
               >
                 <ListItem button key={text}>
                   <ListItemIcon>

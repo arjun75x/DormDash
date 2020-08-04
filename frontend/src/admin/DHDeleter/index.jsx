@@ -1,11 +1,8 @@
-import React, { useState } from "react";
-import TextField from "@material-ui/core/TextField";
+import React from "react";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import CancelIcon from "@material-ui/icons/Cancel";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { makeStyles } from '@material-ui/core/styles';
 

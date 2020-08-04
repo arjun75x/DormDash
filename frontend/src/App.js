@@ -1,9 +1,8 @@
 import React from "react";
 import { useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import Queue from "./queue";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import Admin from "./admin";
 import LogIn from "./LogIn/index";
 
