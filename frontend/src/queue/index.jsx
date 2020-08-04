@@ -22,7 +22,8 @@ const Queue = ({
 }) => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
-  const [queueSize, setQueueSize] = useState();
+  const [queueSize, setQueueSize] = useState(null);
+  const [queueTimeoutId, setQueueTimeoutId] = useState(null);
   const [queueReqResponse, setQueueReqResponse] = useState({});
 
   const [userLat, setUserLat] = useState("");
@@ -53,6 +54,31 @@ const Queue = ({
       });
   }, []);
 
+  useEffect(() => {
+    if (selectedDiningHall === "") return;
+
+    clearTimeout(queueTimeoutId);
+
+    const url = new URL("http://localhost:3000/dev/queue/size");
+    url.search = new URLSearchParams({ DiningHallName: selectedDiningHall });
+
+    const pollQueueSize = () => {
+      fetch(url, {
+        headers: {
+          Authorization: encodeBasicAuthHeader("Google", userTokenID),
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then(({ queueSize }) => {
+          setQueueSize(queueSize);
+          setQueueTimeoutId(setTimeout(pollQueueSize, 30000));
+        });
+    };
+
+    pollQueueSize();
+  }, [selectedDiningHall]);
+
   const handleSelect = (event) => {
     setSelectedDiningHall(event.target.value);
 
@@ -76,7 +102,6 @@ const Queue = ({
       });
 
     //to be replaced with nicer histogram
-    setQueueSize(7);
   };
 
   const handleClose = (event, reason) => {
@@ -113,7 +138,7 @@ const Queue = ({
             selectedDiningHall={selectedDiningHall}
             handleSelect={handleSelect}
           />
-          {queueSize && <QueueSize queueSize={queueSize} />}
+          {queueSize !== null && <QueueSize queueSize={queueSize} />}
         </Box>
       )}
       {selectedDiningHall !== "" && hasLoggedIn && (
