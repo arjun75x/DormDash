@@ -1,4 +1,4 @@
-import { multiQuery } from 'middleware/custom/mysql-connector';
+import { query, multiQuery } from 'middleware/custom/mysql-connector';
 import moment from 'moment';
 
 export interface QueueRequestFromSQL {
@@ -112,8 +112,9 @@ export const joinQueue: (
 export const checkGroup: (
   NetID: string
 ) => Promise<QueueRequest | null> = async (NetID) => {
+  
   const queueRequest = (
-    await multiQuery<QueueRequestWithGroupFromSQL>(
+    await query<QueueRequestWithGroupFromSQL>(
       `
       SELECT 
       q.QueueRequestID,
@@ -134,20 +135,22 @@ export const checkGroup: (
         ),
         ']'
       ) AS QueueGroup
+     
       FROM QueueRequest q
       LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
-      WHERE q.QueueRequestID in (
+      WHERE q.QueueRequestID = (
         SELECT QueueRequestID
-        FROM QueueGroup g
-        WHERE g.NetID = ?
+        FROM QueueGroup
+        WHERE NetID = ?
         ORDER BY QueueRequestID DESC
         LIMIT 1
         );
       `,
-      [NetID],
-      8
+      [NetID]
     )
   ).shift();
 
+  // console.log(queueRequest);
+            // return null;
   return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
 };

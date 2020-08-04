@@ -131,6 +131,18 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+            
+  checkGroup:
+    handler: src/routes/queue/checkGroup.handler
+    events:
+      - http:
+          path: /checkGroup
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token 
 
   attemptAdmit:
     handler: src/routes/admit/attemptAdmit.handler

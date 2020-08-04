@@ -72,6 +72,9 @@ const QueueRequest = ({
                   clearInterval(admitpoll);
                   return r;
                 }
+                else{
+                  return Promise.reject();
+                }
               })
               .then(({ admittedEntry }) => {
                 //   /* this populates the queueRequest state */
