@@ -7,6 +7,7 @@ import QueueSize from "./queueSize";
 import Navbar from "../nav/navbar";
 import Box from "@material-ui/core/Box";
 import { encodeBasicAuthHeader } from "../utils";
+import OnQueueDisplay from "./onQueueDisplay";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
