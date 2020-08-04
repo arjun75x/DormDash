@@ -1,4 +1,4 @@
-import { multiQuery } from 'middleware/custom/mysql-connector';
+import { query, multiQuery } from 'middleware/custom/mysql-connector';
 import moment from 'moment';
 
 export interface QueueRequestFromSQL {
@@ -106,5 +106,51 @@ export const joinQueue: (
     )
   ).shift();
 
+  return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
+};
+
+export const checkGroup: (
+  NetID: string
+) => Promise<QueueRequest | null> = async (NetID) => {
+  
+  const queueRequest = (
+    await query<QueueRequestWithGroupFromSQL>(
+      `
+      SELECT 
+      q.QueueRequestID,
+      q.EnterQueueTime,
+      q.ExitQueueTime,
+      q.RequestTime,
+      q.Preferences,
+      q.Canceled,
+      q.DiningHallName,
+      CONCAT(
+        '[',
+        GROUP_CONCAT(
+          CONCAT(
+            '"',
+            g.NetID,
+            '"'
+          )
+        ),
+        ']'
+      ) AS QueueGroup
+     
+      FROM QueueRequest q
+      LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
+      WHERE q.QueueRequestID = (
+        SELECT QueueRequestID
+        FROM QueueGroup
+        WHERE NetID = ?
+        ORDER BY QueueRequestID DESC
+        LIMIT 1
+        );
+      `,
+      [NetID]
+    )
+  ).shift();
+
+  // console.log(queueRequest);
+            // return null;
   return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
 };

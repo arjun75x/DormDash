@@ -28,7 +28,7 @@ function App() {
   };
   return (
     <main>
-      {!hasLoggedIn && (
+      {!hasLoggedIn && userNetID === "" && (
         <>
           <LogIn
             setLoggedInCB={handleLogIn()}
@@ -38,7 +38,7 @@ function App() {
           />
         </>
       )}
-      {hasLoggedIn && (
+      {hasLoggedIn && userNetID !== "" && (
         <Switch>
           <Route path="/" exact>
             <Queue
