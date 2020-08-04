@@ -195,6 +195,36 @@ Joins the queue
 }
 ```
 
+## GET /checkGroup
+
+Checks if given user has already been queued up in a group. Message is "not in group" if not found
+
+### Request Body Schema
+
+```json
+{
+  "NetID" : "string"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+    "message": "string",
+    "queueRequest": {
+        "QueueRequestID": "number",
+        "EnterQueueTime": "datetime",
+        "ExitQueueTime": "datetime",
+        "RequestTime": "datetime",
+        "Preferences": "string",
+        "Canceled": "boolean",
+        "DiningHallName": "string",
+        "QueueGroup": ["NetID"]
+    }
+}
+```
+
 ## POST /admit
 
 Attempts to admit off the queue. Returns back null admittedEntry if it can't

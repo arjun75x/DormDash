@@ -30,27 +30,62 @@ const Queue = ({
   const [userLong, setUserLong] = useState("");
   const [recDH, setRecDH] = useState("");
   const [finishRec, setFinishRec] = useState(false);
+  const [finishCheckGroup, setFinishCheckGroup] = useState(false);
 
   useEffect(() => {
     //get user location
     navigator.geolocation.getCurrentPosition(function (position) {
-      // console.log("Latitude is :", position.coords.latitude);
-      // console.log("Longitude is :", position.coords.longitude);
       setUserLat(position.coords.latitude);
       setUserLong(position.coords.longitude);
     });
 
-    // console.log(userTokenID);
     fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
-        // Authorization: encodeBasicAuthHeader("Google", userTokenID),
-        // "Content-Type": "application/json",
-        Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2"),
+        Authorization: encodeBasicAuthHeader("Google", userTokenID),
       },
     })
       .then((response) => response.json())
       .then(({ diningHalls }) => {
         setDiningHalls(diningHalls.map(({ DiningHallName }) => DiningHallName));
+      });
+
+    // check for a previous request or if someone has queued you up in a group
+
+    var params = { NetID: userNetID };
+    var checkGroupURL = new URL("http://localhost:3000/dev/checkGroup");
+    checkGroupURL.search = new URLSearchParams(params).toString();
+
+    fetch(checkGroupURL, {
+      headers: {
+        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+      },
+    })
+      .then((response) => response.json())
+      .then(function (r) {
+        if (r.message === "Success!") {
+          setFinishCheckGroup(true);
+          return r;
+        } else {
+          console.log("You are not in a group");
+          return Promise.reject();
+        }
+      })
+      .then(({ queueRequest }) => {
+        /* this populates the queueRequest state */
+        var toFilter = [
+          "QueueRequestID",
+          "DiningHallName",
+          "AdmitOffQueueTime",
+          "QueueGroup",
+        ];
+        setQueueReqResponse(
+          Object.keys(queueRequest)
+            .filter((key) => toFilter.includes(key))
+            .reduce((obj, key) => {
+              obj[key] = queueRequest[key];
+              return obj;
+            }, {})
+        );
       });
   }, []);
 
@@ -106,6 +141,7 @@ const Queue = ({
 
   const handleClose = (event, reason) => {
     setFinishRec(false);
+    setFinishCheckGroup(false);
     if (reason === "clickaway") {
       return;
     }
@@ -125,7 +161,7 @@ const Queue = ({
         handleUserNetIDCB={handleUserNetIDCB}
         hasAdminPriv={hasAdminPriv}
       />
-      {hasLoggedIn && (
+      {hasLoggedIn && Object.keys(queueReqResponse).length === 0 && (
         <Box
           display="flex"
           alignItems="center"
@@ -141,17 +177,19 @@ const Queue = ({
           {queueSize !== null && <QueueSize queueSize={queueSize} />}
         </Box>
       )}
-      {selectedDiningHall !== "" && hasLoggedIn && (
-        <>
-          <hr style={{ width: "80%" }}></hr>
-          <QueueRequest
-            selectedDiningHall={selectedDiningHall}
-            setQueueReqResponseCB={setQueueReqResponse}
-            userTokenID={userTokenID}
-            userNetID={userNetID}
-          />
-        </>
-      )}
+      {selectedDiningHall !== "" &&
+        hasLoggedIn &&
+        Object.keys(queueReqResponse).length === 0 && (
+          <>
+            <hr style={{ width: "80%" }}></hr>
+            <QueueRequest
+              selectedDiningHall={selectedDiningHall}
+              setQueueReqResponseCB={setQueueReqResponse}
+              userTokenID={userTokenID}
+              userNetID={userNetID}
+            />
+          </>
+        )}
 
       {queueReqResponse &&
         Object.keys(queueReqResponse).length !== 0 &&
@@ -180,6 +218,14 @@ const Queue = ({
           <Alert onClose={handleClose} severity="success">
             Based on your location and the current capacity of each dining hall,
             your recommended Dining Hall is {recDH}
+          </Alert>
+        </Snackbar>
+      )}
+      {finishCheckGroup && (
+        <Snackbar open={finishCheckGroup} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="success">
+            You've been queue'd up by a friend (or yourself in the past), here's
+            your ticket!
           </Alert>
         </Snackbar>
       )}
