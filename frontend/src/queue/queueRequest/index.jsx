@@ -29,9 +29,8 @@ const QueueRequest = ({
   };
 
   const handleQueueRequest = (event) => {
-    console.log(userNetID);
+    // console.log(userNetID);
 
-    //TODO: post join queue, need some way to tie in user later
     fetch("http://localhost:3000/dev/queue", {
       headers: {
         // Authorization: getToken(),
@@ -56,14 +55,11 @@ const QueueRequest = ({
             console.log("trying to admit!");
             fetch("http://localhost:3000/dev/admit", {
               headers: {
-                // Authorization: encodeBasicAuthHeader("DeveloperOnly", groupNetIds[0]),
                 Authorization: encodeBasicAuthHeader("Google", userTokenID),
 
                 "Content-Type": "application/json",
               },
               method: "POST",
-              //TODO: hardcoded rn
-              // body: JSON.stringify({ NetID: groupNetIds[0] }),
               body: JSON.stringify({ NetID: userNetID }),
             })
               .then((response) => {
