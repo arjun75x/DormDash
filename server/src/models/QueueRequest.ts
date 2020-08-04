@@ -96,12 +96,20 @@ export const joinQueue: (
           )
         ),
         ']'
-      ) AS QueueGroup
+      ) AS QueueGroup,
+      (
+        SELECT COUNT(*) 
+        FROM QueueRequest qq
+        WHERE qq.ExitQueueTime IS NULL 
+        AND qq.Canceled = 0 
+        AND qq.DiningHallName = ? 
+        AND qq.EnterQueueTime <= (SELECT temp.EnterQueueTime FROM QueueRequest temp WHERE temp.QueueRequestID = @QueueRequestID)
+        ) AS QueuePosition
       FROM QueueRequest q
       LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
       WHERE q.QueueRequestID = @QueueRequestID;
       `,
-      [NetID.map((netID) => [netID]), DiningHallName],
+      [NetID.map((netID) => [netID]), DiningHallName, DiningHallName],
       8
     )
   ).shift();
@@ -109,10 +117,9 @@ export const joinQueue: (
   return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
 };
 
-export const checkGroup: (
-  NetID: string
-) => Promise<QueueRequest | null> = async (NetID) => {
-  
+export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async (
+  NetID
+) => {
   const queueRequest = (
     await query<QueueRequestWithGroupFromSQL>(
       `
@@ -150,7 +157,5 @@ export const checkGroup: (
     )
   ).shift();
 
-  // console.log(queueRequest);
-            // return null;
   return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
 };

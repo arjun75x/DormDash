@@ -192,7 +192,8 @@ Joins the queue
     "Preferences": "string",
     "Canceled": "boolean",
     "DiningHallName": "string",
-    "QueueGroup": ["NetID"]
+    "QueueGroup": ["NetID"],
+    "QueuePosition": "number"
   }
 }
 ```
