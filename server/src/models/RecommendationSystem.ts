@@ -3,7 +3,7 @@ import { getDiningHalls } from 'models/DiningHall'
 
 export interface RecSystemBase {
     DiningHallName: string;
-    NumHalls: number;
+    NumRequests: number;
 }
 
 function sortDictionaryOnKeys(dict) {
@@ -82,7 +82,7 @@ export const rankByBusyness: () => Promise<Array<string>> = async () => {
 export const rankByBusynessSQL: () => Promise<Array<string>> = async () => {
     const rankedHalls = await query<RecSystemBase>(
         `
-        SELECT dh.DiningHallName as DiningHallName, IFNULL(q.Num, 0) as NumHalls
+        SELECT dh.DiningHallName as DiningHallName, IFNULL(q.Num, 0) as NumRequests
         FROM DiningHall dh LEFT JOIN (
             SELECT qr.DiningHallName as DiningHallName, COUNT(qr.QueueRequestID) as Num
             FROM QueueRequest qr
@@ -101,17 +101,46 @@ export const rankByBusynessSQL: () => Promise<Array<string>> = async () => {
 }
 
 export const rankByPastDataSQL: () => Promise<Array<string>> = async () => {
+    await query<void>(
+        `
+        DROP PROCEDURE IF EXISTS AVG_PAST_DATA;
+
+        CREATE PROCEDURE AVG_PAST_DATA()
+            BEGIN
+                DECLARE i int default 0;
+
+                DROP TABLE IF EXISTS PastDataTable;
+
+                CREATE TABLE PastDataTable(
+                    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                    DiningHallName VARCHAR(255),
+                    NumRequests INT
+                );
+
+                WHILE i < 7 DO
+                    INSERT INTO PastDataTable (DiningHallName, NumRequests)
+                    SELECT dh.DiningHallName as DiningHallName, IFNULL(q.Num, 0) as NumRequests
+                    FROM DiningHall dh LEFT JOIN (
+                        SELECT qr.DiningHallName as DiningHallName, COUNT(qr.QueueRequestID) as Num
+                        FROM QueueRequest qr
+                        WHERE (qr.RequestTime >= NOW() - INTERVAL (25 + (24 * i)) HOUR) AND (qr.RequestTime <= NOW() - INTERVAL (23 + (24 * i)) HOUR)
+                        GROUP BY qr.DiningHallName
+                    ) q on dh.DiningHallName = q.DiningHallName
+                    GROUP BY dh.DiningHallName
+                    ORDER BY IFNULL(q.Num, 0);
+                    SET i = i + 1;
+                END WHILE;                
+            END;
+        
+        CALL AVG_PAST_DATA();
+        `
+    );
     const rankedHalls = await query<RecSystemBase>(
         `
-        SELECT dh.DiningHallName as DiningHallName, IFNULL(q.Num, 0) as NumHalls
-        FROM DiningHall dh LEFT JOIN (
-            SELECT qr.DiningHallName as DiningHallName, COUNT(qr.QueueRequestID) as Num
-            FROM QueueRequest qr
-            WHERE (qr.RequestTime >= NOW() - INTERVAL 25 HOUR) AND (qr.RequestTime <= NOW() - INTERVAL 23 HOUR)
-            GROUP BY qr.DiningHallName
-        ) q on dh.DiningHallName = q.DiningHallName
-        GROUP BY dh.DiningHallName
-        ORDER BY IFNULL(q.Num, 0)
+        SELECT DiningHallName, AVG(NumRequests) as NumRequests
+        FROM PastDataTable
+        GROUP BY DiningHallName
+        ORDER BY AVG(NumRequests) ASC;
         `
     );
     var out = Array<string>();
@@ -128,7 +157,6 @@ export const getRecommendation: (
     const rankedLocations = await rankByLocationSQL(Latitude, Longitude);
     const rankedBusyness = await rankByBusynessSQL();
     const rankedPastData = await rankByPastDataSQL();
-    console.log(rankedBusyness, rankedPastData);
     const final_rank = {};
     for (var i = 0; i < rankedLocations.length; i++) {
         final_rank[rankedLocations[i]] += i;
