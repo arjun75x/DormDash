@@ -291,7 +291,7 @@ export const checkIfAdmitted = async (
 
 
 export const attemptAdmitBF: (
-  NetID: string
+  NetID: string,
   admitTime: string
 ) => Promise<AdmittedEntryWithMeta | null> = async (NetID, admitTime) => {
   const admitTimeBF = moment(admitTime).toDate();
@@ -312,7 +312,7 @@ export const attemptAdmitBF: (
         FROM QueueRequest q
         NATURAL JOIN DiningHallTable dht
         WHERE
-          q.EnterQueueTime <= ?  -- Ready to eat
+          q.EnterQueueTime <= CURRENT_TIMESTAMP  -- Ready to eat
           AND q.ExitQueueTime IS NULL  -- Filter out those admitted off the queue
           AND q.Canceled = FALSE  -- Filter out those who left the queue
           AND dht.TableID NOT IN (
@@ -368,7 +368,7 @@ export const attemptAdmitBF: (
       WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit)
       GROUP BY EntryID;
       `,
-      [admitTimeBF, NetID, admitTimeBF],
+      [NetID, admitTimeBF],
       7
     )
   ).shift();
