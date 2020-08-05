@@ -248,10 +248,12 @@ export const checkIfEating = async (NetID: string): Promise<boolean> => {
     SELECT EntryID
     FROM AdmittedEntry
     NATURAL JOIN QueueGroup
+    NATURAL JOIN QueueRequest
     WHERE 
       GroupArrivalTime IS NOT NULL
       AND GroupExitTime IS NULL
       AND NetID = ?
+      AND Canceled = FALSE
   `,
     [NetID]
   );
@@ -283,11 +285,13 @@ export const checkIfAdmitted = async (
         ']'
       ) AS QueueGroup
     FROM AdmittedEntry
+    NATURAL JOIN QueueRequest
     NATURAL JOIN QueueGroup
     NATURAL JOIN DiningHallTable
     WHERE 
       NetID = ?
       AND GroupArrivalTime IS NULL
+      AND Canceled = FALSE
     GROUP BY EntryID
     ORDER BY EntryID DESC;
     `,
