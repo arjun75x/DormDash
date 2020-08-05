@@ -7,7 +7,6 @@ import InputSchema from 'input-schemas/test.is';
 const _handler: HTTPRawHandler = async ({
   queryStringParameters: { DiningHallName },
 }) => {
-  console.log('fdjskal', { DiningHallName });
   const queueSize = await getQueueSize(DiningHallName);
 
   return {
