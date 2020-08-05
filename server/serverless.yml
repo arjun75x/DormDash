@@ -209,7 +209,19 @@ functions:
           path: /admit/activity
           method: get
           cors: true
-          # authorizer:
-          #   name: authorizer
-          #   identitySource: method.request.header.Authorization
-          #   type: token
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  leaveQueue:
+    handler: src/routes/queue/leaveQueue.handler
+    events:
+      - http:
+          path: /queue/leave
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token

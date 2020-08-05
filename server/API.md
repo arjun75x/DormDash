@@ -397,3 +397,23 @@ Returns a histogram of dining hall activity
   }
 }
 ```
+
+## POST /queue/leave
+
+Cancel your group from the queue
+
+### Request Body Schema
+
+```json
+{
+  "NetID": "string"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string"
+}
+```

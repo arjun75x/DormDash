@@ -203,3 +203,16 @@ export const getQueueSize = async (diningHallName: string): Promise<number> => {
 
   return result[0].Size;
 };
+
+export const leaveQueue: (NetID: string) => Promise<Array<void>> = async (NetID) =>
+  await query<void>(
+    `
+    UPDATE QueueRequest NATURAL JOIN QueueGroup
+    SET Canceled = TRUE
+    WHERE 
+      NetID = ? 
+      AND ExitQueueTime IS NULL 
+      AND EnterQueueTime IS NOT NULL
+  `,
+    [NetID]
+  );
