@@ -58,6 +58,8 @@ export const joinQueue: (
       `
       START TRANSACTION;
 
+      SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
       DROP TEMPORARY TABLE IF EXISTS GroupMembers;
 
       CREATE TEMPORARY TABLE GroupMembers(
@@ -100,17 +102,18 @@ export const joinQueue: (
       (
         SELECT COUNT(*) 
         FROM QueueRequest qq
-        WHERE qq.ExitQueueTime IS NULL 
-        AND qq.Canceled = 0 
-        AND qq.DiningHallName = ? 
-        AND qq.EnterQueueTime <= (SELECT temp.EnterQueueTime FROM QueueRequest temp WHERE temp.QueueRequestID = @QueueRequestID)
-        ) AS QueuePosition
+        WHERE 
+          qq.ExitQueueTime IS NULL 
+          AND qq.Canceled = FALSE
+          AND qq.DiningHallName = q.DiningHallName
+          AND qq.EnterQueueTime <= q.EnterQueueTime
+      ) AS QueuePosition
       FROM QueueRequest q
       LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
       WHERE q.QueueRequestID = @QueueRequestID;
       `,
-      [NetID.map((netID) => [netID]), DiningHallName, DiningHallName],
-      8
+      [NetID.map((netID) => [netID]), DiningHallName],
+      9
     )
   ).shift();
 
@@ -146,28 +149,10 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
         SELECT COUNT(*) 
         FROM QueueRequest qq
         WHERE qq.ExitQueueTime IS NULL 
-        AND qq.Canceled = 0 
-        AND qq.DiningHallName = (
-          SELECT temp.DiningHallName 
-          FROM QueueRequest temp 
-          WHERE temp.QueueRequestID = (
-            SELECT QueueRequestID
-            FROM QueueGroup
-            WHERE NetID = ?
-            ORDER BY QueueRequestID DESC
-            LIMIT 1
-            )) 
-        AND qq.EnterQueueTime <= (
-          SELECT temp.EnterQueueTime 
-          FROM QueueRequest temp 
-          WHERE temp.QueueRequestID = (
-            SELECT QueueRequestID
-            FROM QueueGroup
-            WHERE NetID = ?
-            ORDER BY QueueRequestID DESC
-            LIMIT 1
-            ))
-        ) AS QueuePosition
+          AND qq.Canceled = FALSE
+          AND qq.DiningHallName = q.DiningHallName
+          AND qq.EnterQueueTime <= q.EnterQueueTime
+      ) AS QueuePosition
       FROM QueueRequest q
       LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
       WHERE q.QueueRequestID = (
@@ -176,8 +161,8 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
         WHERE NetID = ?
         ORDER BY QueueRequestID DESC
         LIMIT 1
-        )
-      AND q.Canceled = 0
+      )
+      AND q.Canceled = FALSE
       AND q.ExitQueueTime IS NULL;
       `,
       [NetID, NetID, NetID]
@@ -195,8 +180,8 @@ export const getQueueSize = async (diningHallName: string): Promise<number> => {
     SELECT COUNT(*) as Size
     FROM QueueRequest
     WHERE Canceled = 0 
-    AND DiningHallName = ?
-    AND ExitQueueTime IS NULL
+      AND DiningHallName = ?
+      AND ExitQueueTime IS NULL
   `,
     [diningHallName]
   );

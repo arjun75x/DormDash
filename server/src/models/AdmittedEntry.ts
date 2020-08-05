@@ -60,6 +60,8 @@ export const attemptAdmit: (
       `
       START TRANSACTION;
 
+      SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
       DROP TEMPORARY TABLE IF EXISTS ToAdmit;
 
       CREATE TEMPORARY TABLE ToAdmit
@@ -128,7 +130,7 @@ export const attemptAdmit: (
       GROUP BY EntryID;
       `,
       [NetID],
-      6
+      7
     )
   ).shift();
 
