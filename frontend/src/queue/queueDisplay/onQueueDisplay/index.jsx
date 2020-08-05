@@ -27,7 +27,7 @@ const useStyles = makeStyles({
   },
 });
 
-const OnQueueDisplay = ({ queueReqResponse }) => {
+const OnQueueDisplay = ({ queueRequest }) => {
   const classes = useStyles();
 
   return (
@@ -38,19 +38,19 @@ const OnQueueDisplay = ({ queueReqResponse }) => {
             Queue Position
           </Typography>
           <Typography variant="body2" component="p">
-            {queueReqResponse.QueueRequestID}
+            {queueRequest.QueuePosition}
           </Typography>
           <Typography className={classes.title} gutterBottom>
             Dining Hall
           </Typography>
           <Typography variant="body2" component="p">
-            {queueReqResponse.DiningHallName}
+            {queueRequest.DiningHallName}
           </Typography>
           <Typography className={classes.title} gutterBottom>
             Queue Group
           </Typography>
           <Typography variant="body2" component="p">
-            {queueReqResponse.QueueGroup.join(", ")}
+            {queueRequest.QueueGroup.join(", ")}
           </Typography>
         </CardContent>
       </Card>
