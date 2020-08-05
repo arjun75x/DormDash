@@ -133,15 +133,12 @@ const Queue = ({
     };
   }, [selectedDiningHall]);
 
-  const handleSelect = (event) => {
-    setSelectedDiningHall(event.target.value);
-
+  useEffect(() => {
     //AF call here
     fetch("http://localhost:3000/dev/recommendation", {
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/json",
-        // Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2"),
       },
       method: "POST",
       body: JSON.stringify({
@@ -154,8 +151,10 @@ const Queue = ({
         setFinishRec(true);
         setRecDH(DiningHallName);
       });
+  }, []);
 
-    //to be replaced with nicer histogram
+  const handleSelect = (event) => {
+    setSelectedDiningHall(event.target.value);
   };
 
   const handleClose = (event, reason) => {
