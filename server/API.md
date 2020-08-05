@@ -236,7 +236,15 @@ Checks if given user has already been queued up in a group. Message is "not in g
 
 ```json
 {
-  "message": "string",
+  "message": "Not in a group!"
+}
+```
+
+or
+
+```json
+{
+  "message": "Success!",
   "queueRequest": {
     "QueueRequestID": "number",
     "EnterQueueTime": "datetime",
@@ -247,6 +255,33 @@ Checks if given user has already been queued up in a group. Message is "not in g
     "DiningHallName": "string",
     "QueueGroup": ["NetID"],
     "QueuePosition": "number"
+  }
+}
+```
+
+or
+
+```json
+{
+  "message": "Success!",
+  "admittedEntry": {
+    "EntryID": "number",
+    "MealType": "string",
+    "AdmitOffQueueTime": "datetime",
+    "TableID": "number",
+    "QueueRequestID": "number",
+    "DiningHallName": "string",
+    "QueueGroup": ["NetID"]
+  }
+}
+```
+
+or
+
+```json
+{
+  "message": "Success!",
+  "eating": true
   }
 }
 ```
