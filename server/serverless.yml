@@ -178,6 +178,18 @@ functions:
             identitySource: method.request.header.Authorization
             type: token
 
+  attemptAdmitBF:
+    handler: src/routes/admit/attemptAdmitBF.handler
+    events:
+      - http:
+          path: /admitBF
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
   leaveHall:
     handler: src/routes/admit/leaveHall.handler
     events:
