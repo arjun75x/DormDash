@@ -1,4 +1,4 @@
-API Basename Structure: `{localhost:3000|{uri}}/{dev|prod}/`
+API Basename Structure: `{localhost:3000|https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev}/{dev|prod}/`
 
 ## Auth Headers
 
