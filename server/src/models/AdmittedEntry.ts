@@ -58,9 +58,8 @@ export const attemptAdmit: (
   const admittedEntry = (
     await multiQuery<AdmittedEntryWithMetaFromSQL>(
       `
-      START TRANSACTION;
-
       SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+      START TRANSACTION;
 
       DROP TEMPORARY TABLE IF EXISTS ToAdmit;
 
