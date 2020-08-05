@@ -97,15 +97,15 @@ export const getRecommendation: (
     finalRank[rankedBusyness[i]] += i * 0.5;
     finalRank[rankedPastData[i]] += i * 0.25;
   }
-  let best_hall = Object.keys(finalRank)[0];
-  let lowest_rank = Object.values(finalRank)[0];
+  let bestHall = Object.keys(finalRank)[0];
+  let lowestRank = Object.values(finalRank)[0];
 
   Object.keys(finalRank).forEach((hall) => {
-    if (finalRank[hall] < lowest_rank) {
-      lowest_rank = finalRank[hall];
-      best_hall = hall;
+    if (finalRank[hall] < lowestRank) {
+      lowestRank = finalRank[hall];
+      bestHall = hall;
     }
   });
 
-  return best_hall;
+  return bestHall;
 };
