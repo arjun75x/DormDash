@@ -40,7 +40,11 @@ const useStyles = makeStyles({
   },
 });
 
-const AdmittedDisplay = ({ handleEnter, admittedEntry }) => {
+const AdmittedDisplay = ({
+  handleEnter,
+  admittedEntry,
+  handleRemoveFromQueue,
+}) => {
   const classes = useStyles();
 
   return (
@@ -67,6 +71,7 @@ const AdmittedDisplay = ({ handleEnter, admittedEntry }) => {
       </CardContent>
       <CardActions className={classes.cardAction}>
         {/* <Button
+          onClick={handleRemoveFromQueue}
           variant="contained"
           color="secondary"
           startIcon={<DeleteIcon />}

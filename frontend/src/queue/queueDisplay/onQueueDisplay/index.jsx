@@ -4,6 +4,9 @@ import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import CardActions from "@material-ui/core/CardActions";
+import Button from "@material-ui/core/Button";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const useStyles = makeStyles({
   root: {
@@ -27,7 +30,7 @@ const useStyles = makeStyles({
   },
 });
 
-const OnQueueDisplay = ({ queueRequest }) => {
+const OnQueueDisplay = ({ queueRequest, handleRemoveFromQueue }) => {
   const classes = useStyles();
 
   return (
@@ -53,6 +56,16 @@ const OnQueueDisplay = ({ queueRequest }) => {
             {queueRequest.QueueGroup.join(", ")}
           </Typography>
         </CardContent>
+        <CardActions className={classes.cardAction}>
+          <Button
+            onClick={handleRemoveFromQueue}
+            variant="contained"
+            color="secondary"
+            startIcon={<DeleteIcon />}
+          >
+            Unqueue
+          </Button>
+        </CardActions>
       </Card>
     </Box>
   );

@@ -63,15 +63,32 @@ const QueueDisplay = ({
     });
   };
 
+  const handleRemoveFromQueue = () => {
+    fetch("http://localhost:3000/dev/queue/leave", {
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ NetID: userNetID }),
+    }).then(() => {
+      setQueueReqResponseCB({});
+    });
+  };
+
   return (
     <Box display="flex" alignItems="center">
       {queueReqResponse.queueRequest && (
-        <OnQueueDisplay queueRequest={queueReqResponse.queueRequest} />
+        <OnQueueDisplay
+          queueRequest={queueReqResponse.queueRequest}
+          handleRemoveFromQueue={handleRemoveFromQueue}
+        />
       )}
       {queueReqResponse.admittedEntry && (
         <AdmittedDisplay
           admittedEntry={queueReqResponse.admittedEntry}
           handleEnter={handleEnter}
+          handleRemoveFromQueue={handleRemoveFromQueue}
         />
       )}
       {queueReqResponse.eating && <EatingDisplay handleExit={handleExit} />}
