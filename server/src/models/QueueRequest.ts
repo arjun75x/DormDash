@@ -201,8 +201,6 @@ export const leaveQueue: (NetID: string) => Promise<Array<void>> = async (NetID)
     [NetID]
   );
 
-
-
 export const joinQueueBF: (
   DiningHallName: string,
   NetID: Array<string>,

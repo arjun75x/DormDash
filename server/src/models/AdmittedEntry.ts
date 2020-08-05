@@ -150,7 +150,10 @@ export const leaveHall: (NetID: string) => Promise<Array<void>> = async (NetID) 
     [NetID]
   );
 
-export const leaveHallBF: (NetID: string, leaveTime: string) => Promise<void> = async (NetID, leaveTime) => {
+export const leaveHallBF: (NetID: string, leaveTime: string) => Promise<void> = async (
+  NetID,
+  leaveTime
+) => {
   const leaveTimeBF = moment(leaveTime).toDate();
   query<void>(
     `
@@ -164,9 +167,9 @@ export const leaveHallBF: (NetID: string, leaveTime: string) => Promise<void> = 
     `,
     [leaveTimeBF, NetID]
   );
-}
+};
 
-export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetID) => 
+export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetID) =>
   query<void>(
     `
       UPDATE AdmittedEntry
@@ -180,8 +183,10 @@ export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetI
     [NetID]
   );
 
-
-export const arriveAtHallBF: (NetID: string, arriveTime: string) => Promise<void> = async (NetID, arriveTime) => {
+export const arriveAtHallBF: (
+  NetID: string,
+  arriveTime: string
+) => Promise<void> = async (NetID, arriveTime) => {
   const arriveTimeBF = moment(arriveTime).toDate();
   query<void>(
     `
@@ -195,7 +200,7 @@ export const arriveAtHallBF: (NetID: string, arriveTime: string) => Promise<void
     `,
     [arriveTimeBF, NetID]
   );
-}
+};
 
 export interface DiningHallActivityFromSQL {
   DiningHallName: string;
@@ -322,7 +327,6 @@ export const checkIfAdmitted = async (
   return result.length > 0 ? parseAdmittedEntryWithGroupFromSQL(result[0]) : null;
 };
 
-
 export const attemptAdmitBF: (
   NetID: string,
   admitTime: string
@@ -368,10 +372,8 @@ export const attemptAdmitBF: (
       );
 
       INSERT INTO AdmittedEntry (QueueRequestID, TableID, AdmitOffQueueTime)
-      SELECT QueueRequestID, TableID
+      SELECT QueueRequestID, TableID, ? AS AdmitOffQueueTime
       FROM ToAdmit;
-      UNION 
-      VALUES ?
 
       UPDATE QueueRequest
       SET ExitQueueTime = ?
