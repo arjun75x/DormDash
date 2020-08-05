@@ -84,7 +84,13 @@ const QueueDisplay = ({
     });
   };
 
-  return <Box display="flex" alignItems="center"></Box>;
+  return (
+    <Box display="flex" alignItems="center">
+      {queueReqResponse.queueRequest && (
+        <OnQueueDisplay queueRequest={queueReqResponse.queueRequest} />
+      )}
+    </Box>
+  );
 };
 
 export default QueueDisplay;
