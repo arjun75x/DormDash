@@ -214,6 +214,14 @@ functions:
             identitySource: method.request.header.Authorization
             type: token
 
+  genActivity:
+    handler: src/routes/admit/genActivity.handler
+    events:
+      - http:
+          path: /admit/activity
+          method: post
+          cors: true
+
   leaveQueue:
     handler: src/routes/queue/leaveQueue.handler
     events:

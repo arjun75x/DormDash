@@ -179,36 +179,45 @@ export interface DiningHallActivity {
   }>;
 }
 
-export const getActivity: () => Promise<DiningHallActivity> = async () => {
-  const activity = await multiQuery<DiningHallActivityFromSQL>(
+export const genActivity: () => Promise<Array<void>> = async () =>
+  await multiQuery<void>(
     `
-      START TRANSACTION;
+    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+    
+    START TRANSACTION;
 
-      DROP TEMPORARY TABLE IF EXISTS EatingDistribution;
+    DROP TABLE IF EXISTS EatingDistribution;
 
-      CREATE TEMPORARY TABLE EatingDistribution AS (
-        SELECT 
-          DiningHallName,
-          DAYOFWEEK(GroupArrivalTime) AS d,
-          (HOUR(GroupArrivalTime) + i) AS hr,
-          COUNT(DISTINCT QueueRequestID) as num
-        FROM AdmittedEntry
-        NATURAL JOIN DiningHallTable
-        JOIN Integers ON i <= TIMESTAMPDIFF(HOUR, GroupArrivalTime, GroupExitTime)
-        GROUP BY DiningHallName, d, hr
-        ORDER BY d ASC, hr ASC
-      );
+    CREATE TABLE EatingDistribution AS (
+      SELECT 
+        DiningHallName,
+        DAYOFWEEK(GroupArrivalTime) AS d,
+        (HOUR(GroupArrivalTime) + i) AS hr,
+        COUNT(DISTINCT QueueRequestID) as num
+      FROM AdmittedEntry
+      NATURAL JOIN DiningHallTable
+      JOIN Integers ON i <= TIMESTAMPDIFF(HOUR, GroupArrivalTime, GroupExitTime)
+      GROUP BY DiningHallName, d, hr
+      ORDER BY d ASC, hr ASC
+    );
+    
+    DROP TABLE IF EXISTS EatingDistributionTotals;
 
-      DROP TEMPORARY TABLE IF EXISTS EatingDistributionTotals;
+    CREATE TABLE EatingDistributionTotals AS (
+      SELECT 
+        DiningHallName,
+        SUM(num) AS total
+      FROM EatingDistribution
+      GROUP BY DiningHallName
+    );
 
-      CREATE TEMPORARY TABLE EatingDistributionTotals AS (
-        SELECT 
-          DiningHallName,
-          SUM(num) AS total
-        FROM EatingDistribution
-        GROUP BY DiningHallName
-      );
+    COMMIT;
+  `
+  );
 
+export const getActivity: () => Promise<DiningHallActivity> = async () => {
+  const activity = await query<DiningHallActivityFromSQL>(
+    `
       SELECT
         DiningHallName,
         d AS 'DayOfWeek',
@@ -217,8 +226,7 @@ export const getActivity: () => Promise<DiningHallActivity> = async () => {
       FROM EatingDistribution
       NATURAL JOIN EatingDistributionTotals;
     `,
-    null,
-    5
+    null
   );
 
   return activity.reduce((obj, v) => {

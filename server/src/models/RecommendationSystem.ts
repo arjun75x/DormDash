@@ -72,7 +72,7 @@ export const retrainRecommendation: () => void = async () => {
         CALL AVG_PAST_DATA();
         `
   );
-}
+};
 export const rankByPastDataSQL: () => Promise<Array<string>> = async () => {
   const rankedHalls = await query<RecSystemBase>(
     `
