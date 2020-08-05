@@ -38,17 +38,17 @@ export const rankByBusynessSQL: () => Promise<Array<string>> = async () => {
 };
 
 export const rankByPastDataSQL: () => Promise<Array<string>> = async () => {
-  await query<void>(
-    `
+    const rankedHalls = await query<Array<RecSystemBase>>(
+        `
         DROP PROCEDURE IF EXISTS AVG_PAST_DATA;
 
         CREATE PROCEDURE AVG_PAST_DATA()
             BEGIN
                 DECLARE i int default 0;
 
-                DROP TABLE IF EXISTS PastDataTable;
+                DROP TEMPORARY TABLE IF EXISTS PastDataTable;
 
-                CREATE TABLE PastDataTable(
+                CREATE TEMPORARY TABLE PastDataTable(
                     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                     DiningHallName VARCHAR(255),
                     NumRequests INT
@@ -66,21 +66,18 @@ export const rankByPastDataSQL: () => Promise<Array<string>> = async () => {
                     GROUP BY dh.DiningHallName
                     ORDER BY IFNULL(q.Num, 0);
                     SET i = i + 1;
-                END WHILE;                
+                END WHILE;
+                
+                SELECT DiningHallName, AVG(NumRequests) as NumRequests
+                FROM PastDataTable
+                GROUP BY DiningHallName
+                ORDER BY AVG(NumRequests) ASC;
             END;
         
         CALL AVG_PAST_DATA();
         `
-  );
-  const rankedHalls = await query<RecSystemBase>(
-    `
-        SELECT DiningHallName, AVG(NumRequests) as NumRequests
-        FROM PastDataTable
-        GROUP BY DiningHallName
-        ORDER BY AVG(NumRequests) ASC;
-        `
-  );
-  return rankedHalls.map((hall) => hall.DiningHallName);
+    );
+  return rankedHalls[2].map((hall) => hall.DiningHallName);
 };
 
 export const getRecommendation: (
