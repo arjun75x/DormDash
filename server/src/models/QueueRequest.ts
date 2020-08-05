@@ -176,13 +176,17 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
         WHERE NetID = ?
         ORDER BY QueueRequestID DESC
         LIMIT 1
-        );
+        )
+      AND q.Canceled = 0
+      AND q.ExitQueueTime IS NULL;
       `,
       [NetID, NetID, NetID]
     )
   ).shift();
 
-  return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
+  return queueRequest.QueueRequestID !== null
+    ? parseQueueRequestWithGroupFromSQL(queueRequest)
+    : null;
 };
 
 export const getQueueSize = async (diningHallName: string): Promise<number> => {

@@ -169,3 +169,58 @@ export const getActivity: () => Promise<Array<void>> = async () =>
     `,
     []
   );
+
+export const checkIfEating = async (NetID: string): Promise<boolean> => {
+  const result = await query<number[]>(
+    `
+    SELECT EntryID
+    FROM AdmittedEntry
+    NATURAL JOIN QueueGroup
+    WHERE 
+      GroupArrivalTime IS NOT NULL
+      AND GroupExitTime IS NULL
+      AND NetID = ?
+  `,
+    [NetID]
+  );
+
+  return result.length > 0;
+};
+
+export const checkIfAdmitted = async (
+  NetID: string
+): Promise<AdmittedEntryWithMeta | null> => {
+  const result = await query<AdmittedEntryWithMetaFromSQL>(
+    `
+    SELECT
+      EntryID,
+      MealType,
+      AdmitOffQueueTime,
+      TableID,
+      QueueRequestID,
+      DiningHallName,
+      CONCAT(
+        '[',
+        GROUP_CONCAT(
+          CONCAT(
+            '"',
+            NetID,
+            '"'
+          )
+        ),
+        ']'
+      ) AS QueueGroup
+    FROM AdmittedEntry
+    NATURAL JOIN QueueGroup
+    NATURAL JOIN DiningHallTable
+    WHERE 
+      NetID = ?
+      AND GroupArrivalTime IS NULL
+    GROUP BY EntryID
+    ORDER BY EntryID DESC;
+    `,
+    [NetID]
+  );
+
+  return result.length > 0 ? parseAdmittedEntryWithGroupFromSQL(result[0]) : null;
+};
