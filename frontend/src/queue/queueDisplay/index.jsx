@@ -58,9 +58,14 @@ const QueueDisplay = ({
       },
       method: "POST",
       body: JSON.stringify({ NetID: userNetID }),
-    }).then(() => {
-      setQueueReqResponseCB({});
-    });
+    })
+      .then(() => {
+        setQueueReqResponseCB({});
+      })
+      .catch((error) => {
+        handleExit();
+        console.error("Error:", error);
+      });
   };
 
   const handleRemoveFromQueue = () => {
@@ -71,9 +76,14 @@ const QueueDisplay = ({
       },
       method: "POST",
       body: JSON.stringify({ NetID: userNetID }),
-    }).then(() => {
-      setQueueReqResponseCB({});
-    });
+    })
+      .then(() => {
+        setQueueReqResponseCB({});
+      })
+      .catch((error) => {
+        handleRemoveFromQueue();
+        console.error("Error:", error);
+      });
   };
 
   return (
