@@ -28,79 +28,24 @@ const QueueRequest = ({
     setInputNetId("");
   };
 
-  const handleQueueRequest = (event) => {
-    // console.log(userNetID);
-
+  const handleQueueRequest = () => {
     fetch("http://localhost:3000/dev/queue", {
       headers: {
-        // Authorization: getToken(),
         Authorization: encodeBasicAuthHeader("Google", userTokenID),
         "Content-Type": "application/json",
       },
       method: "POST",
-      //hardcoded rn
       body: JSON.stringify({
         DiningHallName: selectedDiningHall,
         QueueGroup: groupNetIds,
       }),
     })
-      .then((response) => {
-        var r = response.json();
-        return r;
-      })
-      .then(function (r) {
-        console.log(r.message);
-        if (r.message === "Success!") {
-          var admitpoll = setInterval(function () {
-            console.log("trying to admit!");
-            fetch("http://localhost:3000/dev/admit", {
-              headers: {
-                Authorization: encodeBasicAuthHeader("Google", userTokenID),
-
-                "Content-Type": "application/json",
-              },
-              method: "POST",
-              body: JSON.stringify({ NetID: userNetID }),
-            })
-              .then((response) => {
-                // console.log(response.json());
-                return response.json();
-              })
-              .then(function (r) {
-                if (r.message === "Success!") {
-                  console.log("ya got admitted boi");
-                  clearInterval(admitpoll);
-                  return r;
-                }
-                else{
-                  return Promise.reject();
-                }
-              })
-              .then(({ admittedEntry }) => {
-                //   /* this populates the queueRequest state */
-                var toFilter = [
-                  "QueueRequestID",
-                  "DiningHallName",
-                  "AdmitOffQueueTime",
-                  "QueueGroup",
-                ];
-                setQueueReqResponseCB(
-                  Object.keys(admittedEntry)
-                    .filter((key) => toFilter.includes(key))
-                    .reduce((obj, key) => {
-                      obj[key] = admittedEntry[key];
-                      return obj;
-                    }, {})
-                );
-              });
-          }, 5000);
+      .then((response) => response.json())
+      .then(({ message, ...rest }) => {
+        if (message === "Success!") {
+          setQueueReqResponseCB(rest);
         }
-        console.log(r);
       });
-    //TODO: should add error catching here
-
-    //also clear groupNetIds
-    setGroupNetIds([]);
   };
 
   return (
@@ -133,26 +78,18 @@ const QueueRequest = ({
           </Button>
         </Box>
         <Box display="flex" flexWrap="flex">
-          {groupNetIds.map((netId, i) => {
-            return (
-              <>
-                {netId === userNetID ? (
-                  <Chip
-                    disabled
-                    variant="outlined"
-                    label={netId}
-                    onDelete={() => handleDeleteNetIdFromGroup(netId)}
-                  />
-                ) : (
-                  <Chip
-                    variant="outlined"
-                    label={netId}
-                    onDelete={() => handleDeleteNetIdFromGroup(netId)}
-                  />
-                )}
-              </>
-            );
-          })}
+          {groupNetIds.map((netId, i) =>
+            netId === userNetID ? (
+              <Chip variant="outlined" label={netId} key={indexedDB} />
+            ) : (
+              <Chip
+                variant="outlined"
+                label={netId}
+                onDelete={() => handleDeleteNetIdFromGroup(netId)}
+                key={i}
+              />
+            )
+          )}
         </Box>
       </Box>
     </Box>

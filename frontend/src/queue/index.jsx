@@ -63,13 +63,13 @@ const Queue = ({
       });
   };
 
-  // useEffect(() => {
-  //   checkIfQueued();
+  useEffect(() => {
+    checkIfQueued();
 
-  //   return () => {
-  //     clearTimeout(queueReqTimeoutId.current);
-  //   };
-  // }, []);
+    return () => {
+      clearTimeout(queueReqTimeoutId.current);
+    };
+  }, []);
 
   useEffect(() => {
     //get user location
@@ -154,6 +154,7 @@ const Queue = ({
   function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
+  console.log({ queueReqResponse });
 
   return (
     <>
@@ -194,8 +195,7 @@ const Queue = ({
             />
           </>
         )}
-
-      {/* {queueReqResponse &&
+      {queueReqResponse &&
         Object.keys(queueReqResponse).length !== 0 &&
         hasLoggedIn && (
           <Box
@@ -213,7 +213,7 @@ const Queue = ({
               userNetID={userNetID}
             />
           </Box>
-        )} */}
+        )}
       {finishRec && (
         <Snackbar open={finishRec} onClose={handleClose}>
           <Alert onClose={handleClose} severity="success">

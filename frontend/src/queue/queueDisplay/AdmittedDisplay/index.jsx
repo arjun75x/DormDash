@@ -1,4 +1,27 @@
+const useStyles = makeStyles({
+  root: {
+    minWidth: 275,
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 8,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+  cardAction: {
+    justifyContent: "center",
+  },
+});
+
 const AdmittedDisplay = () => {
+  const classes = useStyles();
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent>
