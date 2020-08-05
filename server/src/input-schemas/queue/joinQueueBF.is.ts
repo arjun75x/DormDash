@@ -21,8 +21,8 @@ export default {
             type: 'array',
           },
           joinTime: {
-              type: 'datetime'
-          }
+              type: 'string'
+          },
 
         },
       },
