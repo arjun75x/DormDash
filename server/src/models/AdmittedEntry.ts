@@ -162,3 +162,20 @@ export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetI
     `,
     [NetID]
   );
+
+export const checkIfEating = async (NetID: string): Promise<boolean> => {
+  const result = await query<number[]>(
+    `
+    SELECT EntryID
+    FROM AdmittedEntry
+    NATURAL JOIN QueueGroup
+    WHERE 
+      GroupArrivalTime IS NOT NULL
+      AND GroupExitTime IS NULL
+      AND NetID = ?
+  `,
+    [NetID]
+  );
+
+  return result.length > 0;
+};
