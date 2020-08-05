@@ -33,7 +33,7 @@ const Queue = ({
   const [recDH, setRecDH] = useState("");
   const [finishRec, setFinishRec] = useState(false);
   const [finishCheckGroup, setFinishCheckGroup] = useState(false);
-  const [justEntered, setJustEntered] = useState(true);
+  const justEntered = useRef(true);
 
   const checkIfQueued = () => {
     const params = { NetID: userNetID };
@@ -48,9 +48,9 @@ const Queue = ({
       .then((response) => response.json())
       .then(({ message, ...rest }) => {
         if (message === "Success!") {
-          if (justEntered) {
+          if (justEntered.current) {
             setFinishCheckGroup(true);
-            setJustEntered(false);
+            justEntered.current = false;
           }
 
           setQueueReqResponse(rest);
