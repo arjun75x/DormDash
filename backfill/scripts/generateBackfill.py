@@ -16,15 +16,15 @@ for i in range(5):
     queue_group = list(set(random.choices(["tincher2", "arjunsa2", "naymanl2", "ajhsu2"], k=random.randint(1,4))))
     # random_distribution = np.random.normal(0, (7 * 24 * 60 * 60))
     # random_time = (datetime.datetime.now() - datetime.timedelta(seconds=random_distribution)).isoformat()
-    random_distribution = np.random.normal(0, (3 * 60 * 60))
-    meal_end = datetime.timedelta(seconds=(8 * 60 * 60))
+    random_distribution = np.random.normal(0, (4 * 60 * 60))
+    meal_end = datetime.timedelta(seconds=(2 * 60 * 60))
     # testing 8 PM ET to 5 PM ET
     random_time = (datetime.datetime.now() - meal_end - datetime.timedelta(seconds=random_distribution)).isoformat()
 
     auth = ("DeveloperOnly", "arjunsa2")
     body1 = {
         # "DiningHallName": dining_hall_choice,
-        "DiningHallName": "LAR",
+        "DiningHallName": "FAR",
         "QueueGroup": queue_group,
         "joinTime": random_time
     }
