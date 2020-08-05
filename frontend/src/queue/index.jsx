@@ -39,11 +39,15 @@ const Queue = ({
   useEffect(() => {
     if (diningHalls.length === 0) return;
 
-    fetch("http://localhost:3000/dev/admit/activity", {
-      headers: {
-        Authorization: authHeader,
-      },
-    })
+    fetch(
+      "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/admit/activity",
+      {
+        mode: "cors",
+        headers: {
+          Authorization: authHeader,
+        },
+      }
+    )
       .then((response) => response.json())
       .then(({ activity }) => {
         setVisitFrequency(processFrequencyData(activity, diningHalls));
@@ -52,10 +56,13 @@ const Queue = ({
 
   const checkIfQueued = () => {
     const params = { NetID: userNetID };
-    const checkGroupURL = new URL("http://localhost:3000/dev/checkGroup");
+    const checkGroupURL = new URL(
+      "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/checkGroup"
+    );
     checkGroupURL.search = new URLSearchParams(params).toString();
 
     fetch(checkGroupURL, {
+      mode: "cors",
       headers: {
         Authorization: authHeader,
       },
@@ -93,11 +100,15 @@ const Queue = ({
       setUserLong(position.coords.longitude);
     });
 
-    fetch("http://localhost:3000/dev/admin/dining-hall", {
-      headers: {
-        Authorization: authHeader,
-      },
-    })
+    fetch(
+      "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/admin/dining-hall",
+      {
+        mode: "cors",
+        headers: {
+          Authorization: authHeader,
+        },
+      }
+    )
       .then((response) => response.json())
       .then(({ diningHalls }) => {
         setDiningHalls(diningHalls.map(({ DiningHallName }) => DiningHallName));
@@ -109,11 +120,14 @@ const Queue = ({
 
     clearTimeout(queueSizeTimeoutId.current);
 
-    const url = new URL("http://localhost:3000/dev/queue/size");
+    const url = new URL(
+      "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/queue/size"
+    );
     url.search = new URLSearchParams({ DiningHallName: selectedDiningHall });
 
     const pollQueueSize = () => {
       fetch(url, {
+        mode: "cors",
         headers: {
           Authorization: authHeader,
           "Content-Type": "application/json",
@@ -135,17 +149,21 @@ const Queue = ({
 
   useEffect(() => {
     //AF call here
-    fetch("http://localhost:3000/dev/recommendation", {
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({
-        Latitude: parseFloat(userLat),
-        Longitude: parseFloat(userLong),
-      }),
-    })
+    fetch(
+      "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/recommendation",
+      {
+        mode: "cors",
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          Latitude: parseFloat(userLat),
+          Longitude: parseFloat(userLong),
+        }),
+      }
+    )
       .then((response) => response.json())
       .then(({ DiningHallName }) => {
         setFinishRec(true);
