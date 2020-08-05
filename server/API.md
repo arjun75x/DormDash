@@ -417,3 +417,32 @@ Cancel your group from the queue
   "message": "string"
 }
 ```
+## POST /admitBF
+
+Attempts to admit off the queue given a time. Returns back null admittedEntry and message "Not yet!" if it can't
+
+### Request Body Schema
+
+```json
+{
+  "NetID": "string",
+  "admitTime" : "string"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+  "admittedEntry": {
+    "EntryID": "number",
+    "MealType": "string",
+    "AdmitOffQueueTime": "datetime",
+    "TableID": "number",
+    "QueueRequestID": "number",
+    "DiningHallName": "string",
+    "QueueGroup": ["NetID"]
+  }
+}
+```
