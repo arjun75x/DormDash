@@ -291,7 +291,7 @@ export const checkIfAdmitted = async (
 
 
 export const attemptAdmitBF: (
-  NetID: string
+  NetID: string,
   admitTime: string
 ) => Promise<AdmittedEntryWithMeta | null> = async (NetID, admitTime) => {
   const admitTimeBF = moment(admitTime).toDate();
