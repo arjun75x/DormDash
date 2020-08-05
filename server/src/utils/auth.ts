@@ -57,7 +57,6 @@ export const validateTokenAndReturnUser = async (token: Token): Promise<User | n
       }
 
       const payload = ticket.getPayload();
-      console.log(payload);
       const netId = validateIllinoisEmail(payload.email);
       return netId && (await getOrCreateUserByNetId(netId, payload.name));
 

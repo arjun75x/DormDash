@@ -1,18 +1,17 @@
 export default {
-    type: 'object',
-    required: ['headers'],
-    properties: {
-      headers: {
-        type: 'object',
-        properties: {
-          Authorization: {
-            type: 'string',
-          },
+  type: 'object',
+  required: ['headers'],
+  properties: {
+    headers: {
+      type: 'object',
+      properties: {
+        Authorization: {
+          type: 'string',
         },
       },
-      queryStringParameters: {
-        type: 'object'
-      }
     },
-  };
-  
+    queryStringParameters: {
+      type: 'object',
+    },
+  },
+};

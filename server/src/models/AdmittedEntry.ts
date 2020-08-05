@@ -162,3 +162,10 @@ export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetI
     `,
     [NetID]
   );
+
+export const getActivity: () => Promise<Array<void>> = async () =>
+  query<void>(
+    `
+    `,
+    []
+  );
