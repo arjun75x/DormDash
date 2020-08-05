@@ -376,3 +376,41 @@ Returns the best dining hall based on recommendation system
   "DiningHallName": "string"
 }
 ```
+
+
+# Backfill Routes:
+
+## POST /queueBF
+
+Joins the queue at specified time and inserts record into QueueGroup, QueueRequest
+(for backfill purposes only)
+
+### Request Body Schema
+
+```json
+{
+  "DiningHallName": "string",
+  "QueueGroup": ["NetID"],
+  "joinTime" : "datetime"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+  "queueRequest": {
+    "QueueRequestID": "number",
+    "EnterQueueTime": "datetime",
+    "ExitQueueTime": "datetime",
+    "RequestTime": "datetime",
+    "Preferences": "string",
+    "Canceled": "boolean",
+    "DiningHallName": "string",
+    "QueueGroup": ["NetID"],
+    "QueuePosition": "number"
+  }
+}
+```
+

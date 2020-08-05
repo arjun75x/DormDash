@@ -188,3 +188,72 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
     ? parseQueueRequestWithGroupFromSQL(queueRequest)
     : null;
 };
+
+export const joinQueueBF: (
+  DiningHallName: string,
+  NetID: Array<string>,
+  joinTime: datetime
+) => Promise<QueueRequest | null> = async (DiningHallName, NetID, joinTime) => {
+  const queueRequest = (
+    await multiQuery<QueueRequestWithGroupFromSQL>(
+      `
+      START TRANSACTION;
+
+      DROP TEMPORARY TABLE IF EXISTS GroupMembers;
+
+      CREATE TEMPORARY TABLE GroupMembers(
+        NetID VARCHAR(255) NOT NULL PRIMARY KEY
+      );
+
+      INSERT INTO GroupMembers(NetID)
+      VALUES ?;
+
+      INSERT INTO QueueRequest(DiningHallName, EnterQueueTime, RequestTime)
+      VALUES (?, ?, ?);
+
+      SET @QueueRequestID := LAST_INSERT_ID();
+
+      INSERT INTO QueueGroup(NetID, QueueRequestID)
+      SELECT NetID, @QueueRequestID AS QueueRequestID
+      FROM GroupMembers;
+
+      COMMIT;
+
+      SELECT 
+      q.QueueRequestID,
+      q.EnterQueueTime,
+      q.ExitQueueTime,
+      q.RequestTime,
+      q.Preferences,
+      q.Canceled,
+      q.DiningHallName,
+      CONCAT(
+        '[',
+        GROUP_CONCAT(
+          CONCAT(
+            '"',
+            g.NetID,
+            '"'
+          )
+        ),
+        ']'
+      ) AS QueueGroup,
+      (
+        SELECT COUNT(*) 
+        FROM QueueRequest qq
+        WHERE qq.ExitQueueTime IS NULL 
+        AND qq.Canceled = 0 
+        AND qq.DiningHallName = ? 
+        AND qq.EnterQueueTime <= (SELECT temp.EnterQueueTime FROM QueueRequest temp WHERE temp.QueueRequestID = @QueueRequestID)
+        ) AS QueuePosition
+      FROM QueueRequest q
+      LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
+      WHERE q.QueueRequestID = @QueueRequestID;
+      `,
+      [NetID.map((netID) => [netID]), DiningHallName, joinTime, joinTime DiningHallName],
+      8
+    )
+  ).shift();
+
+  return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
+};
