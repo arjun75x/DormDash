@@ -211,10 +211,9 @@ export const leaveQueue: (NetID: string) => Promise<Array<void>> = async (NetID)
     const joinTimeDT = moment(joinTime).toDate();
     const queueRequest = (
       await multiQuery<QueueRequestWithGroupFromSQL>(
-        `
-        START TRANSACTION;
-  
+        ` 
         SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+        START TRANSACTION;
   
         DROP TEMPORARY TABLE IF EXISTS GroupMembers;
   

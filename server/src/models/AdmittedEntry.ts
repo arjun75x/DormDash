@@ -291,14 +291,14 @@ export const checkIfAdmitted = async (
 
 
 export const attemptAdmitBF: (
-  NetID: string,
+  NetID: string
   admitTime: string
 ) => Promise<AdmittedEntryWithMeta | null> = async (NetID, admitTime) => {
-  
   const admitTimeBF = moment(admitTime).toDate();
   const admittedEntry = (
     await multiQuery<AdmittedEntryWithMetaFromSQL>(
       `
+      SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
       START TRANSACTION;
 
       DROP TEMPORARY TABLE IF EXISTS ToAdmit;
@@ -312,7 +312,7 @@ export const attemptAdmitBF: (
         FROM QueueRequest q
         NATURAL JOIN DiningHallTable dht
         WHERE
-          q.EnterQueueTime <= CURRENT_TIMESTAMP  -- Ready to eat
+          q.EnterQueueTime <= ?  -- Ready to eat
           AND q.ExitQueueTime IS NULL  -- Filter out those admitted off the queue
           AND q.Canceled = FALSE  -- Filter out those who left the queue
           AND dht.TableID NOT IN (
@@ -337,9 +337,6 @@ export const attemptAdmitBF: (
       INSERT INTO AdmittedEntry (QueueRequestID, TableID)
       SELECT QueueRequestID, TableID
       FROM ToAdmit;
-
-      INSERT INTO AdmittedEntry (AdmitOffQueueTime)
-      VALUES ?
 
       UPDATE QueueRequest
       SET ExitQueueTime = ?
@@ -371,8 +368,8 @@ export const attemptAdmitBF: (
       WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit)
       GROUP BY EntryID;
       `,
-      [NetID, admitTimeBF, admitTimeBF],
-      6
+      [admitTimeBF, NetID, admitTimeBF],
+      7
     )
   ).shift();
 
