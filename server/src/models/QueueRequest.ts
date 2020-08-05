@@ -192,8 +192,9 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
 export const joinQueueBF: (
   DiningHallName: string,
   NetID: Array<string>,
-  joinTime: datetime
+  joinTime: string
 ) => Promise<QueueRequest | null> = async (DiningHallName, NetID, joinTime) => {
+  const joinTimeDT = moment(joinTime).toDate()
   const queueRequest = (
     await multiQuery<QueueRequestWithGroupFromSQL>(
       `
@@ -250,7 +251,7 @@ export const joinQueueBF: (
       LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
       WHERE q.QueueRequestID = @QueueRequestID;
       `,
-      [NetID.map((netID) => [netID]), DiningHallName, joinTime, joinTime DiningHallName],
+      [NetID.map((netID) => [netID]), DiningHallName, joinTimeDT, joinTimeDT, DiningHallName],
       8
     )
   ).shift();
