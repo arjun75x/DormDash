@@ -28,7 +28,8 @@ const QueueRequest = ({
   };
 
   const handleQueueRequest = () => {
-    fetch("http://localhost:3000/dev/queue", {
+    fetch("https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/queue", {
+      mode: "cors",
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/json",

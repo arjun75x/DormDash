@@ -13,7 +13,8 @@ const QueueDisplay = ({
   const admitTimeoutId = useRef(null);
 
   const attemptToAdmitOffQueue = () => {
-    fetch("http://localhost:3000/dev/admit", {
+    fetch("https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/admit", {
+      mode: "cors",
       headers: {
         Authorization: authHeader,
 
@@ -39,39 +40,51 @@ const QueueDisplay = ({
   }, [queueReqResponse]);
 
   const handleEnter = () => {
-    fetch("http://localhost:3000/dev/admit/arrive", {
-      headers: {
-        Authorization: authHeader,
+    fetch(
+      "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/admit/arrive",
+      {
+        mode: "cors",
+        headers: {
+          Authorization: authHeader,
 
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({ NetID: userNetID }),
-    }).then(() => setQueueReqResponseCB({ eating: true }));
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({ NetID: userNetID }),
+      }
+    ).then(() => setQueueReqResponseCB({ eating: true }));
   };
 
   const handleExit = () => {
-    fetch("http://localhost:3000/dev/admit/leave", {
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({ NetID: userNetID }),
-    }).then(() => {
+    fetch(
+      "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/admit/leave",
+      {
+        mode: "cors",
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({ NetID: userNetID }),
+      }
+    ).then(() => {
       setQueueReqResponseCB({});
     });
   };
 
   const handleRemoveFromQueue = () => {
-    fetch("http://localhost:3000/dev/queue/leave", {
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({ NetID: userNetID }),
-    }).then(() => {
+    fetch(
+      "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev/queue/leave",
+      {
+        mode: "cors",
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({ NetID: userNetID }),
+      }
+    ).then(() => {
       setQueueReqResponseCB({});
     });
   };
