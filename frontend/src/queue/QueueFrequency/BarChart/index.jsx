@@ -1,15 +1,15 @@
 import * as d3 from "d3";
 import React, { useRef, useEffect } from "react";
 import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
 
 function BarChart({ data }) {
   const chartRef = useRef();
+  const axisRef = useRef();
 
   useEffect(() => {
     d3.select(chartRef.current)
       .attr("width", 425)
-      .attr("height", 200)
+      .attr("height", 230)
       .style("border-top", "solid rgba(0, 0, 0, 0.26)");
   }, []);
 
@@ -21,6 +21,24 @@ function BarChart({ data }) {
         .scaleLinear()
         .domain([0, maxVal === 0 ? 1 : maxVal])
         .range([195, 20]);
+
+      const xScale = d3.scaleLinear().domain([0, 24]).range([0, 408]);
+      d3.select(axisRef.current).call(
+        d3
+          .axisBottom()
+          .scale(xScale)
+          .tickValues([2, 5, 8, 11, 14, 17, 20, 23])
+          .tickFormat((hourInd) => {
+            const hour = (hourInd + 4) % 24;
+            const amOrPm = hour < 12 ? "a" : "p";
+
+            return hour === 0
+              ? `12a`
+              : hour <= 12
+              ? `${hour}${amOrPm}`
+              : `${hour - 12}${amOrPm}`;
+          })
+      );
 
       const rectangles = svg.selectAll("rect").data(data);
 
@@ -82,7 +100,9 @@ function BarChart({ data }) {
 
   return (
     <Box>
-      <svg ref={chartRef}></svg>
+      <svg ref={chartRef}>
+        <g ref={axisRef} transform="translate(7, 200)" />
+      </svg>
     </Box>
   );
 }
