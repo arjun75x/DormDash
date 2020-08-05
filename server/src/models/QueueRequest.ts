@@ -123,8 +123,9 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
   NetID
 ) => {
   const queueRequest = (
-    await query<QueueRequestWithGroupFromSQL>(
+    await multiQuery<QueueRequestWithGroupFromSQL>(
       `
+      SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
       SELECT 
       q.QueueRequestID,
       q.EnterQueueTime,
@@ -164,7 +165,8 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
       AND q.Canceled = FALSE
       AND q.ExitQueueTime IS NULL;
       `,
-      [NetID, NetID, NetID]
+      [NetID, NetID, NetID],
+      1
     )
   ).shift();
 
