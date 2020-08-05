@@ -15,6 +15,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import OnQueueDisplay from "./onQueueDisplay";
 import AdmittedDisplay from "./AdmittedDisplay";
+import EatingDisplay from "./EatingDisplay";
 
 const QueueDisplay = ({
   queueReqResponse,
@@ -86,6 +87,7 @@ const QueueDisplay = ({
           handleEnter={handleEnter}
         />
       )}
+      {queueReqResponse.eating && <EatingDisplay handleExit={handleExit} />}
     </Box>
   );
 };

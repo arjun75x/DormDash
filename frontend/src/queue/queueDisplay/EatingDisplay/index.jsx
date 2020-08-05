@@ -1,3 +1,14 @@
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
@@ -24,18 +35,21 @@ const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const handleClose = (event, reason) => {
-  if (reason === "clickaway") {
-    return;
-  }
-};
-
 const EatingDisplay = ({ handleExit }) => {
   const classes = useStyles();
+  const [enterPopupOpen, setEnterPopupOpen] = useState(true);
+
+  const handleClose = () => {
+    setEnterPopupOpen(false);
+  };
 
   return (
     <>
-      <Snackbar open={hasEntered} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar
+        open={enterPopupOpen}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
         <Alert onClose={handleClose} severity="success">
           You've entered the Dining Hall - enjoy your meal!
         </Alert>
@@ -49,7 +63,6 @@ const EatingDisplay = ({ handleExit }) => {
             <Button
               variant="contained"
               color="secondary"
-              // className={classes.button}
               startIcon={<ExitToAppIcon />}
               onClick={() => {
                 if (
