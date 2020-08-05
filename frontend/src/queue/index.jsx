@@ -7,7 +7,7 @@ import QueueSize from "./queueSize";
 import Navbar from "../nav/navbar";
 import Box from "@material-ui/core/Box";
 import { encodeBasicAuthHeader } from "../utils";
-import OnQueueDisplay from "./onQueueDisplay";
+import OnQueueDisplay from "./queueDisplay/onQueueDisplay";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -46,33 +46,30 @@ const Queue = ({
       },
     })
       .then((response) => response.json())
-      .then(function (response) {
-        if (response.message === "Success!") {
+      .then(({ message, ...rest }) => {
+        if (message === "Success!") {
           if (justEntered) {
             setFinishCheckGroup(true);
             setJustEntered(false);
           }
 
-          return response;
+          setQueueReqResponse(rest);
+        } else {
+          setQueueReqResponse({});
         }
-
-        return Promise.reject();
-      })
-      .then(({ message, ...rest }) => {
-        setQueueReqResponse(rest);
       })
       .finally(() => {
         queueReqTimeoutId.current = setTimeout(checkIfQueued, 10000);
       });
   };
 
-  useEffect(() => {
-    checkIfQueued();
+  // useEffect(() => {
+  //   checkIfQueued();
 
-    return () => {
-      clearTimeout(queueReqTimeoutId.current);
-    };
-  }, []);
+  //   return () => {
+  //     clearTimeout(queueReqTimeoutId.current);
+  //   };
+  // }, []);
 
   useEffect(() => {
     //get user location
@@ -198,7 +195,7 @@ const Queue = ({
           </>
         )}
 
-      {queueReqResponse &&
+      {/* {queueReqResponse &&
         Object.keys(queueReqResponse).length !== 0 &&
         hasLoggedIn && (
           <Box
@@ -216,7 +213,7 @@ const Queue = ({
               userNetID={userNetID}
             />
           </Box>
-        )}
+        )} */}
       {finishRec && (
         <Snackbar open={finishRec} onClose={handleClose}>
           <Alert onClose={handleClose} severity="success">

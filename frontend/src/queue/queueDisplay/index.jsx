@@ -13,6 +13,7 @@ import { green } from "@material-ui/core/colors";
 import { encodeBasicAuthHeader } from "../../utils";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import OnQueueDisplay from "./onQueueDisplay";
 
 const useStyles = makeStyles({
   root: {
@@ -46,10 +47,6 @@ const GreenButton = withStyles((theme) => ({
   },
 }))(Button);
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 const QueueDisplay = ({
   queueReqResponse,
   setQueueReqResponseCB,
@@ -57,10 +54,8 @@ const QueueDisplay = ({
   userNetID,
 }) => {
   const classes = useStyles();
-  const [hasEntered, setHasEntered] = useState(false);
 
   const handleEnter = (event) => {
-    setHasEntered(true);
     //TODO: post join queue, need some way to tie in user later
     fetch("http://localhost:3000/dev/admit/arrive", {
       headers: {
@@ -76,12 +71,7 @@ const QueueDisplay = ({
     });
   };
 
-  const handleExit = (event) => {
-    setHasEntered(false);
-
-    /* TODO: not sure if this is the right place to clear queueReqResponse dict for conditional rendering in the parent*/
-    setQueueReqResponseCB({});
-
+  const handleExit = () => {
     fetch("http://localhost:3000/dev/admit/leave", {
       headers: {
         Authorization: encodeBasicAuthHeader("Google", userTokenID),
@@ -89,111 +79,12 @@ const QueueDisplay = ({
       },
       method: "POST",
       body: JSON.stringify({ NetID: userNetID }),
-    }).then((response) => {
-      var r = response.json();
-      return r;
+    }).then(() => {
+      setQueueReqResponseCB({});
     });
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-  };
-
-  return (
-    <Box display="flex" alignItems="center">
-      {!hasEntered && (
-        <Card className={classes.root} variant="outlined">
-          <CardContent>
-            <Typography className={classes.title} gutterBottom>
-              Queue Position
-            </Typography>
-            <Typography variant="body2" component="p">
-              {queueReqResponse.QueueRequestID}
-            </Typography>
-            <Typography className={classes.title} gutterBottom>
-              Dining Hall
-            </Typography>
-            <Typography variant="body2" component="p">
-              {queueReqResponse.DiningHallName}
-            </Typography>
-            <Typography className={classes.title} gutterBottom>
-              Admitted off the Queue on
-            </Typography>
-            <Typography variant="body2" component="p">
-              {Date(queueReqResponse.AdmitOffQueueTime)}
-            </Typography>
-            <Typography className={classes.title} gutterBottom>
-              Queue Group
-            </Typography>
-            <Typography variant="body2" component="p">
-              {queueReqResponse.QueueGroup.join(", ")}
-            </Typography>
-          </CardContent>
-          <CardActions className={classes.cardAction}>
-            <Button
-              variant="contained"
-              color="secondary"
-              // className={classes.button}
-              startIcon={<DeleteIcon />}
-              // onClick={() => {if (window.confirm('Are you sure you wish to delete this Dining Hall DB Table?')) handleDeleteDH() } }
-            >
-              Unqueue
-            </Button>
-            <GreenButton
-              variant="contained"
-              color="primary"
-              // className={classes.margin}
-              startIcon={<PublishIcon />}
-              onClick={handleEnter}
-            >
-              Enter
-            </GreenButton>
-          </CardActions>
-        </Card>
-      )}
-
-      {hasEntered && (
-        <>
-          <Snackbar
-            open={hasEntered}
-            autoHideDuration={6000}
-            onClose={handleClose}
-          >
-            <Alert onClose={handleClose} severity="success">
-              You've entered the Dining Hall - enjoy your meal!
-            </Alert>
-          </Snackbar>
-          <Card className={classes.root} variant="outlined">
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Enjoy your meal! Remember to click Exit when you wish to leave.
-              </Typography>
-              <CardActions className={classes.cardAction}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  // className={classes.button}
-                  startIcon={<ExitToAppIcon />}
-                  onClick={(e) => {
-                    if (
-                      window.confirm(
-                        "Confirm that you wish to leave the Dining Hall"
-                      )
-                    )
-                      handleExit(e);
-                  }}
-                >
-                  Exit
-                </Button>
-              </CardActions>
-            </CardContent>
-          </Card>
-        </>
-      )}
-    </Box>
-  );
+  return <Box display="flex" alignItems="center"></Box>;
 };
 
 export default QueueDisplay;

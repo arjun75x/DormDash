@@ -1,0 +1,52 @@
+const AdmittedDisplay = () => {
+  return (
+    <Card className={classes.root} variant="outlined">
+      <CardContent>
+        <Typography className={classes.title} gutterBottom>
+          Queue Position
+        </Typography>
+        <Typography variant="body2" component="p">
+          {queueReqResponse.QueueRequestID}
+        </Typography>
+        <Typography className={classes.title} gutterBottom>
+          Dining Hall
+        </Typography>
+        <Typography variant="body2" component="p">
+          {queueReqResponse.DiningHallName}
+        </Typography>
+        <Typography className={classes.title} gutterBottom>
+          Admitted off the Queue on
+        </Typography>
+        <Typography variant="body2" component="p">
+          {Date(queueReqResponse.AdmitOffQueueTime)}
+        </Typography>
+        <Typography className={classes.title} gutterBottom>
+          Queue Group
+        </Typography>
+        <Typography variant="body2" component="p">
+          {queueReqResponse.QueueGroup.join(", ")}
+        </Typography>
+      </CardContent>
+      <CardActions className={classes.cardAction}>
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<DeleteIcon />}
+        >
+          Unqueue
+        </Button>
+        <GreenButton
+          variant="contained"
+          color="primary"
+          // className={classes.margin}
+          startIcon={<PublishIcon />}
+          onClick={handleEnter}
+        >
+          Enter
+        </GreenButton>
+      </CardActions>
+    </Card>
+  );
+};
+
+export default AdmittedDisplay;
