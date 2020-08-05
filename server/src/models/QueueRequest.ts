@@ -177,7 +177,8 @@ export const checkGroup: (NetID: string) => Promise<QueueRequest | null> = async
         ORDER BY QueueRequestID DESC
         LIMIT 1
         )
-      AND q.Canceled = 0;
+      AND q.Canceled = 0
+      AND q.ExitQueueTime IS NULL;
       `,
       [NetID, NetID, NetID]
     )

@@ -3,7 +3,7 @@ import type { HTTPRawHandler } from 'routes/handler';
 import middyfy from 'middleware/wrapper.ts';
 import InputSchema from 'input-schemas/queue/checkGroup.is';
 import { checkGroup } from 'models/QueueRequest';
-import { checkIfEating } from 'models/AdmittedEntry';
+import { checkIfEating, checkIfAdmitted } from 'models/AdmittedEntry';
 
 const _handler: HTTPRawHandler = async ({ queryStringParameters: { NetID } }) => {
   const eatingRequest = await checkIfEating(NetID);
@@ -11,12 +11,23 @@ const _handler: HTTPRawHandler = async ({ queryStringParameters: { NetID } }) =>
     return { message: 'Success!', eating: true };
   }
 
-  const queueRequest = await checkGroup(NetID);
+  const admittedEntry = await checkIfAdmitted(NetID);
+  if (admittedEntry) {
+    return {
+      message: 'Success!',
+      admittedEntry,
+    };
+  }
 
-  return {
-    message: queueRequest == null ? 'Not in a group!' : 'Success!',
-    queueRequest: queueRequest,
-  };
+  const queueRequest = await checkGroup(NetID);
+  if (queueRequest) {
+    return {
+      message: 'Success!',
+      queueRequest,
+    };
+  }
+
+  return { message: 'Not in a group!' };
 };
 
 export const handler = middyfy(_handler, InputSchema);
