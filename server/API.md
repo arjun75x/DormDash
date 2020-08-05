@@ -376,3 +376,44 @@ Returns the best dining hall based on recommendation system
   "DiningHallName": "string"
 }
 ```
+
+## GET /admit/activity
+
+Returns a histogram of dining hall activity
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+  "activity": {
+    "[DiningHallName: string]": [
+      {
+          "DayOfWeek": "number",
+          "Hour": "number",
+          "Weight": "number"
+      }
+    ]
+  }
+}
+```
+
+## POST /queue/leave
+
+Cancel your group from the queue
+
+### Request Body Schema
+
+```json
+{
+  "NetID": "string"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string"
+}
+```
