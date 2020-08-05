@@ -6,9 +6,11 @@ import QueueDisplay from "./queueDisplay";
 import QueueSize from "./queueSize";
 import Navbar from "../nav/navbar";
 import Box from "@material-ui/core/Box";
+import { processFrequencyData } from "./QueueFrequency";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import QueueFrequency from "./QueueFrequency";
 
 const Queue = ({
   hasLoggedIn,
@@ -25,12 +27,28 @@ const Queue = ({
   const [queueReqResponse, setQueueReqResponse] = useState({});
   const queueReqTimeoutId = useRef(null);
 
+  const [visitFrequency, setVisitFrequency] = useState(null);
+
   const [userLat, setUserLat] = useState("");
   const [userLong, setUserLong] = useState("");
   const [recDH, setRecDH] = useState("");
   const [finishRec, setFinishRec] = useState(false);
   const [finishCheckGroup, setFinishCheckGroup] = useState(false);
   const justEntered = useRef(true);
+
+  useEffect(() => {
+    if (diningHalls.length === 0) return;
+
+    fetch("http://localhost:3000/dev/admit/activity", {
+      headers: {
+        Authorization: authHeader,
+      },
+    })
+      .then((response) => response.json())
+      .then(({ activity }) => {
+        setVisitFrequency(processFrequencyData(activity, diningHalls));
+      });
+  }, [diningHalls]);
 
   const checkIfQueued = () => {
     const params = { NetID: userNetID };
@@ -115,15 +133,12 @@ const Queue = ({
     };
   }, [selectedDiningHall]);
 
-  const handleSelect = (event) => {
-    setSelectedDiningHall(event.target.value);
-
+  useEffect(() => {
     //AF call here
     fetch("http://localhost:3000/dev/recommendation", {
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/json",
-        // Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2"),
       },
       method: "POST",
       body: JSON.stringify({
@@ -136,8 +151,10 @@ const Queue = ({
         setFinishRec(true);
         setRecDH(DiningHallName);
       });
+  }, []);
 
-    //to be replaced with nicer histogram
+  const handleSelect = (event) => {
+    setSelectedDiningHall(event.target.value);
   };
 
   const handleClose = (event, reason) => {
@@ -166,7 +183,7 @@ const Queue = ({
           display="flex"
           alignItems="center"
           width="100%"
-          height="250px"
+          height="350px"
           justifyContent="center"
         >
           <QueueSelect
@@ -175,6 +192,11 @@ const Queue = ({
             handleSelect={handleSelect}
           />
           {queueSize !== null && <QueueSize queueSize={queueSize} />}
+          {selectedDiningHall !== "" && visitFrequency !== null && (
+            <QueueFrequency
+              visitFrequency={visitFrequency[selectedDiningHall]}
+            />
+          )}
         </Box>
       )}
       {selectedDiningHall !== "" &&
