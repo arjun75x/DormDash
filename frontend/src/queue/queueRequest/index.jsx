@@ -10,6 +10,7 @@ const QueueRequest = ({
   setQueueReqResponseCB,
   authHeader,
   userNetID,
+  baseUrl,
 }) => {
   const [inputNetId, setInputNetId] = useState("");
   const [groupNetIds, setGroupNetIds] = useState([userNetID]);
@@ -28,7 +29,7 @@ const QueueRequest = ({
   };
 
   const handleQueueRequest = () => {
-    fetch("http://localhost:3000/dev/queue", {
+    fetch(`${baseUrl}/queue`, {
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/json",

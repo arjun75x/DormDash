@@ -131,7 +131,7 @@ const Navbar = ({
             <List>
               {["Home", "Admin"].map((text, index) => (
                 <Link
-                  to={index % 2 === 0 ? "/" : "/admin"}
+                  to={index % 2 === 0 ? "/DormDash" : "/DormDash/admin"}
                   style={{ color: "inherit", textDecoration: "inherit" }}
                   key={index}
                 >
@@ -154,7 +154,7 @@ const Navbar = ({
             <List>
               {["Home"].map((text, index) => (
                 <Link
-                  to={index % 2 === 0 ? "/" : "/admin"}
+                  to={index % 2 === 0 ? "/DormDash" : "/DormDash/admin"}
                   style={{ color: "inherit", textDecoration: "inherit" }}
                   key={index}
                 >

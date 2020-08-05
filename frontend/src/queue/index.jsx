@@ -19,6 +19,7 @@ const Queue = ({
   handleLogout,
   hasAdminPriv,
   loggedInAsDev,
+  baseUrl,
 }) => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
@@ -39,7 +40,7 @@ const Queue = ({
   useEffect(() => {
     if (diningHalls.length === 0) return;
 
-    fetch("http://localhost:3000/dev/admit/activity", {
+    fetch(`${baseUrl}/admit/activity`, {
       headers: {
         Authorization: authHeader,
       },
@@ -52,7 +53,7 @@ const Queue = ({
 
   const checkIfQueued = () => {
     const params = { NetID: userNetID };
-    const checkGroupURL = new URL("http://localhost:3000/dev/checkGroup");
+    const checkGroupURL = new URL(`${baseUrl}/checkGroup`);
     checkGroupURL.search = new URLSearchParams(params).toString();
 
     fetch(checkGroupURL, {
@@ -93,7 +94,7 @@ const Queue = ({
       setUserLong(position.coords.longitude);
     });
 
-    fetch("http://localhost:3000/dev/admin/dining-hall", {
+    fetch(`${baseUrl}/admin/dining-hall`, {
       headers: {
         Authorization: authHeader,
       },
@@ -109,7 +110,7 @@ const Queue = ({
 
     clearTimeout(queueSizeTimeoutId.current);
 
-    const url = new URL("http://localhost:3000/dev/queue/size");
+    const url = new URL(`${baseUrl}/queue/size`);
     url.search = new URLSearchParams({ DiningHallName: selectedDiningHall });
 
     const pollQueueSize = () => {
@@ -135,7 +136,7 @@ const Queue = ({
 
   useEffect(() => {
     //AF call here
-    fetch("http://localhost:3000/dev/recommendation", {
+    fetch(`${baseUrl}/recommendation`, {
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/json",
@@ -209,6 +210,7 @@ const Queue = ({
               setQueueReqResponseCB={setQueueReqResponse}
               authHeader={authHeader}
               userNetID={userNetID}
+              baseUrl={baseUrl}
             />
           </>
         )}
@@ -228,6 +230,7 @@ const Queue = ({
               setQueueReqResponseCB={setQueueReqResponse}
               authHeader={authHeader}
               userNetID={userNetID}
+              baseUrl={baseUrl}
             />
           </Box>
         )}

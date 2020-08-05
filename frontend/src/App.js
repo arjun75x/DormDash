@@ -19,6 +19,10 @@ function App() {
   const [selectedTab, setSelectedTab] = useState(0);
   const [authHeader, setAuthHeader] = useState(null);
   const [loggedInAsDev, setLoggedInAsDev] = useState(false);
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000/dev"
+      : "https://qkki7d6q92.execute-api.us-east-1.amazonaws.com/dev";
 
   const handleGoogleLogin = (token, netId, isAdmin = false) => {
     setLoggedIn(true);
@@ -86,7 +90,10 @@ function App() {
       )}
       {hasLoggedIn && userNetID !== "" && (
         <Switch>
-          <Route path="/" exact>
+          <Route path="/DormDash/admin">
+            <Admin baseUrl={baseUrl} />
+          </Route>
+          <Route path="/DormDash">
             <Queue
               hasLoggedIn={hasLoggedIn}
               authHeader={authHeader}
@@ -94,9 +101,9 @@ function App() {
               handleLogout={handleLogout}
               hasAdminPriv={hasAdminPriv}
               loggedInAsDev={loggedInAsDev}
+              baseUrl={baseUrl}
             />
           </Route>
-          <Route path="/admin" component={Admin} />
           <Route component={Error} />
         </Switch>
       )}

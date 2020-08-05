@@ -9,11 +9,12 @@ const QueueDisplay = ({
   setQueueReqResponseCB,
   authHeader,
   userNetID,
+  baseUrl,
 }) => {
   const admitTimeoutId = useRef(null);
 
   const attemptToAdmitOffQueue = () => {
-    fetch("http://localhost:3000/dev/admit", {
+    fetch(`${baseUrl}/admit`, {
       headers: {
         Authorization: authHeader,
 
@@ -39,7 +40,7 @@ const QueueDisplay = ({
   }, [queueReqResponse]);
 
   const handleEnter = () => {
-    fetch("http://localhost:3000/dev/admit/arrive", {
+    fetch(`${baseUrl}/admit/arrive`, {
       headers: {
         Authorization: authHeader,
 
@@ -51,7 +52,7 @@ const QueueDisplay = ({
   };
 
   const handleExit = () => {
-    fetch("http://localhost:3000/dev/admit/leave", {
+    fetch(`${baseUrl}/admit/leave`, {
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/json",
@@ -64,7 +65,7 @@ const QueueDisplay = ({
   };
 
   const handleRemoveFromQueue = () => {
-    fetch("http://localhost:3000/dev/queue/leave", {
+    fetch(`${baseUrl}/queue/leave`, {
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/json",

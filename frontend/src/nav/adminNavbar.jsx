@@ -21,10 +21,7 @@ import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
-
-
 const AdminNavbar = () => {
-
   const [menu, updateMenu] = useState({
     drawerOpened: false,
   });
@@ -36,7 +33,7 @@ const AdminNavbar = () => {
   };
   const useStyles = makeStyles((theme) => ({
     root: {
-      flexGrow: 1
+      flexGrow: 1,
     },
     drawer: {
       width: 250,
@@ -50,8 +47,6 @@ const AdminNavbar = () => {
     },
     // toolbar: theme.mixins.toolbar,
   }));
-
-  
 
   const classes = useStyles();
   return (
@@ -74,9 +69,8 @@ const AdminNavbar = () => {
               <Typography variant="h4" color="inherit">
                 Dash
               </Typography>
-              <FastfoodIcon flexGrow={1}/>
+              <FastfoodIcon flexGrow={1} />
             </Box>
-            
           </Toolbar>
         </AppBar>
       </Box>
@@ -97,7 +91,7 @@ const AdminNavbar = () => {
           <List>
             {["Home", "Admin"].map((text, index) => (
               <Link
-                to={index % 2 === 0 ? "/" : "/admin"}
+                to={index % 2 === 0 ? "/DormDash" : "/DormDash/admin"}
                 style={{ color: "inherit", textDecoration: "inherit" }}
                 key={index}
               >
@@ -110,7 +104,6 @@ const AdminNavbar = () => {
               </Link>
             ))}
           </List>
-          
         </Box>
       </Drawer>
     </>
