@@ -1,44 +1,9 @@
 import { query } from 'middleware/custom/mysql-connector';
-import { getDiningHalls } from 'models/DiningHall';
 
 export interface RecSystemBase {
   DiningHallName: string;
   NumRequests: number;
 }
-
-function sortDictionaryOnKeys(dict) {
-  const toSort = [];
-  for (const key in dict) {
-    if (dict.hasOwnProperty(key)) {
-      toSort.push([key, dict[key]]);
-    }
-  }
-  toSort.sort(function (a, b) {
-    return a[1] - b[1];
-  });
-  const out = Array<string>();
-  toSort.forEach((elem) => {
-    out.push(elem[0]);
-  });
-  return out;
-}
-
-export const rankByLocation: (
-  Latitude: number,
-  Longitude: number
-) => Promise<Array<string>> = async (Latitude, Longitude) => {
-  const diningHalls = await getDiningHalls();
-  const hallByDistance = {};
-
-  diningHalls.forEach((hall) => {
-    const distance = Math.sqrt(
-      Math.pow(Latitude - hall.Latitude, 2) + Math.pow(Longitude - hall.Longitude, 2)
-    );
-    hallByDistance[hall.DiningHallName] = distance;
-  });
-
-  return sortDictionaryOnKeys(hallByDistance);
-};
 
 export const rankByLocationSQL: (
   Latitude: number,
@@ -53,28 +18,6 @@ export const rankByLocationSQL: (
     [Latitude, Longitude]
   );
   return rankedHalls.map((hall) => hall.DiningHallName);
-};
-
-export const rankByBusyness: () => Promise<Array<string>> = async () => {
-  const diningHalls = await getDiningHalls();
-  const hallByQueueSize = {};
-
-  for (const i in diningHalls) {
-    const hall = diningHalls[i];
-    const queueSize = (
-      await query<number>(
-        `
-            SELECT COUNT(QueueRequestID) as size
-            FROM QueueRequest
-            WHERE ExitQueueTime IS NULL AND DiningHallName = ?
-            `,
-        [hall.DiningHallName]
-      )
-    ).shift();
-    hallByQueueSize[hall.DiningHallName] = queueSize['size'];
-  }
-
-  return sortDictionaryOnKeys(hallByQueueSize);
 };
 
 export const rankByBusynessSQL: () => Promise<Array<string>> = async () => {
@@ -147,19 +90,22 @@ export const getRecommendation: (
   const rankedLocations = await rankByLocationSQL(Latitude, Longitude);
   const rankedBusyness = await rankByBusynessSQL();
   const rankedPastData = await rankByPastDataSQL();
-  const final_rank = {};
+  const finalRank = {};
+
   for (let i = 0; i < rankedLocations.length; i++) {
-    final_rank[rankedLocations[i]] += i;
-    final_rank[rankedBusyness[i]] += i * 0.5;
-    final_rank[rankedPastData[i]] += i * 0.25;
+    finalRank[rankedLocations[i]] += i;
+    finalRank[rankedBusyness[i]] += i * 0.5;
+    finalRank[rankedPastData[i]] += i * 0.25;
   }
-  let best_hall = Object.keys(final_rank)[0];
-  let lowest_rank = Object.values(final_rank)[0];
-  for (const hall in final_rank) {
-    if (final_rank[hall] < lowest_rank) {
-      lowest_rank = final_rank[hall];
+  let best_hall = Object.keys(finalRank)[0];
+  let lowest_rank = Object.values(finalRank)[0];
+
+  Object.keys(finalRank).forEach((hall) => {
+    if (finalRank[hall] < lowest_rank) {
+      lowest_rank = finalRank[hall];
       best_hall = hall;
     }
-  }
+  });
+
   return best_hall;
 };
