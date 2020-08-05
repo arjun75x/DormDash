@@ -367,16 +367,14 @@ export const attemptAdmitBF: (
         LIMIT 1
       );
 
-      INSERT INTO AdmittedEntry (QueueRequestID, TableID)
+      INSERT INTO AdmittedEntry (QueueRequestID, TableID, AdmitOffQueueTime)
       SELECT QueueRequestID, TableID
       FROM ToAdmit;
+      UNION 
+      VALUES ?
 
       UPDATE QueueRequest
       SET ExitQueueTime = ?
-      WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit);
-
-      UPDATE AdmittedEntry
-      SET AdmitOffQueueTime = ?
       WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit);
 
       COMMIT;
