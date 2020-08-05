@@ -6,6 +6,7 @@ import QueueDisplay from "./queueDisplay";
 import QueueSize from "./queueSize";
 import Navbar from "../nav/navbar";
 import Box from "@material-ui/core/Box";
+import { processFrequencyData } from "./QueueFrequency";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -25,12 +26,28 @@ const Queue = ({
   const [queueReqResponse, setQueueReqResponse] = useState({});
   const queueReqTimeoutId = useRef(null);
 
+  const [visitFrequency, setVisitFrequency] = useState(null);
+
   const [userLat, setUserLat] = useState("");
   const [userLong, setUserLong] = useState("");
   const [recDH, setRecDH] = useState("");
   const [finishRec, setFinishRec] = useState(false);
   const [finishCheckGroup, setFinishCheckGroup] = useState(false);
   const justEntered = useRef(true);
+
+  useEffect(() => {
+    if (diningHalls.length === 0) return;
+
+    fetch("http://localhost:3000/dev/admit/activity", {
+      headers: {
+        Authorization: authHeader,
+      },
+    })
+      .then((response) => response.json())
+      .then(({ activity }) => {
+        setVisitFrequency(processFrequencyData(activity, diningHalls));
+      });
+  }, [diningHalls]);
 
   const checkIfQueued = () => {
     const params = { NetID: userNetID };
