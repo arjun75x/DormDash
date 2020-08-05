@@ -10,25 +10,29 @@ import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
+import { encodeBasicAuthHeader } from "./utils";
 
 function App() {
   const [hasLoggedIn, setLoggedIn] = useState(false);
-  const [userTokenID, setUserTokenID] = useState();
   const [userNetID, setUserNetID] = useState("");
-  const [hasAdminPriv, setPriv] = useState(false);
+  const [hasAdminPriv, setHasAdminPriv] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
+  const [authHeader, setAuthHeader] = useState(null);
+  const [loggedInAsDev, setLoggedInAsDev] = useState(false);
 
-  const handleLogIn = (value) => {
-    setLoggedIn(value);
+  const handleGoogleLogin = (token, netId, isAdmin = false) => {
+    setLoggedIn(true);
+    setAuthHeader(encodeBasicAuthHeader("Google", token));
+    setUserNetID(netId);
+    setHasAdminPriv(isAdmin);
+    setLoggedInAsDev(false);
   };
-  const handleUserToken = (value) => {
-    setUserTokenID(value);
-  };
-  const handleUserNetID = (value) => {
-    setUserNetID(value);
-  };
-  const handlePriv = (value) => {
-    setPriv(value);
+
+  const handleLogout = () => {
+    setLoggedIn(false);
+    setAuthHeader(null);
+    setUserNetID("");
+    setHasAdminPriv(false);
   };
 
   const handleTabChange = (event, value) => {
@@ -38,7 +42,9 @@ function App() {
   const handleDeveloperLogin = (netId) => {
     setLoggedIn(true);
     setUserNetID(netId);
-    setUserTokenID("DeveloperOnly");
+    setAuthHeader(encodeBasicAuthHeader("DeveloperOnly", netId));
+    setHasAdminPriv(true);
+    setLoggedInAsDev(true);
   };
 
   return (
@@ -70,12 +76,7 @@ function App() {
               justifyContent="center"
             >
               {selectedTab === 0 ? (
-                <LogIn
-                  setLoggedInCB={handleLogIn}
-                  handleUserTokenCB={handleUserToken}
-                  handleUserNetIDCB={handleUserNetID}
-                  handlePrivCB={handlePriv}
-                />
+                <LogIn handleLogin={handleGoogleLogin} />
               ) : (
                 <DeveloperLogin handleLogin={handleDeveloperLogin} />
               )}
@@ -88,12 +89,11 @@ function App() {
           <Route path="/" exact>
             <Queue
               hasLoggedIn={hasLoggedIn}
-              setLoggedInCB={handleLogIn}
-              userTokenID={userTokenID}
+              authHeader={authHeader}
               userNetID={userNetID}
-              handleUserTokenCB={handleUserToken}
-              handleUserNetIDCB={handleUserNetID}
+              handleLogout={handleLogout}
               hasAdminPriv={hasAdminPriv}
+              loggedInAsDev={loggedInAsDev}
             />
           </Route>
           <Route path="/admin" component={Admin} />

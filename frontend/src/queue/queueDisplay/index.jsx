@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import Box from "@material-ui/core/Box";
-import { encodeBasicAuthHeader } from "../../utils";
 import OnQueueDisplay from "./onQueueDisplay";
 import AdmittedDisplay from "./AdmittedDisplay";
 import EatingDisplay from "./EatingDisplay";
@@ -8,7 +7,7 @@ import EatingDisplay from "./EatingDisplay";
 const QueueDisplay = ({
   queueReqResponse,
   setQueueReqResponseCB,
-  userTokenID,
+  authHeader,
   userNetID,
 }) => {
   const admitTimeoutId = useRef(null);
@@ -16,7 +15,7 @@ const QueueDisplay = ({
   const attemptToAdmitOffQueue = () => {
     fetch("http://localhost:3000/dev/admit", {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
 
         "Content-Type": "application/json",
       },
@@ -42,7 +41,7 @@ const QueueDisplay = ({
   const handleEnter = () => {
     fetch("http://localhost:3000/dev/admit/arrive", {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
 
         "Content-Type": "application/json",
       },
@@ -54,7 +53,7 @@ const QueueDisplay = ({
   const handleExit = () => {
     fetch("http://localhost:3000/dev/admit/leave", {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
         "Content-Type": "application/json",
       },
       method: "POST",

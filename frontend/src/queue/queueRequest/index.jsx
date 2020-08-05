@@ -4,12 +4,11 @@ import Chip from "@material-ui/core/Chip";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import { encodeBasicAuthHeader } from "../../utils";
 
 const QueueRequest = ({
   selectedDiningHall,
   setQueueReqResponseCB,
-  userTokenID,
+  authHeader,
   userNetID,
 }) => {
   const [inputNetId, setInputNetId] = useState("");
@@ -31,7 +30,7 @@ const QueueRequest = ({
   const handleQueueRequest = () => {
     fetch("http://localhost:3000/dev/queue", {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
         "Content-Type": "application/json",
       },
       method: "POST",

@@ -2,25 +2,12 @@ import React from "react";
 import { useGoogleLogin } from "react-google-login";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
-const LogIn = ({
-  setLoggedInCB,
-  handleUserTokenCB,
-  handleUserNetIDCB,
-  handlePrivCB,
-}) => {
+const LogIn = ({ handleLogin }) => {
   const admins = ["tincher2", "ajhsu2", "naymanl2", "arjunsa2"];
   const onSuccess = (response) => {
-    // console.log(response);
-    setLoggedInCB(true);
-    handleUserTokenCB(response.tokenId);
     var UIemail = response.profileObj.email;
     var netID = UIemail.substring(0, UIemail.indexOf("@"));
-    handleUserNetIDCB(netID);
-
-    //determine admin priveleges
-    if (admins.includes(netID)) {
-      handlePrivCB(true);
-    }
+    handleLogin(response.tokenId, netID, admins.includes(netID));
   };
 
   const onFailure = (response) => {

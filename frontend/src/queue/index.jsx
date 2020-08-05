@@ -6,20 +6,17 @@ import QueueDisplay from "./queueDisplay";
 import QueueSize from "./queueSize";
 import Navbar from "../nav/navbar";
 import Box from "@material-ui/core/Box";
-import { encodeBasicAuthHeader } from "../utils";
-import OnQueueDisplay from "./queueDisplay/onQueueDisplay";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
 const Queue = ({
   hasLoggedIn,
-  setLoggedInCB,
-  userTokenID,
+  authHeader,
   userNetID,
-  handleUserTokenCB,
-  handleUserNetIDCB,
+  handleLogout,
   hasAdminPriv,
+  loggedInAsDev,
 }) => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
@@ -42,7 +39,7 @@ const Queue = ({
 
     fetch(checkGroupURL, {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
       },
     })
       .then((response) => response.json())
@@ -80,7 +77,7 @@ const Queue = ({
 
     fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
       },
     })
       .then((response) => response.json())
@@ -100,7 +97,7 @@ const Queue = ({
     const pollQueueSize = () => {
       fetch(url, {
         headers: {
-          Authorization: encodeBasicAuthHeader("Google", userTokenID),
+          Authorization: authHeader,
           "Content-Type": "application/json",
         },
       })
@@ -124,7 +121,7 @@ const Queue = ({
     //AF call here
     fetch("http://localhost:3000/dev/recommendation", {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
         "Content-Type": "application/json",
         // Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2"),
       },
@@ -159,11 +156,10 @@ const Queue = ({
     <>
       <Navbar
         hasLoggedIn={hasLoggedIn}
-        setLoggedInCB={setLoggedInCB}
         userNetID={userNetID}
-        handleUserTokenCB={handleUserTokenCB}
-        handleUserNetIDCB={handleUserNetIDCB}
+        handleLogout={handleLogout}
         hasAdminPriv={hasAdminPriv}
+        loggedInAsDev={loggedInAsDev}
       />
       {hasLoggedIn && Object.keys(queueReqResponse).length === 0 && (
         <Box
@@ -189,7 +185,7 @@ const Queue = ({
             <QueueRequest
               selectedDiningHall={selectedDiningHall}
               setQueueReqResponseCB={setQueueReqResponse}
-              userTokenID={userTokenID}
+              authHeader={authHeader}
               userNetID={userNetID}
             />
           </>
@@ -208,7 +204,7 @@ const Queue = ({
             <QueueDisplay
               queueReqResponse={queueReqResponse}
               setQueueReqResponseCB={setQueueReqResponse}
-              userTokenID={userTokenID}
+              authHeader={authHeader}
               userNetID={userNetID}
             />
           </Box>
