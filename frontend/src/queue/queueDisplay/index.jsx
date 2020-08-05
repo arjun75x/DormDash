@@ -50,7 +50,7 @@ const QueueDisplay = ({
     }).then(() => setQueueReqResponseCB({ eating: true }));
   };
 
-  const handleExit = () => {
+  const handleExit = (retries = 5) => {
     fetch("http://localhost:3000/dev/admit/leave", {
       headers: {
         Authorization: authHeader,
@@ -59,16 +59,23 @@ const QueueDisplay = ({
       method: "POST",
       body: JSON.stringify({ NetID: userNetID }),
     })
-      .then(() => {
-        setQueueReqResponseCB({});
+      .then((res) => {
+        if (res.ok) {
+          setQueueReqResponseCB({});
+          return res.json();
+        }
+        if (retries > 0) {
+          return handleExit(retries - 1);
+        } else {
+          throw new Error(res);
+        }
       })
       .catch((error) => {
-        handleExit();
         console.error("Error:", error);
       });
   };
 
-  const handleRemoveFromQueue = () => {
+  const handleRemoveFromQueue = (retries = 5) => {
     fetch("http://localhost:3000/dev/queue/leave", {
       headers: {
         Authorization: authHeader,
@@ -77,11 +84,18 @@ const QueueDisplay = ({
       method: "POST",
       body: JSON.stringify({ NetID: userNetID }),
     })
-      .then(() => {
-        setQueueReqResponseCB({});
+      .then((res) => {
+        if (res.ok) {
+          setQueueReqResponseCB({});
+          return res.json();
+        }
+        if (retries > 0) {
+          return handleRemoveFromQueue(retries - 1);
+        } else {
+          throw new Error(res);
+        }
       })
       .catch((error) => {
-        handleRemoveFromQueue();
         console.error("Error:", error);
       });
   };
