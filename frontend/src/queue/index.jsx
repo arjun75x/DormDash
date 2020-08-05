@@ -10,6 +10,7 @@ import { processFrequencyData } from "./QueueFrequency";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import QueueFrequency from "./QueueFrequency";
 
 const Queue = ({
   hasLoggedIn,
@@ -192,6 +193,11 @@ const Queue = ({
             handleSelect={handleSelect}
           />
           {queueSize !== null && <QueueSize queueSize={queueSize} />}
+          {selectedDiningHall !== "" && visitFrequency !== null && (
+            <QueueFrequency
+              visitFrequency={visitFrequency[selectedDiningHall]}
+            />
+          )}
         </Box>
       )}
       {selectedDiningHall !== "" &&
