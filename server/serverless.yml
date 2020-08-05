@@ -201,3 +201,15 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+
+  getActivity:
+    handler: src/routes/admit/getActivity.handler
+    events:
+      - http:
+          path: /admit/activity
+          method: get
+          cors: true
+          # authorizer:
+          #   name: authorizer
+          #   identitySource: method.request.header.Authorization
+          #   type: token

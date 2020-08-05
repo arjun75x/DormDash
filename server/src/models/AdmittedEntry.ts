@@ -163,12 +163,75 @@ export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetI
     [NetID]
   );
 
-export const getActivity: () => Promise<Array<void>> = async () =>
-  query<void>(
+export interface DiningHallActivityFromSQL {
+  DiningHallName: string;
+  DayOfWeek: number;
+  Hour: number;
+  Weight: number;
+}
+
+export interface DiningHallActivity {
+  [DiningHallName: string]: Array<{
+    DayOfWeek: number;
+    Hour: number;
+    Weight: number;
+  }>;
+}
+
+export const getActivity: () => Promise<DiningHallActivity> = async () => {
+  const activity = await multiQuery<DiningHallActivityFromSQL>(
     `
+      START TRANSACTION;
+
+      DROP TEMPORARY TABLE IF EXISTS EatingDistribution;
+
+      CREATE TEMPORARY TABLE EatingDistribution AS (
+        SELECT 
+          DiningHallName,
+          DAYOFWEEK(GroupArrivalTime) AS d,
+          (HOUR(GroupArrivalTime) + i) AS hr,
+          COUNT(DISTINCT QueueRequestID) as num
+        FROM AdmittedEntry
+        NATURAL JOIN DiningHallTable
+        JOIN Integers ON i <= TIMESTAMPDIFF(HOUR, GroupArrivalTime, GroupExitTime)
+        GROUP BY DiningHallName, d, hr
+        ORDER BY d ASC, hr ASC
+      );
+
+      DROP TEMPORARY TABLE IF EXISTS EatingDistributionTotals;
+
+      CREATE TEMPORARY TABLE EatingDistributionTotals AS (
+        SELECT 
+          DiningHallName,
+          SUM(num) AS total
+        FROM EatingDistribution
+        GROUP BY DiningHallName
+      );
+
+      SELECT
+        DiningHallName,
+        d AS 'DayOfWeek',
+        hr AS 'Hour',
+        num / total AS Weight
+      FROM EatingDistribution
+      NATURAL JOIN EatingDistributionTotals;
     `,
-    []
+    null,
+    5
   );
+
+  return activity.reduce((obj, v) => {
+    if (!obj.hasOwnProperty(v.DiningHallName)) {
+      obj[v.DiningHallName] = [];
+    }
+    obj[v.DiningHallName].push({
+      DayOfWeek: v.DayOfWeek,
+      Hour: v.Hour,
+      Weight: v.Weight,
+    });
+    return obj;
+  }, {});
+};
 
 export const checkIfEating = async (NetID: string): Promise<boolean> => {
   const result = await query<number[]>(

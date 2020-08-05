@@ -38,8 +38,8 @@ export const rankByBusynessSQL: () => Promise<Array<string>> = async () => {
 };
 
 export const rankByPastDataSQL: () => Promise<Array<string>> = async () => {
-    const rankedHalls = await query<Array<RecSystemBase>>(
-        `
+  const rankedHalls = await query<Array<RecSystemBase>>(
+    `
         DROP PROCEDURE IF EXISTS AVG_PAST_DATA;
 
         CREATE PROCEDURE AVG_PAST_DATA()
@@ -76,7 +76,7 @@ export const rankByPastDataSQL: () => Promise<Array<string>> = async () => {
         
         CALL AVG_PAST_DATA();
         `
-    );
+  );
   return rankedHalls[2].map((hall) => hall.DiningHallName);
 };
 
