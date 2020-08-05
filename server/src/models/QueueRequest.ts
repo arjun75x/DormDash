@@ -201,3 +201,78 @@ export const leaveQueue: (NetID: string) => Promise<Array<void>> = async (NetID)
   `,
     [NetID]
   );
+
+
+
+  export const joinQueueBF: (
+    DiningHallName: string,
+    NetID: Array<string>,
+    joinTime: string
+  ) => Promise<QueueRequest | null> = async (DiningHallName, NetID, joinTime) => {
+    const joinTimeDT = moment(joinTime).toDate();
+    const queueRequest = (
+      await multiQuery<QueueRequestWithGroupFromSQL>(
+        `
+        START TRANSACTION;
+  
+        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+  
+        DROP TEMPORARY TABLE IF EXISTS GroupMembers;
+  
+        CREATE TEMPORARY TABLE GroupMembers(
+          NetID VARCHAR(255) NOT NULL PRIMARY KEY
+        );
+  
+        INSERT INTO GroupMembers(NetID)
+        VALUES ?;
+  
+        INSERT INTO QueueRequest(DiningHallName, EnterQueueTime, RequestTime)
+        VALUES (?, ?, ?);
+  
+        SET @QueueRequestID := LAST_INSERT_ID();
+  
+        INSERT INTO QueueGroup(NetID, QueueRequestID)
+        SELECT NetID, @QueueRequestID AS QueueRequestID
+        FROM GroupMembers;
+  
+        COMMIT;
+  
+        SELECT 
+        q.QueueRequestID,
+        q.EnterQueueTime,
+        q.ExitQueueTime,
+        q.RequestTime,
+        q.Preferences,
+        q.Canceled,
+        q.DiningHallName,
+        CONCAT(
+          '[',
+          GROUP_CONCAT(
+            CONCAT(
+              '"',
+              g.NetID,
+              '"'
+            )
+          ),
+          ']'
+        ) AS QueueGroup,
+        (
+          SELECT COUNT(*) 
+          FROM QueueRequest qq
+          WHERE 
+            qq.ExitQueueTime IS NULL 
+            AND qq.Canceled = FALSE
+            AND qq.DiningHallName = q.DiningHallName
+            AND qq.EnterQueueTime <= q.EnterQueueTime
+        ) AS QueuePosition
+        FROM QueueRequest q
+        LEFT JOIN QueueGroup g ON q.QueueRequestID = g.QueueRequestID
+        WHERE q.QueueRequestID = @QueueRequestID;
+        `,
+        [NetID.map((netID) => [netID]), DiningHallName, joinTimeDT, joinTimeDT],
+        9
+      )
+    ).shift();
+  
+    return queueRequest != null ? parseQueueRequestWithGroupFromSQL(queueRequest) : null;
+  };
