@@ -225,3 +225,11 @@ functions:
             name: authorizer
             identitySource: method.request.header.Authorization
             type: token
+  
+  retrainRecommendation:
+    handler: src/routes/recommendation-system/retrainRecommendation.handler
+    events:
+      - http:
+          path: /retrain-recommendation
+          method: get
+          cors: true

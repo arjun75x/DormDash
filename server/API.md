@@ -417,3 +417,14 @@ Cancel your group from the queue
   "message": "string"
 }
 ```
+## GET /retrain-recommendation
+
+Rebuilds past data table used for recommendation system
+
+### Response Body Schema
+
+```json
+{
+  "message": "string"
+}
+```
