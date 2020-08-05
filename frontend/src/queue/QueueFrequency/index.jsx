@@ -1,6 +1,19 @@
 import React, { useState } from "react";
 import Box from "@material-ui/core/Box";
 import BarChart from "./BarChart";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import moment from "moment";
+
+const days = [
+  "Mondays",
+  "Tuesdays",
+  "Wednesdays",
+  "Thursdays",
+  "Fridays",
+  "Saturdays",
+  "Sundays",
+];
 
 export const processFrequencyData = (serverResponse, diningHallNames) => {
   return diningHallNames.reduce((acc, diningHallName) => {
@@ -19,10 +32,21 @@ export const processFrequencyData = (serverResponse, diningHallNames) => {
 };
 
 const QueueFrequency = ({ visitFrequency }) => {
-  const [dayInd, setDayInd] = useState(0);
+  const [dayInd, setDayInd] = useState(moment(new Date()).format("d") - 1);
+
+  const handleSelect = (event) => {
+    setDayInd(event.target.value);
+  };
 
   return (
-    <Box>
+    <Box marginLeft="50px">
+      <Select value={dayInd} onChange={handleSelect}>
+        {days.map((day, i) => (
+          <MenuItem value={i} key={i}>
+            {day}
+          </MenuItem>
+        ))}
+      </Select>
       <BarChart data={visitFrequency[dayInd]} />
     </Box>
   );

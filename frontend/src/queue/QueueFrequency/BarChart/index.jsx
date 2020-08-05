@@ -51,30 +51,7 @@ function BarChart({ data }) {
       rectangles
         .enter()
         .append("rect")
-        // .on("mouseover", (data, i) => {
-        //   d3.select(tooltipRef.current).style("opacity", 1);
-        //   d3.select(tooltipHeadingRef.current).text(
-        //     i === 0
-        //       ? "Average of Everyone"
-        //       : hasLowest && i === 1
-        //       ? "Lowest Non-Zero Average"
-        //       : `Selection ${i + 1}`
-        //   );
-        //   d3.select(tooltipEarningsRef.current).text(
-        //     `Average expected earnings: $${data}`
-        //   );
-        //   d3.select(tooltipCountRef.current).text(
-        //     `Number who fit criteria: ${num}`
-        //   );
-        // })
-        // .on("mouseout", () => d3.select(tooltipRef.current).style("opacity", 0))
-        // .on("mousemove", () =>
-        //   d3
-        //     .select(tooltipRef.current)
-        //     .style("left", `${d3.event.pageX + 10}px`)
-        //     .style("top", `${d3.event.pageY + 10}px`)
-        // )
-        .attr("fill", "#9c27b0")
+        .attr("fill", "#3f51b5")
         .attr("x", (_, i) => i * 17 + 7)
         .attr("y", () => 200)
         .attr("width", 16)
@@ -88,7 +65,7 @@ function BarChart({ data }) {
       rectangles
         .enter()
         .append("rect")
-        .attr("fill", "#9c27b0")
+        .attr("fill", "#3f51b5")
         .attr("x", (_, i) => i * 17 + 7)
         .attr("y", () => 198)
         .attr("width", 16)

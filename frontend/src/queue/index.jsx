@@ -184,7 +184,7 @@ const Queue = ({
           display="flex"
           alignItems="center"
           width="100%"
-          height="250px"
+          height="350px"
           justifyContent="center"
         >
           <QueueSelect
