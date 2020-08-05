@@ -150,7 +150,23 @@ export const leaveHall: (NetID: string) => Promise<Array<void>> = async (NetID) 
     [NetID]
   );
 
-export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetID) =>
+export const leaveHallBF: (NetID: string, leaveTime: string) => Promise<void> = async (NetID, leaveTime) => {
+  const leaveTimeBF = moment(leaveTime).toDate();
+  query<void>(
+    `
+      UPDATE AdmittedEntry
+      NATURAL JOIN QueueGroup
+      SET GroupExitTime = ?
+      WHERE 
+          GroupArrivalTime IS NOT NULL
+          AND GroupExitTime IS NULL
+          AND NetID = ?
+    `,
+    [leaveTimeBF, NetID]
+  );
+}
+
+export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetID) => 
   query<void>(
     `
       UPDATE AdmittedEntry
@@ -163,6 +179,23 @@ export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetI
     `,
     [NetID]
   );
+
+
+export const arriveAtHallBF: (NetID: string, arriveTime: string) => Promise<void> = async (NetID, arriveTime) => {
+  const arriveTimeBF = moment(arriveTime).toDate();
+  query<void>(
+    `
+      UPDATE AdmittedEntry
+      NATURAL JOIN QueueGroup
+      SET GroupArrivalTime = ?
+      WHERE 
+          GroupArrivalTime IS NULL
+          AND GroupExitTime IS NULL
+          AND NetID = ?
+    `,
+    [arriveTimeBF, NetID]
+  );
+}
 
 export interface DiningHallActivityFromSQL {
   DiningHallName: string;
@@ -312,7 +345,7 @@ export const attemptAdmitBF: (
         FROM QueueRequest q
         NATURAL JOIN DiningHallTable dht
         WHERE
-          q.EnterQueueTime <= CURRENT_TIMESTAMP  -- Ready to eat
+          q.EnterQueueTime <= ?  -- Ready to eat
           AND q.ExitQueueTime IS NULL  -- Filter out those admitted off the queue
           AND q.Canceled = FALSE  -- Filter out those who left the queue
           AND dht.TableID NOT IN (
@@ -342,6 +375,10 @@ export const attemptAdmitBF: (
       SET ExitQueueTime = ?
       WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit);
 
+      UPDATE AdmittedEntry
+      SET AdmitOffQueueTime = ?
+      WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit);
+
       COMMIT;
 
       SELECT
@@ -368,10 +405,10 @@ export const attemptAdmitBF: (
       WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit)
       GROUP BY EntryID;
       `,
-      [NetID, admitTimeBF],
+      [admitTimeBF, NetID, admitTimeBF, admitTimeBF],
       7
     )
   ).shift();
-
+  console.log(admittedEntry);
   return admittedEntry != null ? parseAdmittedEntryWithGroupFromSQL(admittedEntry) : null;
 };

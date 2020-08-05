@@ -446,3 +446,46 @@ Attempts to admit off the queue given a time. Returns back null admittedEntry an
   }
 }
 ```
+
+
+## POST /admit/leaveBF
+
+Exits the dining hall at a given time
+
+### Request Body Schema
+
+```json
+{
+  "NetID": "string",
+  "leaveTime": "string"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string"
+}
+```
+
+## POST /admit/arriveBF
+
+Enters the dining hall _after_ having been admitted at a given time
+
+### Request Body Schema
+
+```json
+{
+  "NetID": "string",
+  "arriveTime": "string"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string"
+}
+```

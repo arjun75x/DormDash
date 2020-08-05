@@ -214,6 +214,30 @@ functions:
             identitySource: method.request.header.Authorization
             type: token
 
+  leaveHallBF:
+    handler: src/routes/admit/leaveHallBF.handler
+    events:
+      - http:
+          path: /admit/leaveBF
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  arriveAtHallBF:
+    handler: src/routes/admit/arriveAtHallBF.handler
+    events:
+      - http:
+          path: /admit/arriveBF
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
   getRecommendation:
     handler: src/routes/recommendation-system/getRecommendation.handler
     events:
