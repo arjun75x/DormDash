@@ -380,6 +380,7 @@ Returns the best dining hall based on recommendation system
 
 # Backfill Routes:
 
+*time strings are in ISO 6801 format*
 ## POST /queueBF
 
 Joins the queue at specified time and inserts record into QueueGroup, QueueRequest
@@ -391,7 +392,7 @@ Joins the queue at specified time and inserts record into QueueGroup, QueueReque
 {
   "DiningHallName": "string",
   "QueueGroup": ["NetID"],
-  "joinTime" : "datetime"
+  "joinTime" : "string"
 }
 ```
 
@@ -414,3 +415,32 @@ Joins the queue at specified time and inserts record into QueueGroup, QueueReque
 }
 ```
 
+## POST /admitBF
+
+Attempts to admit off the queue given a time. Returns back null admittedEntry and message "Not yet!" if it can't
+
+### Request Body Schema
+
+```json
+{
+  "NetID": "string",
+  "admitTime" : "string"
+}
+```
+
+### Response Body Schema
+
+```json
+{
+  "message": "string",
+  "admittedEntry": {
+    "EntryID": "number",
+    "MealType": "string",
+    "AdmitOffQueueTime": "datetime",
+    "TableID": "number",
+    "QueueRequestID": "number",
+    "DiningHallName": "string",
+    "QueueGroup": ["NetID"]
+  }
+}
+```

@@ -219,3 +219,93 @@ export const checkIfAdmitted = async (
 
   return result.length > 0 ? parseAdmittedEntryWithGroupFromSQL(result[0]) : null;
 };
+
+
+export const attemptAdmitBF: (
+  NetID: string,
+  admitTime: string
+) => Promise<AdmittedEntryWithMeta | null> = async (NetID, admitTime) => {
+  
+  const admitTimeBF = moment(admitTime).toDate();
+  const admittedEntry = (
+    await multiQuery<AdmittedEntryWithMetaFromSQL>(
+      `
+      START TRANSACTION;
+
+      DROP TEMPORARY TABLE IF EXISTS ToAdmit;
+
+      CREATE TEMPORARY TABLE ToAdmit
+      AS (
+        SELECT
+          q.QueueRequestID,
+          dht.DiningHallName,
+          dht.TableID
+        FROM QueueRequest q
+        NATURAL JOIN DiningHallTable dht
+        WHERE
+          q.EnterQueueTime <= CURRENT_TIMESTAMP  -- Ready to eat
+          AND q.ExitQueueTime IS NULL  -- Filter out those admitted off the queue
+          AND q.Canceled = FALSE  -- Filter out those who left the queue
+          AND dht.TableID NOT IN (
+            SELECT TableID
+            FROM AdmittedEntry
+            WHERE GroupExitTime IS NULL
+          )  -- Filter out occupied tables
+          AND (
+            SELECT COUNT(*)
+            FROM QueueGroup g
+            WHERE g.QueueRequestID = q.QueueRequestID
+          ) <= dht.Capacity -- Filter only tables with enough seats
+          AND ? IN (
+            SELECT NetID
+            FROM QueueGroup g
+            WHERE g.QueueRequestID = q.QueueRequestID
+          )
+        ORDER BY q.EnterQueueTime DESC, dht.Capacity DESC
+        LIMIT 1
+      );
+
+      INSERT INTO AdmittedEntry (QueueRequestID, TableID)
+      SELECT QueueRequestID, TableID
+      FROM ToAdmit;
+
+      INSERT INTO AdmittedEntry (AdmitOffQueueTime)
+      VALUES ?
+
+      UPDATE QueueRequest
+      SET ExitQueueTime = ?
+      WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit);
+
+      COMMIT;
+
+      SELECT
+        EntryID,
+        MealType,
+        AdmitOffQueueTime,
+        TableID,
+        QueueRequestID,
+        DiningHallName,
+        CONCAT(
+          '[',
+          GROUP_CONCAT(
+            CONCAT(
+              '"',
+              NetID,
+              '"'
+            )
+          ),
+          ']'
+        ) AS QueueGroup
+      FROM AdmittedEntry
+      NATURAL JOIN QueueGroup
+      NATURAL JOIN DiningHallTable
+      WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit)
+      GROUP BY EntryID;
+      `,
+      [NetID, admitTimeBF, admitTimeBF],
+      6
+    )
+  ).shift();
+
+  return admittedEntry != null ? parseAdmittedEntryWithGroupFromSQL(admittedEntry) : null;
+};
