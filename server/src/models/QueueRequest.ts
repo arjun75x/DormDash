@@ -56,9 +56,8 @@ export const joinQueue: (
   const queueRequest = (
     await multiQuery<QueueRequestWithGroupFromSQL>(
       `
-      START TRANSACTION;
-
       SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+      START TRANSACTION;
 
       DROP TEMPORARY TABLE IF EXISTS GroupMembers;
 
