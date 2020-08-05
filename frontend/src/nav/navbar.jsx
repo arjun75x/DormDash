@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -16,19 +16,23 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import HomeIcon from "@material-ui/icons/Home";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import HealingIcon from "@material-ui/icons/Healing";
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import AccountCircle from "@material-ui/icons/AccountCircle";
 import FastfoodIcon from "@material-ui/icons/Fastfood";
 import Box from "@material-ui/core/Box";
-import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from "@material-ui/core/Tooltip";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
-import {useGoogleLogout } from 'react-google-login';
+import { useGoogleLogout } from "react-google-login";
 
-
-const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handleUserNetIDCB, hasAdminPriv}) => {
-
+const Navbar = ({
+  hasLoggedIn,
+  handleLogout,
+  userNetID,
+  hasAdminPriv,
+  loggedInAsDev,
+}) => {
   const [menu, updateMenu] = useState({
     drawerOpened: false,
   });
@@ -40,7 +44,7 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
   };
   const useStyles = makeStyles((theme) => ({
     root: {
-      flexGrow: 1
+      flexGrow: 1,
     },
     drawer: {
       width: 250,
@@ -55,20 +59,14 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
     // toolbar: theme.mixins.toolbar,
   }));
 
-  const onLogoutSuccess = (response) => {
-    console.log(response);
-    setLoggedInCB(false);
-    handleUserTokenCB();
-    handleUserNetIDCB("");
-  }
-  
   const onFailure = (response) => {
-    console.log('Logout failed, res: ', response);
-  }
-  const clientId = "808699597542-2jgrb1ive07o219flrasng9q0rm4fj6p.apps.googleusercontent.com";
+    console.log("Logout failed, res: ", response);
+  };
+  const clientId =
+    "808699597542-2jgrb1ive07o219flrasng9q0rm4fj6p.apps.googleusercontent.com";
 
   const { signOut } = useGoogleLogout({
-    onLogoutSuccess,
+    onLogoutSuccess: handleLogout,
     clientId,
     onFailure,
   });
@@ -94,27 +92,28 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
               <Typography variant="h4" color="inherit">
                 Dash
               </Typography>
-              <FastfoodIcon flexGrow={1}/>
+              <FastfoodIcon flexGrow={1} />
             </Box>
-            
-           
-            {!hasLoggedIn &&
-              <Button color="inherit">Login</Button>
-            }
-            {hasLoggedIn &&
+
+            {!hasLoggedIn && <Button color="inherit">Login</Button>}
+            {hasLoggedIn && (
               <>
                 <Tooltip title={userNetID}>
                   <IconButton color="inherit" aria-label={userNetID}>
                     <AccountCircle />
                   </IconButton>
                 </Tooltip>
-                <Button color="inherit" onClick={signOut}>Logout</Button>
+                <Button
+                  color="inherit"
+                  onClick={loggedInAsDev ? handleLogout : signOut}
+                >
+                  Logout
+                </Button>
               </>
-            }
+            )}
           </Toolbar>
         </AppBar>
       </Box>
-
       <Drawer
         anchor="left"
         open={menu.drawerOpened}
@@ -128,44 +127,51 @@ const Navbar = ({hasLoggedIn, setLoggedInCB, userNetID, handleUserTokenCB, handl
         <Box onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
           <Box height={64} />
           <Divider />
-          { hasAdminPriv && 
-          <List>
-            {["Home", "Admin"].map((text, index) => (
-              <Link
-                to={index % 2 === 0 ? "/" : "/admin"}
-                style={{ color: "inherit", textDecoration: "inherit" }}
-                key={index}
-              >
-                <ListItem button key={text}>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <HomeIcon /> : <SupervisorAccountIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              </Link>
-            ))}
-          </List>
-          }
-        {/* keeping map in case some history log gets add later or smthing */}
-          { !hasAdminPriv && 
-          
-          <List>
-            {["Home"].map((text, index) => (
-              <Link
-                to={index % 2 === 0 ? "/" : "/admin"}
-                style={{ color: "inherit", textDecoration: "inherit" }}
-                key={index}
-              >
-                <ListItem button key={text}>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <HomeIcon /> : <SupervisorAccountIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              </Link>
-            ))}
-          </List>
-          }
+          {hasAdminPriv && (
+            <List>
+              {["Home", "Admin"].map((text, index) => (
+                <Link
+                  to={index % 2 === 0 ? "/" : "/admin"}
+                  style={{ color: "inherit", textDecoration: "inherit" }}
+                  key={index}
+                >
+                  <ListItem button key={text}>
+                    <ListItemIcon>
+                      {index % 2 === 0 ? (
+                        <HomeIcon />
+                      ) : (
+                        <SupervisorAccountIcon />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItem>
+                </Link>
+              ))}
+            </List>
+          )}
+          {/* keeping map in case some history log gets add later or smthing */}
+          {!hasAdminPriv && (
+            <List>
+              {["Home"].map((text, index) => (
+                <Link
+                  to={index % 2 === 0 ? "/" : "/admin"}
+                  style={{ color: "inherit", textDecoration: "inherit" }}
+                  key={index}
+                >
+                  <ListItem button key={text}>
+                    <ListItemIcon>
+                      {index % 2 === 0 ? (
+                        <HomeIcon />
+                      ) : (
+                        <SupervisorAccountIcon />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItem>
+                </Link>
+              ))}
+            </List>
+          )}
         </Box>
       </Drawer>
     </>

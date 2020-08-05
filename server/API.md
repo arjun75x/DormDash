@@ -377,21 +377,36 @@ Returns the best dining hall based on recommendation system
 }
 ```
 
+## GET /admit/activity
 
-# Backfill Routes:
+Returns a histogram of dining hall activity
 
-## POST /queueBF
+### Response Body Schema
 
-Joins the queue at specified time and inserts record into QueueGroup, QueueRequest
-(for backfill purposes only)
+```json
+{
+  "message": "string",
+  "activity": {
+    "[DiningHallName: string]": [
+      {
+          "DayOfWeek": "number",
+          "Hour": "number",
+          "Weight": "number"
+      }
+    ]
+  }
+}
+```
+
+## POST /queue/leave
+
+Cancel your group from the queue
 
 ### Request Body Schema
 
 ```json
 {
-  "DiningHallName": "string",
-  "QueueGroup": ["NetID"],
-  "joinTime" : "datetime"
+  "NetID": "string"
 }
 ```
 
@@ -399,18 +414,6 @@ Joins the queue at specified time and inserts record into QueueGroup, QueueReque
 
 ```json
 {
-  "message": "string",
-  "queueRequest": {
-    "QueueRequestID": "number",
-    "EnterQueueTime": "datetime",
-    "ExitQueueTime": "datetime",
-    "RequestTime": "datetime",
-    "Preferences": "string",
-    "Canceled": "boolean",
-    "DiningHallName": "string",
-    "QueueGroup": ["NetID"],
-    "QueuePosition": "number"
-  }
+  "message": "string"
 }
 ```
-

@@ -1,6 +1,6 @@
 export default {
   type: 'object',
-  required: ['headers'],
+  required: ['headers', 'body'],
   properties: {
     headers: {
       type: 'object',
@@ -10,8 +10,14 @@ export default {
         },
       },
     },
-    queryStringParameters: {
+    body: {
       type: 'object',
+      required: ['NetID'],
+      properties: {
+        NetID: {
+          type: 'string',
+        },
+      },
     },
   },
 };

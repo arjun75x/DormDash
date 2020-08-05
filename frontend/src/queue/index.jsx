@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import QueueSelect from "./queueSelect";
 import QueueRequest from "./queueRequest";
@@ -6,32 +6,67 @@ import QueueDisplay from "./queueDisplay";
 import QueueSize from "./queueSize";
 import Navbar from "../nav/navbar";
 import Box from "@material-ui/core/Box";
-import { encodeBasicAuthHeader } from "../utils";
-import OnQueueDisplay from "./onQueueDisplay";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
 const Queue = ({
   hasLoggedIn,
-  setLoggedInCB,
-  userTokenID,
+  authHeader,
   userNetID,
-  handleUserTokenCB,
-  handleUserNetIDCB,
+  handleLogout,
   hasAdminPriv,
+  loggedInAsDev,
 }) => {
   const [diningHalls, setDiningHalls] = useState([]);
   const [selectedDiningHall, setSelectedDiningHall] = useState("");
   const [queueSize, setQueueSize] = useState(null);
-  const [queueTimeoutId, setQueueTimeoutId] = useState(null);
+  const queueSizeTimeoutId = useRef(null);
   const [queueReqResponse, setQueueReqResponse] = useState({});
+  const queueReqTimeoutId = useRef(null);
 
   const [userLat, setUserLat] = useState("");
   const [userLong, setUserLong] = useState("");
   const [recDH, setRecDH] = useState("");
   const [finishRec, setFinishRec] = useState(false);
   const [finishCheckGroup, setFinishCheckGroup] = useState(false);
+  const justEntered = useRef(true);
+
+  const checkIfQueued = () => {
+    const params = { NetID: userNetID };
+    const checkGroupURL = new URL("http://localhost:3000/dev/checkGroup");
+    checkGroupURL.search = new URLSearchParams(params).toString();
+
+    fetch(checkGroupURL, {
+      headers: {
+        Authorization: authHeader,
+      },
+    })
+      .then((response) => response.json())
+      .then(({ message, ...rest }) => {
+        if (message === "Success!") {
+          if (justEntered.current) {
+            setFinishCheckGroup(true);
+            justEntered.current = false;
+          }
+
+          setQueueReqResponse(rest);
+        } else {
+          setQueueReqResponse({});
+        }
+      })
+      .finally(() => {
+        queueReqTimeoutId.current = setTimeout(checkIfQueued, 10000);
+      });
+  };
+
+  useEffect(() => {
+    checkIfQueued();
+
+    return () => {
+      clearTimeout(queueReqTimeoutId.current);
+    };
+  }, []);
 
   useEffect(() => {
     //get user location
@@ -42,58 +77,19 @@ const Queue = ({
 
     fetch("http://localhost:3000/dev/admin/dining-hall", {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
       },
     })
       .then((response) => response.json())
       .then(({ diningHalls }) => {
         setDiningHalls(diningHalls.map(({ DiningHallName }) => DiningHallName));
       });
-
-    // check for a previous request or if someone has queued you up in a group
-
-    var params = { NetID: userNetID };
-    var checkGroupURL = new URL("http://localhost:3000/dev/checkGroup");
-    checkGroupURL.search = new URLSearchParams(params).toString();
-
-    fetch(checkGroupURL, {
-      headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
-      },
-    })
-      .then((response) => response.json())
-      .then(function (r) {
-        if (r.message === "Success!") {
-          setFinishCheckGroup(true);
-          return r;
-        } else {
-          console.log("You are not in a group");
-          return Promise.reject();
-        }
-      })
-      .then(({ queueRequest }) => {
-        /* this populates the queueRequest state */
-        var toFilter = [
-          "QueueRequestID",
-          "DiningHallName",
-          "AdmitOffQueueTime",
-          "QueueGroup",
-        ];
-        setQueueReqResponse(
-          Object.keys(queueRequest)
-            .filter((key) => toFilter.includes(key))
-            .reduce((obj, key) => {
-              obj[key] = queueRequest[key];
-              return obj;
-            }, {})
-        );
-      });
   }, []);
 
   useEffect(() => {
     if (selectedDiningHall === "") return;
 
-    clearTimeout(queueTimeoutId);
+    clearTimeout(queueSizeTimeoutId.current);
 
     const url = new URL("http://localhost:3000/dev/queue/size");
     url.search = new URLSearchParams({ DiningHallName: selectedDiningHall });
@@ -101,18 +97,22 @@ const Queue = ({
     const pollQueueSize = () => {
       fetch(url, {
         headers: {
-          Authorization: encodeBasicAuthHeader("Google", userTokenID),
+          Authorization: authHeader,
           "Content-Type": "application/json",
         },
       })
         .then((res) => res.json())
         .then(({ queueSize }) => {
           setQueueSize(queueSize);
-          setQueueTimeoutId(setTimeout(pollQueueSize, 30000));
+          queueSizeTimeoutId.current = setTimeout(pollQueueSize, 30000);
         });
     };
 
     pollQueueSize();
+
+    return () => {
+      clearTimeout(queueSizeTimeoutId.current);
+    };
   }, [selectedDiningHall]);
 
   const handleSelect = (event) => {
@@ -121,7 +121,7 @@ const Queue = ({
     //AF call here
     fetch("http://localhost:3000/dev/recommendation", {
       headers: {
-        Authorization: encodeBasicAuthHeader("Google", userTokenID),
+        Authorization: authHeader,
         "Content-Type": "application/json",
         // Authorization: encodeBasicAuthHeader("DeveloperOnly", "naymanl2"),
       },
@@ -156,11 +156,10 @@ const Queue = ({
     <>
       <Navbar
         hasLoggedIn={hasLoggedIn}
-        setLoggedInCB={setLoggedInCB}
         userNetID={userNetID}
-        handleUserTokenCB={handleUserTokenCB}
-        handleUserNetIDCB={handleUserNetIDCB}
+        handleLogout={handleLogout}
         hasAdminPriv={hasAdminPriv}
+        loggedInAsDev={loggedInAsDev}
       />
       {hasLoggedIn && Object.keys(queueReqResponse).length === 0 && (
         <Box
@@ -186,34 +185,30 @@ const Queue = ({
             <QueueRequest
               selectedDiningHall={selectedDiningHall}
               setQueueReqResponseCB={setQueueReqResponse}
-              userTokenID={userTokenID}
+              authHeader={authHeader}
               userNetID={userNetID}
             />
           </>
         )}
-
       {queueReqResponse &&
         Object.keys(queueReqResponse).length !== 0 &&
         hasLoggedIn && (
-          <>
-            <hr style={{ width: "80%" }}></hr>
-            <Box
-              display="flex"
-              alignItems="center"
-              width="100%"
-              height="350px"
-              justifyContent="center"
-            >
-              <QueueDisplay
-                queueReqResponse={queueReqResponse}
-                setQueueReqResponseCB={setQueueReqResponse}
-                userTokenID={userTokenID}
-                userNetID={userNetID}
-              />
-            </Box>
-          </>
+          <Box
+            display="flex"
+            alignItems="center"
+            width="100%"
+            height="350px"
+            justifyContent="center"
+            marginTop="100px"
+          >
+            <QueueDisplay
+              queueReqResponse={queueReqResponse}
+              setQueueReqResponseCB={setQueueReqResponse}
+              authHeader={authHeader}
+              userNetID={userNetID}
+            />
+          </Box>
         )}
-
       {finishRec && (
         <Snackbar open={finishRec} onClose={handleClose}>
           <Alert onClose={handleClose} severity="success">

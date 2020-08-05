@@ -60,6 +60,8 @@ export const attemptAdmit: (
       `
       START TRANSACTION;
 
+      SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
       DROP TEMPORARY TABLE IF EXISTS ToAdmit;
 
       CREATE TEMPORARY TABLE ToAdmit
@@ -128,7 +130,7 @@ export const attemptAdmit: (
       GROUP BY EntryID;
       `,
       [NetID],
-      6
+      7
     )
   ).shift();
 
@@ -162,6 +164,76 @@ export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetI
     `,
     [NetID]
   );
+
+export interface DiningHallActivityFromSQL {
+  DiningHallName: string;
+  DayOfWeek: number;
+  Hour: number;
+  Weight: number;
+}
+
+export interface DiningHallActivity {
+  [DiningHallName: string]: Array<{
+    DayOfWeek: number;
+    Hour: number;
+    Weight: number;
+  }>;
+}
+
+export const getActivity: () => Promise<DiningHallActivity> = async () => {
+  const activity = await multiQuery<DiningHallActivityFromSQL>(
+    `
+      START TRANSACTION;
+
+      DROP TEMPORARY TABLE IF EXISTS EatingDistribution;
+
+      CREATE TEMPORARY TABLE EatingDistribution AS (
+        SELECT 
+          DiningHallName,
+          DAYOFWEEK(GroupArrivalTime) AS d,
+          (HOUR(GroupArrivalTime) + i) AS hr,
+          COUNT(DISTINCT QueueRequestID) as num
+        FROM AdmittedEntry
+        NATURAL JOIN DiningHallTable
+        JOIN Integers ON i <= TIMESTAMPDIFF(HOUR, GroupArrivalTime, GroupExitTime)
+        GROUP BY DiningHallName, d, hr
+        ORDER BY d ASC, hr ASC
+      );
+
+      DROP TEMPORARY TABLE IF EXISTS EatingDistributionTotals;
+
+      CREATE TEMPORARY TABLE EatingDistributionTotals AS (
+        SELECT 
+          DiningHallName,
+          SUM(num) AS total
+        FROM EatingDistribution
+        GROUP BY DiningHallName
+      );
+
+      SELECT
+        DiningHallName,
+        d AS 'DayOfWeek',
+        hr AS 'Hour',
+        num / total AS Weight
+      FROM EatingDistribution
+      NATURAL JOIN EatingDistributionTotals;
+    `,
+    null,
+    5
+  );
+
+  return activity.reduce((obj, v) => {
+    if (!obj.hasOwnProperty(v.DiningHallName)) {
+      obj[v.DiningHallName] = [];
+    }
+    obj[v.DiningHallName].push({
+      DayOfWeek: v.DayOfWeek,
+      Hour: v.Hour,
+      Weight: v.Weight,
+    });
+    return obj;
+  }, {});
+};
 
 export const checkIfEating = async (NetID: string): Promise<boolean> => {
   const result = await query<number[]>(
@@ -215,7 +287,95 @@ export const checkIfAdmitted = async (
     [NetID]
   );
 
-  console.log({ result });
-
   return result.length > 0 ? parseAdmittedEntryWithGroupFromSQL(result[0]) : null;
+};
+
+
+export const attemptAdmitBF: (
+  NetID: string,
+  admitTime: string
+) => Promise<AdmittedEntryWithMeta | null> = async (NetID, admitTime) => {
+  
+  const admitTimeBF = moment(admitTime).toDate();
+  const admittedEntry = (
+    await multiQuery<AdmittedEntryWithMetaFromSQL>(
+      `
+      START TRANSACTION;
+
+      DROP TEMPORARY TABLE IF EXISTS ToAdmit;
+
+      CREATE TEMPORARY TABLE ToAdmit
+      AS (
+        SELECT
+          q.QueueRequestID,
+          dht.DiningHallName,
+          dht.TableID
+        FROM QueueRequest q
+        NATURAL JOIN DiningHallTable dht
+        WHERE
+          q.EnterQueueTime <= CURRENT_TIMESTAMP  -- Ready to eat
+          AND q.ExitQueueTime IS NULL  -- Filter out those admitted off the queue
+          AND q.Canceled = FALSE  -- Filter out those who left the queue
+          AND dht.TableID NOT IN (
+            SELECT TableID
+            FROM AdmittedEntry
+            WHERE GroupExitTime IS NULL
+          )  -- Filter out occupied tables
+          AND (
+            SELECT COUNT(*)
+            FROM QueueGroup g
+            WHERE g.QueueRequestID = q.QueueRequestID
+          ) <= dht.Capacity -- Filter only tables with enough seats
+          AND ? IN (
+            SELECT NetID
+            FROM QueueGroup g
+            WHERE g.QueueRequestID = q.QueueRequestID
+          )
+        ORDER BY q.EnterQueueTime DESC, dht.Capacity DESC
+        LIMIT 1
+      );
+
+      INSERT INTO AdmittedEntry (QueueRequestID, TableID)
+      SELECT QueueRequestID, TableID
+      FROM ToAdmit;
+
+      INSERT INTO AdmittedEntry (AdmitOffQueueTime)
+      VALUES ?
+
+      UPDATE QueueRequest
+      SET ExitQueueTime = ?
+      WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit);
+
+      COMMIT;
+
+      SELECT
+        EntryID,
+        MealType,
+        AdmitOffQueueTime,
+        TableID,
+        QueueRequestID,
+        DiningHallName,
+        CONCAT(
+          '[',
+          GROUP_CONCAT(
+            CONCAT(
+              '"',
+              NetID,
+              '"'
+            )
+          ),
+          ']'
+        ) AS QueueGroup
+      FROM AdmittedEntry
+      NATURAL JOIN QueueGroup
+      NATURAL JOIN DiningHallTable
+      WHERE QueueRequestID IN (SELECT QueueRequestID FROM ToAdmit)
+      GROUP BY EntryID;
+      `,
+      [NetID, admitTimeBF, admitTimeBF],
+      6
+    )
+  ).shift();
+
+  return admittedEntry != null ? parseAdmittedEntryWithGroupFromSQL(admittedEntry) : null;
 };

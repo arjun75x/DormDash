@@ -10,8 +10,5 @@ export default {
         },
       },
     },
-    queryStringParameters: {
-      type: 'object',
-    },
   },
 };

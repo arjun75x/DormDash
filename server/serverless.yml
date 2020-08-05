@@ -178,6 +178,18 @@ functions:
             identitySource: method.request.header.Authorization
             type: token
 
+  attemptAdmitBF:
+    handler: src/routes/admit/attemptAdmitBF.handler
+    events:
+      - http:
+          path: /admitBF
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
   leaveHall:
     handler: src/routes/admit/leaveHall.handler
     events:
@@ -207,6 +219,30 @@ functions:
     events:
       - http:
           path: /recommendation
+          method: post
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  getActivity:
+    handler: src/routes/admit/getActivity.handler
+    events:
+      - http:
+          path: /admit/activity
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  leaveQueue:
+    handler: src/routes/queue/leaveQueue.handler
+    events:
+      - http:
+          path: /queue/leave
           method: post
           cors: true
           authorizer:
