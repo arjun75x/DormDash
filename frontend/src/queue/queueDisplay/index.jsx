@@ -11,8 +11,6 @@ const QueueDisplay = ({
   userNetID,
 }) => {
   const admitTimeoutId = useRef(null);
-  const leaveTimeoutId = useRef(null);
-  const unqueueTimeoutId = useRef(null);
 
   const attemptToAdmitOffQueue = () => {
     fetch("http://localhost:3000/dev/admit", {
@@ -60,22 +58,10 @@ const QueueDisplay = ({
       },
       method: "POST",
       body: JSON.stringify({ NetID: userNetID }),
-    }).then(({ message }) => {
-      if (message === "Success!") {
-        setQueueReqResponseCB({});
-      } else {
-        leaveTimeoutId.current = setTimeout(handleExit, 5000);
-      }
+    }).then(() => {
+      setQueueReqResponseCB({});
     });
   };
-
-  useEffect(() => {
-    if (queueReqResponse.queueRequest) {
-      handleExit();
-    }
-
-    return () => clearTimeout(leaveTimeoutId.current);
-  }, [queueReqResponse]);
 
   const handleRemoveFromQueue = () => {
     fetch("http://localhost:3000/dev/queue/leave", {
@@ -85,22 +71,10 @@ const QueueDisplay = ({
       },
       method: "POST",
       body: JSON.stringify({ NetID: userNetID }),
-    }).then(({ message }) => {
-      if (message === "Success!") {
-        setQueueReqResponseCB({});
-      } else {
-        unqueueTimeoutId.current = setTimeout(handleRemoveFromQueue, 5000);
-      }
+    }).then(() => {
+      setQueueReqResponseCB({});
     });
   };
-
-  useEffect(() => {
-    if (queueReqResponse.queueRequest) {
-      handleRemoveFromQueue();
-    }
-
-    return () => clearTimeout(unqueueTimeoutId.current);
-  }, [queueReqResponse]);
 
   return (
     <Box display="flex" alignItems="center">
