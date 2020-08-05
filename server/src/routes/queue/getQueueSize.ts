@@ -1,6 +1,6 @@
 import type { HTTPRawHandler } from 'routes/handler';
 
-import { getQueueSize } from 'models/QueueInfo';
+import { getQueueSize } from 'models/QueueRequest';
 import middyfy from 'middleware/wrapper.ts';
 import InputSchema from 'input-schemas/test.is';
 

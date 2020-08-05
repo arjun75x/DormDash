@@ -163,6 +163,13 @@ export const arriveAtHall: (NetID: string) => Promise<Array<void>> = async (NetI
     [NetID]
   );
 
+export const getActivity: () => Promise<Array<void>> = async () =>
+  query<void>(
+    `
+    `,
+    []
+  );
+
 export const checkIfEating = async (NetID: string): Promise<boolean> => {
   const result = await query<number[]>(
     `
@@ -214,8 +221,6 @@ export const checkIfAdmitted = async (
     `,
     [NetID]
   );
-
-  console.log({ result });
 
   return result.length > 0 ? parseAdmittedEntryWithGroupFromSQL(result[0]) : null;
 };
