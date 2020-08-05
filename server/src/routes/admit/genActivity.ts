@@ -1,7 +1,7 @@
 import type { HTTPRawHandler } from 'routes/handler';
 
 import middyfy from 'middleware/wrapper.ts';
-import InputSchema from 'input-schemas/admit/getActivity.is';
+import InputSchema from 'input-schemas/test.is';
 import { genActivity } from 'models/AdmittedEntry';
 
 const _handler: HTTPRawHandler = async () => {

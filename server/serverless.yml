@@ -221,6 +221,7 @@ functions:
           path: /admit/activity
           method: post
           cors: true
+      - schedule: cron(0 0 * * ? *)
 
   leaveQueue:
     handler: src/routes/queue/leaveQueue.handler
@@ -241,3 +242,4 @@ functions:
           path: /retrain-recommendation
           method: get
           cors: true
+      - schedule: cron(0 0 * * ? *)
