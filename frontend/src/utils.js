@@ -1,9 +1,10 @@
-import { Buffer } from 'buffer';
+import { Buffer } from "buffer";
 
 const encodeToken = (tokenType, token) =>
-  Buffer.from(`${tokenType}:${token}`).toString('base64');
+  Buffer.from(`${tokenType}:${token}`).toString("base64");
 
 export const encodeBasicAuthHeader = (tokenType, token) => {
+  console.log({ tokenType, token });
   const encodedToken = encodeToken(tokenType, token);
   return `Basic ${encodedToken}`;
 };
