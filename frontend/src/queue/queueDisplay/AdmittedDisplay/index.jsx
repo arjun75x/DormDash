@@ -65,9 +65,9 @@ const AdmittedDisplay = ({
         <Typography className={classes.title} gutterBottom>
           Queue Group
         </Typography>
-        <Typography variant="body2" component="p">
+        {/* <Typography variant="body2" component="p">
           {admittedEntry.QueueGroup.join(", ")}
-        </Typography>
+        </Typography> */}
       </CardContent>
       <CardActions className={classes.cardAction}>
         {/* <Button
