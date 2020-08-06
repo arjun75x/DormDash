@@ -62,9 +62,9 @@ const AdmittedDisplay = ({
         <Typography variant="body2" component="p">
           {Date(admittedEntry.AdmitOffQueueTime)}
         </Typography>
-        <Typography className={classes.title} gutterBottom>
+        {/* <Typography className={classes.title} gutterBottom>
           Queue Group
-        </Typography>
+        </Typography> */}
         {/* <Typography variant="body2" component="p">
           {admittedEntry.QueueGroup.join(", ")}
         </Typography> */}
